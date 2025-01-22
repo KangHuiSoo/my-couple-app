@@ -15,14 +15,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // locale: Locale('ko', 'KR'),  // 앱 로케일 설정
-      // supportedLocales: [
-      //   Locale('en', 'US'),
-      //   Locale('ko', 'KR')
-      // ],
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        fontFamily: "Pretendard",
+        // primarySwatch: Colors.blue,
       ),
       home: LoginScreen(),
       // home: BottomNavigationScreen(),
