@@ -71,33 +71,36 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
 
           // 이미지 위 텍스트
+          // Positioned(
+          //   top: 100, // 텍스트의 Y 좌표 조정
+          //   left: 20, // 텍스트의 X 좌표 조정
+          //   child: Text(
+          //     '우리만난지',
+          //     style: TextStyle(
+          //       color: Colors.white, // 텍스트 색상
+          //       fontSize: 24, // 텍스트 크기
+          //       fontWeight: FontWeight.bold,
+          //       shadows: [
+          //         Shadow(
+          //           blurRadius: 4.0,
+          //           color: Colors.black.withOpacity(0.5),
+          //           offset: Offset(2, 2),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
           Positioned(
-            top: 100, // 텍스트의 Y 좌표 조정
-            left: 20, // 텍스트의 X 좌표 조정
-            child: Text(
-              '우리만난지',
-              style: TextStyle(
-                color: Colors.white, // 텍스트 색상
-                fontSize: 24, // 텍스트 크기
-                fontWeight: FontWeight.bold,
-                shadows: [
-                  Shadow(
-                    blurRadius: 4.0,
-                    color: Colors.black.withOpacity(0.5),
-                    offset: Offset(2, 2),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            top: 130, // 텍스트의 Y 좌표 조정
+            top: 80, // 텍스트의 Y 좌표 조정
             left: 20, // 텍스트의 X 좌표 조정
             child: Text(
               'D+1082',
               style: TextStyle(
-                color: Colors.white, // 텍스트 색상
-                fontSize: 40, // 텍스트 크기
+                fontFamily: 'okddung',
+                color: Colors.white,
+                // 텍스트 색상
+                fontSize: 40,
+                // 텍스트 크기
                 fontWeight: FontWeight.bold,
                 shadows: [
                   Shadow(
@@ -110,42 +113,66 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           Positioned(
-            top: 200, // 텍스트의 Y 좌표 조정
+            top: 150, // 텍스트의 Y 좌표 조정
             left: 20, // 텍스트의 X 좌표 조정
-            child: Text(
-              ' 자기생일 D-30 ',
-              style: TextStyle(
-                backgroundColor: Colors.white,
-                color: Color(0xFFb4b4b4), // 텍스트 색상
-                fontSize: 12, // 텍스트 크기
-                fontWeight: FontWeight.bold,
-                // shadows: [
-                //   Shadow(
-                //     blurRadius: 4.0,
-                //     color: Colors.black.withOpacity(0.5),
-                //     offset: Offset(2, 2),
-                //   ),
-                // ],
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20.0),
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 5,
+                      offset: Offset(0, 2))
+                ],
+              ),
+              child: Text(
+                ' 생일 D-30 ',
+                style: TextStyle(
+                  // backgroundColor: Colors.white,
+                  color: Color(0xFFb4b4b4), // 텍스트 색상
+                  fontSize: 14, // 텍스트 크기
+                  fontWeight: FontWeight.bold,
+                  // shadows: [
+                  //   Shadow(
+                  //     blurRadius: 4.0,
+                  //     color: Colors.black.withOpacity(0.5),
+                  //     offset: Offset(2, 2),
+                  //   ),
+                  // ],
+                ),
               ),
             ),
           ),
           Positioned(
-            top: 220, // 텍스트의 Y 좌표 조정
+            top: 178, // 텍스트의 Y 좌표 조정
             left: 20, // 텍스트의 X 좌표 조정
-            child: Text(
-              ' 크리스마스 D-40 ',
-              style: TextStyle(
-                backgroundColor: Colors.white,
-                color: Color(0xFFb4b4b4), // 텍스트 색상
-                fontSize: 12, // 텍스트 크기
-                fontWeight: FontWeight.bold,
-                // shadows: [
-                //   Shadow(
-                //     blurRadius: 4.0,
-                //     color: Colors.black.withOpacity(0.5),
-                //     offset: Offset(2, 2),
-                //   ),
-                // ],
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20.0),
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 5,
+                      offset: Offset(0, 2))
+                ],
+              ),
+              child: Text(
+                ' 크리스마스 D-40 ',
+                style: TextStyle(
+                  // backgroundColor: Colors.white,
+                  color: Color(0xFFb4b4b4), // 텍스트 색상
+                  fontSize: 14, // 텍스트 크기
+                  fontWeight: FontWeight.bold,
+                  // shadows: [
+                  //   Shadow(
+                  //     blurRadius: 4.0,
+                  //     color: Colors.black.withOpacity(0.5),
+                  //     offset: Offset(2, 2),
+                  //   ),
+                  // ],
+                ),
               ),
             ),
           ),
@@ -192,11 +219,43 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    CircleAvatar(
-                                      radius: 32, // 원 크기
-                                      backgroundColor: PRIMARY_COLOR,
-                                      backgroundImage: AssetImage(
-                                          'assets/images/person1.jpg'), // 이미지 경로
+                                    Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        // 외곽 테두리
+                                        SizedBox(
+                                          width: 80,
+                                          height: 80,
+                                          child: DecoratedBox(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                color: PRIMARY_COLOR,
+                                                width: 2,
+                                              ),
+                                              shape: BoxShape.circle,
+                                            ),
+                                          ),
+                                        ),
+                                        // 내부 테두리
+                                        SizedBox(
+                                          width: 72,
+                                          // CircleAvatar 크기 + 내부 테두리 두께
+                                          height: 72,
+                                          child: DecoratedBox(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.white, // 내부 테두리 색상
+                                            ),
+                                          ),
+                                        ),
+                                        // 프로필 이미지
+                                        CircleAvatar(
+                                          radius: 32, // 프로필 이미지 크기
+                                          backgroundColor: PRIMARY_COLOR,
+                                          backgroundImage: AssetImage(
+                                              'assets/images/profile.png'), // 이미지 경로
+                                        ),
+                                      ],
                                     ),
                                     SizedBox(width: 12.0),
                                     Column(
@@ -216,11 +275,43 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ],
                                     ),
                                     SizedBox(width: 12.0),
-                                    CircleAvatar(
-                                      radius: 32, // 원 크기
-                                      backgroundColor: PRIMARY_COLOR,
-                                      backgroundImage: AssetImage(
-                                          'assets/images/person1.jpg'), // 이미지 경로
+                                    Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        // 외곽 테두리
+                                        SizedBox(
+                                          width: 80,
+                                          height: 80,
+                                          child: DecoratedBox(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                color: PRIMARY_COLOR,
+                                                width: 2,
+                                              ),
+                                              shape: BoxShape.circle,
+                                            ),
+                                          ),
+                                        ),
+                                        // 내부 테두리
+                                        SizedBox(
+                                          width: 72,
+                                          // CircleAvatar 크기 + 내부 테두리 두께
+                                          height: 72,
+                                          child: DecoratedBox(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.white, // 내부 테두리 색상
+                                            ),
+                                          ),
+                                        ),
+                                        // 프로필 이미지
+                                        CircleAvatar(
+                                          radius: 32, // 프로필 이미지 크기
+                                          backgroundColor: PRIMARY_COLOR,
+                                          backgroundImage: AssetImage(
+                                              'assets/images/profile.png'), // 이미지 경로
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -254,9 +345,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 ListView.builder(
                                     padding: EdgeInsets.zero,
-                                    shrinkWrap: true, // 내부 ListView 크기 제한
-                                    physics:
-                                        NeverScrollableScrollPhysics(), // 스크롤 비활성화
+                                    shrinkWrap: true,
+                                    // 내부 ListView 크기 제한
+                                    physics: NeverScrollableScrollPhysics(),
+                                    // 스크롤 비활성화
                                     itemCount: places.length,
                                     itemBuilder: (context, index) {
                                       final place = places[index];
@@ -326,7 +418,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               ],
                             ),
                           ),
-                          Container(color: Colors.white, height: 100),
                         ],
                       ),
                     ),
