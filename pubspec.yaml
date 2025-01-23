@@ -82,24 +82,27 @@ flutter:
   fonts:
     - family: Pretendard
       fonts:
-        - asset: assets/fonts/Pretendard-Thin.ttf
+        - asset: assets/fonts/pretendard/Pretendard-Thin.ttf
           weight: 100
-        - asset: assets/fonts/Pretendard-ExtraLight.ttf
+        - asset: assets/fonts/pretendard/Pretendard-ExtraLight.ttf
           weight: 200
-        - asset: assets/fonts/Pretendard-Light.ttf
+        - asset: assets/fonts/pretendard/Pretendard-Light.ttf
           weight: 300
-        - asset: assets/fonts/Pretendard-Regular.ttf
+        - asset: assets/fonts/pretendard/Pretendard-Regular.ttf
           weight: 400
-        - asset: assets/fonts/Pretendard-Medium.ttf
+        - asset: assets/fonts/pretendard/Pretendard-Medium.ttf
           weight: 500
-        - asset: assets/fonts/Pretendard-SemiBold.ttf
+        - asset: assets/fonts/pretendard/Pretendard-SemiBold.ttf
           weight: 600
-        - asset: assets/fonts/Pretendard-Bold.ttf
+        - asset: assets/fonts/pretendard/Pretendard-Bold.ttf
           weight: 700
-        - asset: assets/fonts/Pretendard-ExtraBold.ttf
+        - asset: assets/fonts/pretendard/Pretendard-ExtraBold.ttf
           weight: 800
-        - asset: assets/fonts/Pretendard-Black.ttf
+        - asset: assets/fonts/pretendard/Pretendard-Black.ttf
           weight: 900
+    - family: okddung
+      fonts:
+        - asset: assets/fonts/okddung/OKDDUNG.ttf
   # fonts:
   #   - family: Schyler
   #     fonts:
