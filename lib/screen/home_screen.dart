@@ -356,12 +356,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 3.0, horizontal: 8.0),
                                         child: Card(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(5), // 둥근 모서리 크기
+                                          ),
                                           color: PRIMARY_CARD_COLOR,
                                           child: Row(
                                             children: [
                                               ClipRRect(
                                                 borderRadius:
-                                                    BorderRadius.circular(8.0),
+                                                    BorderRadius.circular(5.0),
                                                 child: Image.asset(
                                                   place['image'], // 이미지 경로
                                                   width: 100,
