@@ -184,9 +184,18 @@ class _PlaceListScreenState extends State<PlaceListScreen> {
           ],
         ),
       ),
-    floatingActionButton: FloatingActionButton(onPressed: (){
-      Navigator.push(context, MaterialPageRoute(builder: (context) => PlaceAddScreen()));
-    }),);
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: PRIMARY_COLOR,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50.0),
+        ),
+        onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => PlaceAddScreen()));
+        },
+        child: Icon(Icons.add, color: Colors.white),
+      ),
+    );
   }
 
   void onDaySelected(DateTime selectedDay, DateTime focusedDay) {
