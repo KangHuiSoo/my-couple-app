@@ -95,7 +95,7 @@ class JoinScreen extends StatelessWidget {
                 SizedBox(height: 24),
 
                 // 회원가입 버튼
-                CustomButton(buttonText: "회원가입", onPressed: () {
+                CustomButton(backgroundColor:PRIMARY_COLOR, textColor: Colors.white,buttonText: "회원가입", onPressed: () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => CoupleLinkScreen()));
                   },
                 )

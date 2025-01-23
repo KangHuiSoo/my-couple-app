@@ -35,7 +35,7 @@ class LoginScreen extends StatelessWidget {
                 SizedBox(height: 24),
 
                 // 로그인 버튼
-                CustomButton(buttonText: "로그인", onPressed: () {
+                CustomButton(backgroundColor: PRIMARY_COLOR, textColor: Colors.white,buttonText: "로그인", onPressed: () {
                       Navigator.push(context, MaterialPageRoute( builder: (context) => BottomNavigationScreen()));
                 }),
                 SizedBox(height: 16),

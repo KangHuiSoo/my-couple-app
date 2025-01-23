@@ -5,7 +5,9 @@ import 'package:my_couple_app/const/colors.dart';
 class CustomButton extends StatelessWidget {
   final String buttonText;
   final VoidCallback onPressed;
-  const CustomButton({super.key, required this.onPressed, required this.buttonText});
+  final Color? backgroundColor;
+  final Color? textColor;
+  const CustomButton({super.key, required this.onPressed, required this.buttonText, this.backgroundColor, this.textColor});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +17,7 @@ class CustomButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: PRIMARY_COLOR,
+          backgroundColor: backgroundColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(6.0),
           ),
@@ -24,7 +26,7 @@ class CustomButton extends StatelessWidget {
           buttonText,
           style: TextStyle(
             fontSize: 16,
-            color: Colors.white,
+            color: textColor,
           ),
         ),
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_couple_app/component/custom_calendar.dart';
 import 'package:my_couple_app/const/colors.dart';
+import 'package:my_couple_app/screen/place_add_screen.dart';
 
 class PlaceListScreen extends StatefulWidget {
   const PlaceListScreen({super.key});
@@ -42,144 +43,147 @@ class _PlaceListScreenState extends State<PlaceListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('데이트코스'),
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              CustomCalendar(
-                selectedDay: selectedDay,
-                focusedDay: focusedDay,
-                onDaySelected: onDaySelected,
-              ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: categories
-                      .map(
-                        (category) => TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            category,
-                            style: TextStyle(
-                              color:
-                                  category == '전체' ? Colors.black : Colors.grey,
-                              fontWeight: category == '전체'
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                            ),
+      appBar: AppBar(
+        title: Text('데이트코스'),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            CustomCalendar(
+              selectedDay: selectedDay,
+              focusedDay: focusedDay,
+              onDaySelected: onDaySelected,
+            ),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: categories
+                    .map(
+                      (category) => TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          category,
+                          style: TextStyle(
+                            color:
+                                category == '전체' ? Colors.black : Colors.grey,
+                            fontWeight: category == '전체'
+                                ? FontWeight.bold
+                                : FontWeight.normal,
                           ),
                         ),
-                      )
-                      .toList(),
-                ),
+                      ),
+                    )
+                    .toList(),
               ),
-              Divider(
-                height: 0.001,
-                color: Color(0xFFB4B4B4),
-                thickness: 0.5,
-                indent: 16.0,
-                endIndent: 16.0,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 20.0, vertical: 12.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'TOTAL ${places.length}',
+            ),
+            Divider(
+              height: 0.001,
+              color: Color(0xFFB4B4B4),
+              thickness: 0.5,
+              indent: 16.0,
+              endIndent: 16.0,
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'TOTAL ${places.length}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12.0,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {},
+                    style: TextButton.styleFrom(
+                        minimumSize: Size.zero,
+                        padding: EdgeInsets.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                    child: Text(
+                      '편집',
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
+                        color: Colors.grey,
                         fontSize: 12.0,
                       ),
                     ),
-                    TextButton(
-                      onPressed: () {},
-                      style: TextButton.styleFrom(
-                          minimumSize: Size.zero,
-                          padding: EdgeInsets.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-                      child: Text(
-                        '편집',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 12.0,
-                        ),
+                  ),
+                ],
+              ),
+            ),
+            ListView.builder(
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                // 내부 ListView 크기 제한
+                physics: NeverScrollableScrollPhysics(),
+                // 스크롤 비활성화
+                itemCount: places.length,
+                itemBuilder: (context, index) {
+                  final place = places[index];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 3.0, horizontal: 8.0),
+                    child: Card(
+                      color: PRIMARY_CARD_COLOR,
+                      child: Row(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: Image.asset(
+                              place['image'], // 이미지 경로
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 16.0,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                place['name'],
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                place['address'],
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  Icon(Icons.star,
+                                      color: Colors.yellow[700], size: 16),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    place['rating'].toString(),
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          )
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              ),
-              ListView.builder(
-                  padding: EdgeInsets.zero,
-                  shrinkWrap: true,
-                  // 내부 ListView 크기 제한
-                  physics: NeverScrollableScrollPhysics(),
-                  // 스크롤 비활성화
-                  itemCount: places.length,
-                  itemBuilder: (context, index) {
-                    final place = places[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 3.0, horizontal: 8.0),
-                      child: Card(
-                        color: PRIMARY_CARD_COLOR,
-                        child: Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8.0),
-                              child: Image.asset(
-                                place['image'], // 이미지 경로
-                                width: 100,
-                                height: 100,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            SizedBox(
-                              width: 16.0,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  place['name'],
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  place['address'],
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                                SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    Icon(Icons.star,
-                                        color: Colors.yellow[700], size: 16),
-                                    SizedBox(width: 4),
-                                    Text(
-                                      place['rating'].toString(),
-                                      style: TextStyle(fontSize: 14),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    );
-                  })
-            ],
-          ),
-        ));
+                  );
+                })
+          ],
+        ),
+      ),
+    floatingActionButton: FloatingActionButton(onPressed: (){
+      Navigator.push(context, MaterialPageRoute(builder: (context) => PlaceAddScreen()));
+    }),);
   }
 
   void onDaySelected(DateTime selectedDay, DateTime focusedDay) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:my_couple_app/component/custom_button.dart';
 import 'package:my_couple_app/component/custom_text_field.dart';
 import 'package:my_couple_app/screen/bottom_navigation_screen.dart';
 import 'package:my_couple_app/screen/join_screen.dart';
@@ -43,21 +44,11 @@ class CoupleLinkScreen extends StatelessWidget {
                 SizedBox(
                   height: 44,
                   width: double.infinity,
-                  child: ElevatedButton(
+                  child: CustomButton(
                     onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: PRIMARY_COLOR,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6.0),
-                      ),
-                    ),
-                    child: Text(
-                      '완료',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                      ),
-                    ),
+                    buttonText: "연결",
+                    textColor: Colors.white,
+                    backgroundColor: PRIMARY_COLOR,
                   ),
                 ),
               ],
