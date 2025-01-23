@@ -23,8 +23,8 @@ class CustomCalendar extends StatelessWidget {
       // color: Colors.white70,
     );
 
-    final defaultTextStyle =
-    TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w700, fontSize: 12.0);
+    final defaultTextStyle = TextStyle(
+        color: Colors.grey[600], fontWeight: FontWeight.w700, fontSize: 12.0);
 
     return Container(
       color: Color(0xFFF3F8F9),
@@ -34,14 +34,15 @@ class CustomCalendar extends StatelessWidget {
         firstDay: DateTime(1800),
         lastDay: DateTime(3000),
         headerStyle: HeaderStyle(
-            formatButtonVisible: false,
-            titleCentered: true,
-            titleTextStyle: TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: 16.0,
-            )),
+          formatButtonVisible: false,
+          titleCentered: true,
+          titleTextStyle: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 16.0,
+          ),
+        ),
         calendarStyle: CalendarStyle(
-          // cellMargin: EdgeInsets.zero, // 셀 간의 간격을 없앰
+          // cellMargin: EdgeInsets.all(2.0), // 셀 간의 간격을 없앰
           // 오늘 날짜 표기 여부
           isTodayHighlighted: false,
           // 평일 스타일 적용
@@ -52,8 +53,8 @@ class CustomCalendar extends StatelessWidget {
           weekendDecoration: defaultBoxDeco,
           // 선택된 날짜 스타일 적용
           selectedDecoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(6.0),
+            color: PRIMARY_COLOR,
+            borderRadius: BorderRadius.circular(30.0),
             border: Border.all(
               color: PRIMARY_COLOR,
               width: 1.0,
@@ -63,18 +64,19 @@ class CustomCalendar extends StatelessWidget {
             shape: BoxShape.circle,
           ),
           selectedTextStyle: defaultTextStyle.copyWith(
-            color: PRIMARY_COLOR,
+            color: Colors.white,
           ),
         ),
         onDaySelected: onDaySelected,
-
         selectedDayPredicate: (DateTime date) {
           // 3. 현재 선택된 날짜가 맞는지 비교하여 표시함 true인경우 선택됨
           if (selectedDay == null) {
             return false; // 선택없는 경우 false를 리턴해주었기때문에 처음 실행하면 날짜가 선택되어 있지 않음
           }
 
-          return date.year == selectedDay!.year && // 선택날짜와의 연,월,일을 비교한후 true를 리턴하면 선택한날짜에 표시가됨
+          return date.year ==
+                  selectedDay!
+                      .year && // 선택날짜와의 연,월,일을 비교한후 true를 리턴하면 선택한날짜에 표시가됨
               date.month == selectedDay!.month &&
               date.day == selectedDay!.day;
         },
