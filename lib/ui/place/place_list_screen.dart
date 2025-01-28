@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:my_couple_app/component/custom_calendar.dart';
-import 'package:my_couple_app/const/colors.dart';
-import 'package:my_couple_app/screen/place_add_screen.dart';
+import 'package:my_couple_app/core/constants/colors.dart';
+import 'package:my_couple_app/core/ui/component/custom_calendar.dart';
+import 'package:my_couple_app/ui/place/place_add_screen.dart';
 
 class PlaceListScreen extends StatefulWidget {
   const PlaceListScreen({super.key});

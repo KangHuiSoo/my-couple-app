@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:my_couple_app/component/custom_button.dart';
-import 'package:my_couple_app/component/custom_text_field.dart';
-import 'package:my_couple_app/const/colors.dart';
-import 'package:my_couple_app/screen/couple_link_screen.dart';
+import 'package:my_couple_app/core/constants/colors.dart';
+import 'package:my_couple_app/core/ui/component/custom_button.dart';
+import 'package:my_couple_app/core/ui/component/custom_text_field.dart';
+import 'package:my_couple_app/ui/join/couple_link_screen.dart';
 
 class JoinScreen extends StatelessWidget {
   @override

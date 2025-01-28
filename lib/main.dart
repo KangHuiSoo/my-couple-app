@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:my_couple_app/screen/login_screen.dart';
+import 'package:my_couple_app/ui/login/login_screen.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized(); //Flutter의 비동기 작업 초기화

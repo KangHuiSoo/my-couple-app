@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:my_couple_app/const/colors.dart';
-import 'package:my_couple_app/screen/home_screen.dart';
-import 'package:my_couple_app/screen/mypage_screen.dart';
-import 'package:my_couple_app/screen/place_list_screen.dart';
+import 'package:my_couple_app/core/constants/colors.dart';
+import 'package:my_couple_app/ui/home/home_screen.dart';
+import 'package:my_couple_app/ui/mypage/mypage_screen.dart';
+import 'package:my_couple_app/ui/place/place_list_screen.dart';
 
 class BottomNavigationScreen extends StatefulWidget {
   const BottomNavigationScreen({super.key});

@@ -1,11 +1,8 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:my_couple_app/component/custom_button.dart';
-import 'package:my_couple_app/component/custom_text_field.dart';
-import 'package:my_couple_app/const/colors.dart';
-
+import 'package:my_couple_app/core/constants/colors.dart';
+import 'package:my_couple_app/core/ui/component/custom_button.dart';
+import 'package:my_couple_app/core/ui/component/custom_text_field.dart';
 class PlaceAddScreen extends StatefulWidget {
   const PlaceAddScreen({super.key});
 
