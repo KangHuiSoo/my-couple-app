@@ -3,6 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
+import 'package:my_couple_app/core/ui/component/draggable_bar.dart';
+import 'package:my_couple_app/core/ui/component/positioned_decorated_box.dart';
+import 'package:my_couple_app/core/ui/component/positioned_text.dart';
+import 'package:my_couple_app/core/ui/component/profile_photo.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -69,114 +73,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-
-          // 이미지 위 텍스트
-          // Positioned(
-          //   top: 100, // 텍스트의 Y 좌표 조정
-          //   left: 20, // 텍스트의 X 좌표 조정
-          //   child: Text(
-          //     '우리만난지',
-          //     style: TextStyle(
-          //       color: Colors.white, // 텍스트 색상
-          //       fontSize: 24, // 텍스트 크기
-          //       fontWeight: FontWeight.bold,
-          //       shadows: [
-          //         Shadow(
-          //           blurRadius: 4.0,
-          //           color: Colors.black.withOpacity(0.5),
-          //           offset: Offset(2, 2),
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
-          Positioned(
-            top: 80, // 텍스트의 Y 좌표 조정
-            left: 20, // 텍스트의 X 좌표 조정
-            child: Text(
-              'D+1082',
-              style: TextStyle(
-                fontFamily: 'okddung',
-                color: Colors.white,
-                // 텍스트 색상
-                fontSize: 40,
-                // 텍스트 크기
-                fontWeight: FontWeight.bold,
-                shadows: [
-                  Shadow(
-                    blurRadius: 4.0,
-                    color: Colors.black.withOpacity(0.5),
-                    offset: Offset(2, 2),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            top: 150, // 텍스트의 Y 좌표 조정
-            left: 20, // 텍스트의 X 좌표 조정
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20.0),
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 5,
-                      offset: Offset(0, 2))
-                ],
-              ),
-              child: Text(
-                ' 생일 D-30 ',
-                style: TextStyle(
-                  // backgroundColor: Colors.white,
-                  color: Color(0xFFb4b4b4), // 텍스트 색상
-                  fontSize: 14, // 텍스트 크기
-                  fontWeight: FontWeight.bold,
-                  // shadows: [
-                  //   Shadow(
-                  //     blurRadius: 4.0,
-                  //     color: Colors.black.withOpacity(0.5),
-                  //     offset: Offset(2, 2),
-                  //   ),
-                  // ],
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 178, // 텍스트의 Y 좌표 조정
-            left: 20, // 텍스트의 X 좌표 조정
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20.0),
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 5,
-                      offset: Offset(0, 2))
-                ],
-              ),
-              child: Text(
-                ' 크리스마스 D-40 ',
-                style: TextStyle(
-                  // backgroundColor: Colors.white,
-                  color: Color(0xFFb4b4b4), // 텍스트 색상
-                  fontSize: 14, // 텍스트 크기
-                  fontWeight: FontWeight.bold,
-                  // shadows: [
-                  //   Shadow(
-                  //     blurRadius: 4.0,
-                  //     color: Colors.black.withOpacity(0.5),
-                  //     offset: Offset(2, 2),
-                  //   ),
-                  // ],
-                ),
-              ),
-            ),
-          ),
-
+          PositionedText(x: 20, y: 80, text: 'D+987'),
+          PositionedDecoratedBox(x: 20, y: 150, text: '생일 D-30'),
+          PositionedDecoratedBox(x: 20, y: 180, text: '크리스마스 D-30'),
           DraggableScrollableSheet(
             initialChildSize: 0.2, // 초기 높이 30%
             minChildSize: 0.2, // 최소 높이 20%
@@ -184,25 +83,14 @@ class _HomeScreenState extends State<HomeScreen> {
             builder: (BuildContext context, ScrollController scrollController) {
               return Container(
                 decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(16)),
-                    boxShadow: [
-                      BoxShadow(color: Colors.black26, blurRadius: 10)
-                    ]),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                  boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 10)],
+                ),
                 child: Column(
                   children: [
                     //상단 Draggable 기호
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        width: 40,
-                        height: 4,
-                        decoration: BoxDecoration(
-                            color: Colors.grey[400],
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
-                    ),
+                    DraggableBar(),
 
                     // DraggalbeScrollableSheet 몸체
                     Expanded(
@@ -219,44 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Stack(
-                                      alignment: Alignment.center,
-                                      children: [
-                                        // 외곽 테두리
-                                        SizedBox(
-                                          width: 80,
-                                          height: 80,
-                                          child: DecoratedBox(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                color: PRIMARY_COLOR,
-                                                width: 2,
-                                              ),
-                                              shape: BoxShape.circle,
-                                            ),
-                                          ),
-                                        ),
-                                        // 내부 테두리
-                                        SizedBox(
-                                          width: 72,
-                                          // CircleAvatar 크기 + 내부 테두리 두께
-                                          height: 72,
-                                          child: DecoratedBox(
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: Colors.white, // 내부 테두리 색상
-                                            ),
-                                          ),
-                                        ),
-                                        // 프로필 이미지
-                                        CircleAvatar(
-                                          radius: 32, // 프로필 이미지 크기
-                                          backgroundColor: PRIMARY_COLOR,
-                                          backgroundImage: AssetImage(
-                                              'assets/images/profile.png'), // 이미지 경로
-                                        ),
-                                      ],
-                                    ),
+                                    ProfilePhoto(outsideSize: 80, insideSize: 72, radius: 32, imageUrl: 'assets/images/profile.png'),
                                     SizedBox(width: 12.0),
                                     Column(
                                       children: [
@@ -275,44 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ],
                                     ),
                                     SizedBox(width: 12.0),
-                                    Stack(
-                                      alignment: Alignment.center,
-                                      children: [
-                                        // 외곽 테두리
-                                        SizedBox(
-                                          width: 80,
-                                          height: 80,
-                                          child: DecoratedBox(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                color: PRIMARY_COLOR,
-                                                width: 2,
-                                              ),
-                                              shape: BoxShape.circle,
-                                            ),
-                                          ),
-                                        ),
-                                        // 내부 테두리
-                                        SizedBox(
-                                          width: 72,
-                                          // CircleAvatar 크기 + 내부 테두리 두께
-                                          height: 72,
-                                          child: DecoratedBox(
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: Colors.white, // 내부 테두리 색상
-                                            ),
-                                          ),
-                                        ),
-                                        // 프로필 이미지
-                                        CircleAvatar(
-                                          radius: 32, // 프로필 이미지 크기
-                                          backgroundColor: PRIMARY_COLOR,
-                                          backgroundImage: AssetImage(
-                                              'assets/images/profile.png'), // 이미지 경로
-                                        ),
-                                      ],
-                                    ),
+                                    ProfilePhoto(outsideSize: 80, insideSize: 72, radius:32, imageUrl: 'assets/images/profile.png'),
                                   ],
                                 ),
                               ),
@@ -357,7 +171,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                             vertical: 3.0, horizontal: 8.0),
                                         child: Card(
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(5), // 둥근 모서리 크기
+                                            borderRadius: BorderRadius.circular(
+                                                5), // 둥근 모서리 크기
                                           ),
                                           color: PRIMARY_CARD_COLOR,
                                           child: Row(

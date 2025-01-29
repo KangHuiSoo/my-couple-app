@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:my_couple_app/core/ui/component/profile_photo.dart';
+
+import '../../core/constants/colors.dart';
 
 class MyPageScreen extends StatelessWidget {
   const MyPageScreen({Key? key}) : super(key: key);
@@ -25,16 +28,18 @@ class MyPageScreen extends StatelessWidget {
         children: [
           const SizedBox(height: 20),
           // 프로필 이미지
-          Center(
-            child: CircleAvatar(
-              radius: 60,
-              backgroundColor: Color(0xFF81D0D9),
-              child: CircleAvatar(
-                radius: 58,
-                backgroundImage: AssetImage('assets/images/person1.jpg'),
-              ),
-            ),
-          ),
+          // Center(
+          //   child: CircleAvatar(
+          //     radius: 60,
+          //     backgroundColor: Color(0xFF81D0D9),
+          //     child: CircleAvatar(
+          //       radius: 58,
+          //       backgroundImage: AssetImage('assets/images/person1.jpg'),
+          //     ),
+          //   ),
+          // ),
+          ProfilePhoto(outsideSize: 120, insideSize: 100, radius: 52,imageUrl: 'assets/images/profile.png'),
+
           const SizedBox(height: 10),
           // 사용자 이름
           const Text(
