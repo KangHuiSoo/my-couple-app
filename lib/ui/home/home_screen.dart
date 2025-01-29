@@ -19,27 +19,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String? backgroundImage;
-  final List<Map<String, dynamic>> places = [
-    {
-      'name': '헌스시',
-      'address': '부산 해운대구 중동2로 2길',
-      'rating': 4.3,
-      'image': 'assets/images/default_background.jpg', // 이미지 경로
-    },
-    {
-      'name': '올리스 카페',
-      'address': '부산 해운대구 달맞이길 33',
-      'rating': 4.8,
-      'image': 'assets/images/default_background.jpg',
-      'highlighted': true, // 선택된 아이템
-    },
-    {
-      'name': '디무 커피',
-      'address': '부산 기장군 일광읍 512',
-      'rating': 4.5,
-      'image': 'assets/images/default_background.jpg',
-    },
-  ];
 
   Future<void> _pickBackgroundImage() async {
     final ImagePicker picker = ImagePicker();

@@ -27,6 +27,30 @@ class PlaceList extends StatelessWidget {
         'rating': 4.5,
         'image': 'assets/images/default_background.jpg',
       },
+      {
+        'name': '디무 커피',
+        'address': '부산 기장군 일광읍 512',
+        'rating': 4.5,
+        'image': 'assets/images/default_background.jpg',
+      },
+      {
+        'name': '디무 커피',
+        'address': '부산 기장군 일광읍 512',
+        'rating': 4.5,
+        'image': 'assets/images/default_background.jpg',
+      },
+      {
+        'name': '디무 커피',
+        'address': '부산 기장군 일광읍 512',
+        'rating': 4.5,
+        'image': 'assets/images/default_background.jpg',
+      },
+      {
+        'name': '디무 커피',
+        'address': '부산 기장군 일광읍 512',
+        'rating': 4.5,
+        'image': 'assets/images/default_background.jpg',
+      }
     ];
 
     return ListView.builder(

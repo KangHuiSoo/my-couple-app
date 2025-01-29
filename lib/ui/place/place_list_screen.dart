@@ -19,27 +19,6 @@ class _PlaceListScreenState extends State<PlaceListScreen> {
   );
   DateTime focusedDay = DateTime.now();
   final categories = ['전체', '카페', '식당', 'bar', '백화점', '테마파크', '갤러리'];
-  final List<Map<String, dynamic>> places = [
-    {
-      'name': '헌스시',
-      'address': '부산 해운대구 중동2로 2길',
-      'rating': 4.3,
-      'image': 'assets/images/default_background.jpg', // 이미지 경로
-    },
-    {
-      'name': '올리스 카페',
-      'address': '부산 해운대구 달맞이길 33',
-      'rating': 4.8,
-      'image': 'assets/images/default_background.jpg',
-      'highlighted': true, // 선택된 아이템
-    },
-    {
-      'name': '디무 커피',
-      'address': '부산 기장군 일광읍 512',
-      'rating': 4.5,
-      'image': 'assets/images/default_background.jpg',
-    },
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -50,11 +29,11 @@ class _PlaceListScreenState extends State<PlaceListScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            CustomCalendar(
-              selectedDay: selectedDay,
-              focusedDay: focusedDay,
-              onDaySelected: onDaySelected,
-            ),
+            // CustomCalendar(
+            //   selectedDay: selectedDay,
+            //   focusedDay: focusedDay,
+            //   onDaySelected: onDaySelected,
+            // ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -91,7 +70,7 @@ class _PlaceListScreenState extends State<PlaceListScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'TOTAL ${places.length}',
+                    'TOTAL 5',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 12.0,
