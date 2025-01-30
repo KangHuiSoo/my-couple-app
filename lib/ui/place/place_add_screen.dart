@@ -4,6 +4,7 @@ import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/custom_button.dart';
 import 'package:my_couple_app/core/ui/component/custom_text_field.dart';
 import 'package:my_couple_app/core/ui/component/draggable_bar.dart';
+import 'package:my_couple_app/ui/place/place_search_screen.dart';
 
 class PlaceAddScreen extends StatefulWidget {
   const PlaceAddScreen({super.key});
@@ -49,9 +50,36 @@ class _PlaceAddScreenState extends State<PlaceAddScreen> {
                         CameraPosition(target: _center, zoom: 15.0),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: CustomTextField(hintText: "장소명", isBorder: true),
-                  ),
+                      padding: const EdgeInsets.all(16.0),
+                      child: GestureDetector(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=> PlaceSearchScreen()));
+                        },
+                        child: Container(
+                          height: 44,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                              color: Color(0xFFF3F8F9),
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withValues(),
+                                  spreadRadius: 2,
+                                  blurRadius: 4,
+                                )
+                              ]),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("이곳에서 검색 하세요"),
+                                Icon(Icons.search)
+                              ],
+                            ),
+                          ),
+                        ),
+                      )),
                   DraggableScrollableSheet(
                       initialChildSize: 0.2,
                       minChildSize: 0.2,
@@ -60,24 +88,19 @@ class _PlaceAddScreenState extends State<PlaceAddScreen> {
                           ScrollController scrollController) {
                         return DecoratedBox(
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.vertical(top: Radius.circular(16))
-                          ),
+                              color: Colors.white,
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(16))),
                           child: Column(
                             children: [
                               DraggableBar(),
-
                               Expanded(
                                 child: ListView(
                                   padding: EdgeInsets.zero,
                                   controller: scrollController,
-                                  children: [
-
-                                  ],
+                                  children: [],
                                 ),
                               )
-
-
                             ],
                           ),
                         );
