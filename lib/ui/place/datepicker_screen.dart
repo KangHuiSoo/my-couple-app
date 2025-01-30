@@ -23,35 +23,41 @@ class _DatepickerScreenState extends State<DatepickerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text('날짜선택'),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          CustomCalendar(
-            selectedDay: selectedDay,
-            focusedDay: focusedDay,
-            onDaySelected: onDaySelected,
-          ),
-          Text(
-            '방문할 날짜를 선택 하세요!',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-              color: PRIMARY_COLOR
+      body: DecoratedBox(
+        decoration: BoxDecoration(
+          color: Colors.white
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            CustomCalendar(
+              selectedDay: selectedDay,
+              focusedDay: focusedDay,
+              onDaySelected: onDaySelected,
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: CustomButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => PlaceAddScreen()));
-                },
-                backgroundColor: PRIMARY_COLOR,
-                textColor: Colors.white,
-                buttonText: "${focusedDay.month}월 ${focusedDay.day}일 선택"),
-          )
-        ],
+            Text(
+              '방문할 날짜를 선택 하세요!',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: PRIMARY_COLOR
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: CustomButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => PlaceAddScreen()));
+                  },
+                  backgroundColor: PRIMARY_COLOR,
+                  textColor: Colors.white,
+                  buttonText: "${focusedDay.month}월 ${focusedDay.day}일 선택"),
+            )
+          ],
+        ),
       ),
     );
   }

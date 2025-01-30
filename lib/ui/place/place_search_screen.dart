@@ -27,53 +27,59 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text('장소 검색'),
       ),
-      body: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: CustomTextField(controller: searchController,
-                  hintText: '이곳에서 검색 하세요',
-                  color: Color(0xFFF9F9F9),),
-              )),
-              IconButton(onPressed: () {}, icon: Icon(Icons.search))
-            ],
-          ),
+      body: DecoratedBox(
+        decoration: BoxDecoration(
+          color: Colors.white
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: CustomTextField(controller: searchController,
+                    hintText: '이곳에서 검색 하세요',
+                    color: Color(0xFFF9F9F9),),
+                )),
+                IconButton(onPressed: () {}, icon: Icon(Icons.search))
+              ],
+            ),
 
-          Expanded(
-            child: ListView.builder(itemCount:places.length, itemBuilder: (context, index) {
-              Map<String,dynamic> place = places[index];
-              return Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Icon(Icons.location_on_rounded),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(place["name"], style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16.0
-                          ),),
-                          Text(place["address"], style: TextStyle(
-                            color: Colors.grey
-                          ),)
-                        ],
+            Expanded(
+              child: ListView.builder(itemCount:places.length, itemBuilder: (context, index) {
+                Map<String,dynamic> place = places[index];
+                return Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Icon(Icons.location_on_rounded),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(place["name"], style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16.0
+                            ),),
+                            Text(place["address"], style: TextStyle(
+                              color: Colors.grey
+                            ),)
+                          ],
+                        ),
                       ),
-                    ),
-                    Text(place['distance'])
-                  ],
-                ),
-              );
-            }),
-          )
-        ],
+                      Text(place['distance'])
+                    ],
+                  ),
+                );
+              }),
+            )
+          ],
+        ),
       ),
     );
   }

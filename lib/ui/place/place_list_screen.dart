@@ -25,78 +25,84 @@ class _PlaceListScreenState extends State<PlaceListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text('데이트코스'),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // CustomCalendar(
-            //   selectedDay: selectedDay,
-            //   focusedDay: focusedDay,
-            //   onDaySelected: onDaySelected,
-            // ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: categories
-                    .map(
-                      (category) => TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          category,
-                          style: TextStyle(
-                            color:
-                                category == '전체' ? Colors.black : Colors.grey,
-                            fontWeight: category == '전체'
-                                ? FontWeight.bold
-                                : FontWeight.normal,
+      body: DecoratedBox(
+        decoration: BoxDecoration(
+          color: Colors.white
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // CustomCalendar(
+              //   selectedDay: selectedDay,
+              //   focusedDay: focusedDay,
+              //   onDaySelected: onDaySelected,
+              // ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: categories
+                      .map(
+                        (category) => TextButton(
+                          onPressed: () {},
+                          child: Text(
+                            category,
+                            style: TextStyle(
+                              color:
+                                  category == '전체' ? Colors.black : Colors.grey,
+                              fontWeight: category == '전체'
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                            ),
                           ),
                         ),
-                      ),
-                    )
-                    .toList(),
+                      )
+                      .toList(),
+                ),
               ),
-            ),
-            Divider(
-              height: 0.001,
-              color: Color(0xFFB4B4B4),
-              thickness: 0.5,
-              indent: 16.0,
-              endIndent: 16.0,
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'TOTAL 5',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12.0,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {},
-                    style: TextButton.styleFrom(
-                        minimumSize: Size.zero,
-                        padding: EdgeInsets.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-                    child: Text(
-                      '편집',
+              Divider(
+                height: 0.001,
+                color: Color(0xFFB4B4B4),
+                thickness: 0.5,
+                indent: 16.0,
+                endIndent: 16.0,
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'TOTAL 5',
                       style: TextStyle(
-                        color: Colors.grey,
+                        fontWeight: FontWeight.bold,
                         fontSize: 12.0,
                       ),
                     ),
-                  ),
-                ],
+                    TextButton(
+                      onPressed: () {},
+                      style: TextButton.styleFrom(
+                          minimumSize: Size.zero,
+                          padding: EdgeInsets.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                      child: Text(
+                        '편집',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12.0,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            PlaceList()
+              PlaceList()
 
-          ],
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
