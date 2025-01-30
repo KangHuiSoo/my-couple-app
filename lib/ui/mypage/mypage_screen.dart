@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_couple_app/core/ui/component/profile_photo.dart';
+import 'package:my_couple_app/ui/mypage/profile_edit_screen.dart';
+import 'package:my_couple_app/ui/place/datepicker_screen.dart';
 
 import '../../core/constants/colors.dart';
 
@@ -27,20 +29,7 @@ class MyPageScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(height: 20),
-          // 프로필 이미지
-          // Center(
-          //   child: CircleAvatar(
-          //     radius: 60,
-          //     backgroundColor: Color(0xFF81D0D9),
-          //     child: CircleAvatar(
-          //       radius: 58,
-          //       backgroundImage: AssetImage('assets/images/person1.jpg'),
-          //     ),
-          //   ),
-          // ),
-          ProfilePhoto(outsideSize: 120, insideSize: 100, radius: 52,imageUrl: 'assets/images/profile.png'),
-
-          const SizedBox(height: 10),
+          ProfilePhoto(outsideSize: 120, insideSize: 100, radius: 52,imageUrl: 'assets/images/profile.png'),          const SizedBox(height: 10),
           // 사용자 이름
           const Text(
             'woody',
@@ -68,12 +57,12 @@ class MyPageScreen extends StatelessWidget {
           Expanded(
             child: ListView(
               children: [
-                _buildMenuItem('회원 정보 수정'),
-                _buildMenuItem('비밀번호 변경'),
-                _buildMenuItem('커플인증/해제'),
-                _buildMenuItem('앱설정'),
-                const SizedBox(height: 10),
-                _buildMenuItem('로그아웃', isDisabled: true),
+                _buildMenuItem(context, '회원 정보 수정', ProfileEditScreen()),
+                // _buildMenuItem(context, '비밀번호 변경', ),
+                // _buildMenuItem(context, '커플인증/해제'),
+                // _buildMenuItem(context, '앱설정'),
+                // const SizedBox(height: 10),
+                // _buildMenuItem(context, '로그아웃', isDisabled: true),
               ],
             ),
           ),
@@ -83,26 +72,34 @@ class MyPageScreen extends StatelessWidget {
   }
 
   // 메뉴 항목 빌드
-  Widget _buildMenuItem(String title, {bool isDisabled = false}) {
+  Widget _buildMenuItem(BuildContext context, String title, Widget page, {bool isDisabled = false}) {
     return Column(
       children: [
-        ListTile(
-          title: Text(
-            title,
-            style: TextStyle(
-              color: isDisabled ? Colors.grey : Colors.black,
-              fontSize: 16,
+        GestureDetector(
+          onTap: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context)=> page));
+          },
+          child: ListTile(
+            title: Text(
+              title,
+              style: TextStyle(
+                color: isDisabled ? Colors.grey : Colors.black,
+                fontSize: 16,
+              ),
+            ),
+            trailing: isDisabled
+                ? null
+                : const Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: Colors.grey,
             ),
           ),
-          trailing: isDisabled
-              ? null
-              : const Icon(
-            Icons.arrow_forward_ios,
-            size: 16,
-            color: Colors.grey,
-          ),
         ),
-        const Divider(height: 1, thickness: 1),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14.0),
+          child: const Divider(height: 1, thickness: 1),
+        ),
       ],
     );
   }
