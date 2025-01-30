@@ -22,7 +22,7 @@ class ProfilePhoto extends StatelessWidget {
             decoration: BoxDecoration(
               border: Border.all(
                 color: PRIMARY_COLOR,
-                width: 2,
+                width: 1,
               ),
               shape: BoxShape.circle,
             ),
