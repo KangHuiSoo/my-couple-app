@@ -11,8 +11,8 @@ class CustomCalendar extends StatelessWidget {
     required this.selectedDay,
     required this.focusedDay,
     required this.onDaySelected,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   // DateTime? selectedDay;
   @override
@@ -26,8 +26,10 @@ class CustomCalendar extends StatelessWidget {
     final defaultTextStyle = TextStyle(
         color: Colors.grey[600], fontWeight: FontWeight.w700, fontSize: 12.0);
 
-    return Container(
-      color: Color(0xFFF3F8F9),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Color(0xFFF3F8F9),
+      ),
       child: TableCalendar(
         locale: 'ko_KR',
         focusedDay: focusedDay,

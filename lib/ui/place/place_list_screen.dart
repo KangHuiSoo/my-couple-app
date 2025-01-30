@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/custom_calendar.dart';
 import 'package:my_couple_app/core/ui/component/place_list.dart';
+import 'package:my_couple_app/ui/place/datepicker_screen.dart';
 import 'package:my_couple_app/ui/place/place_add_screen.dart';
 
 class PlaceListScreen extends StatefulWidget {
@@ -105,19 +106,19 @@ class _PlaceListScreenState extends State<PlaceListScreen> {
         ),
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => PlaceAddScreen()));
+              MaterialPageRoute(builder: (context) => DatepickerScreen()));
         },
         child: Icon(Icons.add, color: Colors.white),
       ),
     );
   }
 
-  void onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-    // 1. 선택한 날짜(=selectedDay)를 state에서 관리 하도록함
-    print(selectedDay);
-    setState(() {
-      this.selectedDay = selectedDay; // 2.데이터값을 바꿔주기때문에 다시 빌드됨
-      this.focusedDay = selectedDay;
-    });
-  }
+  // void onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+  //   // 1. 선택한 날짜(=selectedDay)를 state에서 관리 하도록함
+  //   print(selectedDay);
+  //   setState(() {
+  //     this.selectedDay = selectedDay; // 2.데이터값을 바꿔주기때문에 다시 빌드됨
+  //     this.focusedDay = selectedDay;
+  //   });
+  // }
 }
