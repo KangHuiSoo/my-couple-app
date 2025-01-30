@@ -4,7 +4,9 @@ import 'package:my_couple_app/core/constants/colors.dart';
 
 class CustomTextField extends StatelessWidget {
   final String hintText;
-  const CustomTextField({super.key, required this.hintText});
+  final Color? color;
+  final bool isBorder;
+  const CustomTextField({super.key, required this.hintText, this.color, this.isBorder = false});
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +22,16 @@ class CustomTextField extends StatelessWidget {
             hintText: hintText,
             hintStyle: TextStyle(color: Colors.grey),
             filled: true,
-            fillColor: Colors.grey[100],
+            fillColor: color ?? Colors.grey[100],
             // border: InputBorder.none, // 기본 밑줄 없앰
             // focusedBorder: InputBorder.none, // 활성화 상태에서 밑줄 없앰
-            enabledBorder: InputBorder.none, // 비활성화 상태에서 밑줄 없앰
+            enabledBorder: isBorder ? OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+              borderSide: BorderSide(
+                color: Colors.grey,
+                width: 0.5
+              ),
+            ) : InputBorder.none, // 비활성화 상태에서 밑줄 없앰
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
               borderSide: BorderSide(
