@@ -120,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Column(
                               children: [
                                 CustomTitle(titleText: '데이트 장소'),
-                                PlaceList()
+                                PlaceList(isEditing: false)
                               ],
                             ),
                           ),

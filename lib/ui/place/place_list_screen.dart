@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
-import 'package:my_couple_app/core/ui/component/custom_calendar.dart';
 import 'package:my_couple_app/core/ui/component/place_list.dart';
 import 'package:my_couple_app/ui/place/datepicker_screen.dart';
-import 'package:my_couple_app/ui/place/place_add_screen.dart';
 
 class PlaceListScreen extends StatefulWidget {
   const PlaceListScreen({super.key});
@@ -13,6 +11,7 @@ class PlaceListScreen extends StatefulWidget {
 }
 
 class _PlaceListScreenState extends State<PlaceListScreen> {
+  bool isEditing = false; // 편집 모드 상태
   DateTime selectedDay = DateTime.utc(
     DateTime.now().year,
     DateTime.now().month,
@@ -24,14 +23,13 @@ class _PlaceListScreenState extends State<PlaceListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text('데이트코스'),
       ),
       body: DecoratedBox(
-        decoration: BoxDecoration(
-          color: Colors.white
-        ),
+        decoration: BoxDecoration(color: Colors.white),
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -63,15 +61,14 @@ class _PlaceListScreenState extends State<PlaceListScreen> {
                 ),
               ),
               Divider(
-                height: 0.001,
-                color: Color(0xFFB4B4B4),
-                thickness: 0.5,
-                indent: 16.0,
-                endIndent: 16.0,
-              ),
+                  height: 0.001,
+                  color: Color(0xFFB4B4B4),
+                  thickness: 0.5,
+                  indent: 16.0,
+                  endIndent: 16.0),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0, vertical: 12.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -83,7 +80,11 @@ class _PlaceListScreenState extends State<PlaceListScreen> {
                       ),
                     ),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(() {
+                          isEditing = true;
+                        });
+                      },
                       style: TextButton.styleFrom(
                           minimumSize: Size.zero,
                           padding: EdgeInsets.zero,
@@ -99,12 +100,50 @@ class _PlaceListScreenState extends State<PlaceListScreen> {
                   ],
                 ),
               ),
-              PlaceList()
-
+              PlaceList(
+                  isEditing: isEditing,
+                  onEditingChanged: (value) {
+                    setState(() {
+                      isEditing = value;
+                    });
+                  })
             ],
           ),
         ),
       ),
+      bottomNavigationBar: isEditing
+          ? Container(
+              color: PRIMARY_COLOR,
+              padding: EdgeInsets.all(10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  TextButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        isEditing = false;
+                        // widget.onEditingChanged!(false);
+                        // selectedItems = [false, false, false];
+                      });
+                    },
+                    icon: Icon(Icons.close),
+                    label: Text('취소'),
+                  ),
+                  TextButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        // selectedItems =
+                        //     List.generate(selectedItems.length, (_) => false);
+                      });
+                    },
+                    icon: Icon(Icons.delete),
+                    label: Text('삭제'),
+                  ),
+                ],
+              ),
+            )
+          : SizedBox.shrink(),
+
       floatingActionButton: FloatingActionButton(
         backgroundColor: PRIMARY_COLOR,
         shape: RoundedRectangleBorder(
@@ -119,12 +158,12 @@ class _PlaceListScreenState extends State<PlaceListScreen> {
     );
   }
 
-  // void onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-  //   // 1. 선택한 날짜(=selectedDay)를 state에서 관리 하도록함
-  //   print(selectedDay);
-  //   setState(() {
-  //     this.selectedDay = selectedDay; // 2.데이터값을 바꿔주기때문에 다시 빌드됨
-  //     this.focusedDay = selectedDay;
-  //   });
-  // }
+// void onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+//   // 1. 선택한 날짜(=selectedDay)를 state에서 관리 하도록함
+//   print(selectedDay);
+//   setState(() {
+//     this.selectedDay = selectedDay; // 2.데이터값을 바꿔주기때문에 다시 빌드됨
+//     this.focusedDay = selectedDay;
+//   });
+// }
 }
