@@ -5,7 +5,12 @@ import '../../constants/colors.dart';
 class PlaceList extends StatefulWidget {
   final bool isEditing;
   final ValueChanged<bool>? onEditingChanged;
-  const PlaceList({super.key, required this.isEditing, this.onEditingChanged});
+
+  final List<bool>? selectedItems;
+  final ValueChanged<int>? onCheckboxChanged;
+  final VoidCallback? onReset;
+
+  const PlaceList({super.key, required this.isEditing, this.onEditingChanged, this.selectedItems, this.onReset, this.onCheckboxChanged});
 
   @override
   State<PlaceList> createState() => _PlaceListState();
@@ -57,8 +62,8 @@ class _PlaceListState extends State<PlaceList> {
     },
   ];
 
-  late List<bool> selectedItems =
-      List.generate(places.length, (index) => false);
+  // late List<bool> selectedItems =
+  //     List.generate(places.length, (index) => false);
 
 
   @override
@@ -131,11 +136,11 @@ class _PlaceListState extends State<PlaceList> {
                       ),
                       widget.isEditing
                           ? Checkbox(
-                              value: selectedItems[index],
+                              value: widget.selectedItems![index],
                               onChanged: (value) {
-                                setState(() {
-                                  selectedItems[index] = value ?? false;
-                                });
+                                if (widget.onCheckboxChanged != null) {
+                                  widget.onCheckboxChanged!(index);
+                                }
                               })
                           : SizedBox.shrink(),
                     ],

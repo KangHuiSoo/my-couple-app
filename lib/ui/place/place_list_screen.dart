@@ -19,6 +19,27 @@ class _PlaceListScreenState extends State<PlaceListScreen> {
   );
   DateTime focusedDay = DateTime.now();
   final categories = ['전체', '카페', '식당', 'bar', '백화점', '테마파크', '갤러리'];
+  late List<bool> selectedItems;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    selectedItems = List.generate(7, (_) => false);
+  }
+
+  void toggleCheckbox(int index) {
+    setState(() {
+      selectedItems[index] = !selectedItems[index];
+    });
+  }
+
+  void resetCheckboxes() {
+    setState(() {
+      selectedItems = List.generate(selectedItems.length, (_) => false);
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -102,6 +123,9 @@ class _PlaceListScreenState extends State<PlaceListScreen> {
               ),
               PlaceList(
                   isEditing: isEditing,
+                  selectedItems: selectedItems,
+                  onCheckboxChanged: toggleCheckbox,
+                  onReset: resetCheckboxes,
                   onEditingChanged: (value) {
                     setState(() {
                       isEditing = value;
@@ -122,6 +146,7 @@ class _PlaceListScreenState extends State<PlaceListScreen> {
                     onPressed: () {
                       setState(() {
                         isEditing = false;
+                        resetCheckboxes();
                         // widget.onEditingChanged!(false);
                         // selectedItems = [false, false, false];
                       });
