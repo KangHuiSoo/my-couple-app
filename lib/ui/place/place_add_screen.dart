@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/custom_button.dart';
-import 'package:my_couple_app/core/ui/component/custom_text_field.dart';
 import 'package:my_couple_app/core/ui/component/draggable_bar.dart';
 import 'package:my_couple_app/ui/place/place_search_screen.dart';
 

@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:my_couple_app/core/ui/component/profile_photo.dart';
 import 'package:my_couple_app/ui/mypage/password_edit_screen.dart';
 import 'package:my_couple_app/ui/mypage/profile_edit_screen.dart';
-import 'package:my_couple_app/ui/place/datepicker_screen.dart';
-
-import '../../core/constants/colors.dart';
 
 class MyPageScreen extends StatelessWidget {
   const MyPageScreen({Key? key}) : super(key: key);

@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/custom_button.dart';
 import 'package:my_couple_app/core/ui/component/custom_text_field.dart';
 
-import 'package:my_couple_app/ui/join/bottom_navigation_screen.dart';
-import 'package:my_couple_app/ui/join/join_screen.dart';
 
 
 class CoupleLinkScreen extends StatelessWidget {
