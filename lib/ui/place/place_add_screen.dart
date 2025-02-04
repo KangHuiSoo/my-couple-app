@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
-import 'package:my_couple_app/core/ui/component/custom_button.dart';
 import 'package:my_couple_app/core/ui/component/draggable_bar.dart';
 import 'package:my_couple_app/ui/place/place_search_screen.dart';
 
@@ -13,11 +12,21 @@ class PlaceAddScreen extends StatefulWidget {
 }
 
 class _PlaceAddScreenState extends State<PlaceAddScreen> {
-  final List<String> imageUrls = [
-    'assets/images/default_background.jpg',
-    'assets/images/default_background.jpg',
-    'assets/images/default_background.jpg',
-    'assets/images/default_background.jpg',
+  // final List<String> imageUrls = [
+  //   'assets/images/default_background.jpg',
+  //   'assets/images/default_background.jpg',
+  //   'assets/images/default_background.jpg',
+  //   'assets/images/default_background.jpg',
+  // ];
+  final List<Map<String, dynamic>> categories = [
+    {'icon': Icons.coffee, 'label': '카페'},
+    {'icon': Icons.fastfood_rounded, 'label': '음식점'},
+    {'icon': Icons.park, 'label': '테마파크'},
+    {'icon': Icons.image, 'label': '갤러리'},
+    {'icon': Icons.apartment, 'label': '백화점'},
+    {'icon': Icons.local_bar, 'label': 'BAR'},
+    {'icon': Icons.local_convenience_store, 'label': '편의점'},
+    {'icon': Icons.local_hospital, 'label':  '병원'},
   ];
 
   late GoogleMapController mapController;
@@ -31,15 +40,15 @@ class _PlaceAddScreenState extends State<PlaceAddScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        centerTitle: false,
         backgroundColor: Colors.white,
-        title: Text("장소추가"),
+        title: Text("장소 검색"),
       ),
       body: SafeArea(
         child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: Colors.white
-          ),
+          decoration: BoxDecoration(color: Colors.white),
           child: Column(
             children: [
               // 장소명 입력 필드
@@ -56,8 +65,11 @@ class _PlaceAddScreenState extends State<PlaceAddScreen> {
                     Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: GestureDetector(
-                          onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=> PlaceSearchScreen()));
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => PlaceSearchScreen()));
                           },
                           child: Container(
                             height: 44,
@@ -67,16 +79,16 @@ class _PlaceAddScreenState extends State<PlaceAddScreen> {
                                 borderRadius: BorderRadius.circular(10),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.grey.withValues(alpha: 0.5),
-                                    spreadRadius: 1,
-                                    blurRadius: 3,
-                                    offset: Offset(4, 4)
-                                  )
+                                      color: Colors.grey.withValues(alpha: 0.5),
+                                      spreadRadius: 1,
+                                      blurRadius: 3,
+                                      offset: Offset(4, 4))
                                 ]),
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text("이곳에서 검색 하세요"),
                                   Icon(Icons.search)
@@ -86,9 +98,9 @@ class _PlaceAddScreenState extends State<PlaceAddScreen> {
                           ),
                         )),
                     DraggableScrollableSheet(
-                        initialChildSize: 0.2,
-                        minChildSize: 0.2,
-                        maxChildSize: 1.0,
+                        initialChildSize: 0.3,
+                        minChildSize: 0.3,
+                        maxChildSize: 0.3,
                         builder: (BuildContext context,
                             ScrollController scrollController) {
                           return DecoratedBox(
@@ -103,9 +115,18 @@ class _PlaceAddScreenState extends State<PlaceAddScreen> {
                                   child: ListView(
                                     padding: EdgeInsets.zero,
                                     controller: scrollController,
-                                    children: [],
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(top: 24.0),
+                                            child: _buildCategoryGrid(),
+                                          ), // 같은 UI 반복
+                                        ],
+                                      )
+                                    ],
                                   ),
-                                )
+                                ),
                               ],
                             ),
                           );
@@ -168,37 +189,43 @@ class _PlaceAddScreenState extends State<PlaceAddScreen> {
               //   ),
               // ),
 
-              SizedBox(height: 16.0),
-
-              // 버튼 영역
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween, // 버튼 간격 조정
-                  children: [
-                    Expanded(
-                      child: CustomButton(
-                        onPressed: () {},
-                        backgroundColor: Colors.white,
-                        textColor: PRIMARY_COLOR,
-                        buttonText: "취소",
-                      ),
-                    ),
-                    SizedBox(width: 16.0), // 버튼 간격 추가
-                    Expanded(
-                      child: CustomButton(
-                        onPressed: () {},
-                        textColor: Colors.white,
-                        backgroundColor: PRIMARY_COLOR,
-                        buttonText: "추가",
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
         ),
+      ),
+
+    );
+
+  }
+
+  Widget _buildCategoryGrid() {
+    return Column(
+      children: List.generate(
+        (categories.length / 4).ceil(), // 4개씩 묶어서 그룹 생성
+            (rowIndex) {
+          final startIndex = rowIndex * 4;
+          final endIndex = (startIndex + 4 < categories.length) ? startIndex + 4 : categories.length;
+          final rowItems = categories.sublist(startIndex, endIndex); // 4개씩 가져오기
+
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: rowItems.map((category) {
+                return Column(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: PRIMARY_COLOR,
+                      radius: 26.0,
+                      child: Icon(category['icon'], color: Colors.white),
+                    ),
+                    Text(category['label']),
+                  ],
+                );
+              }).toList(),
+            ),
+          );
+        },
       ),
     );
   }
