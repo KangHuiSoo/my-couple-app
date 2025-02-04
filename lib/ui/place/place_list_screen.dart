@@ -12,20 +12,28 @@ class PlaceListScreen extends StatefulWidget {
 
 class _PlaceListScreenState extends State<PlaceListScreen> {
   bool isEditing = false; // 편집 모드 상태
-  DateTime selectedDay = DateTime.utc(
-    DateTime.now().year,
-    DateTime.now().month,
-    DateTime.now().day,
-  );
   DateTime focusedDay = DateTime.now();
+  DateTime selectedDay = DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
   final categories = ['전체', '카페', '식당', 'bar', '백화점', '테마파크', '갤러리'];
+  String selectedCategory = '전체';
+  final List<Map<String, dynamic>> places = [
+    {'name': '헌스시', 'category': '식당', 'address': '부산 해운대구 중동2로 2길', 'rating': 4.3, 'image': 'https://picsum.photos/seed/picsum/100/100'},
+    {'name': '올리스 카페', 'category': '카페', 'address': '부산 해운대구 달맞이길 33', 'rating': 4.8, 'image': 'https://picsum.photos/seed/picsum/100/100'},
+    {'name': '빅다방 카페', 'category': '카페', 'address': '부산 사상구 빅도로 31', 'rating': 4.8, 'image': 'https://picsum.photos/seed/picsum/100/100'},
+    {'name': '스타 바', 'category': 'bar', 'address': '부산 해운대구 바거리 12', 'rating': 4.6, 'image': 'https://picsum.photos/seed/picsum/100/100'},
+    {'name': '백화점 쇼핑몰', 'category': '백화점', 'address': '부산 센텀시티 123', 'rating': 4.5, 'image': 'https://picsum.photos/seed/picsum/100/100'},
+    {'name': '테마파크', 'category': '테마파크', 'address': '부산 기장군 45번지', 'rating': 4.7, 'image': 'https://picsum.photos/seed/picsum/100/100'},
+    {'name': '장 갤러리', 'category': '갤러리', 'address': '부산 기장군 45번지', 'rating': 4.7, 'image': 'https://picsum.photos/seed/picsum/100/100'},
+  ];
+
   late List<bool> selectedItems;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    selectedItems = List.generate(7, (_) => false);
+    selectedItems = List.generate(places.length, (_) => false);
   }
 
   void toggleCheckbox(int index) {
@@ -40,38 +48,44 @@ class _PlaceListScreenState extends State<PlaceListScreen> {
     });
   }
 
+  List<Map<String, dynamic>> get filteredPlaces {
+    if (selectedCategory == '전체') {
+      return places;
+    }
+    return places.where((place) => place['category'] == selectedCategory).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        centerTitle: false,
         backgroundColor: Colors.white,
-        title: Text('데이트코스'),
+        title: Text('약속장소'),
       ),
       body: DecoratedBox(
         decoration: BoxDecoration(color: Colors.white),
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // CustomCalendar(
-              //   selectedDay: selectedDay,
-              //   focusedDay: focusedDay,
-              //   onDaySelected: onDaySelected,
-              // ),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: categories
                       .map(
                         (category) => TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            setState(() {
+                              selectedCategory = category;
+                            });
+                          },
                           child: Text(
                             category,
                             style: TextStyle(
                               color:
-                                  category == '전체' ? Colors.black : Colors.grey,
-                              fontWeight: category == '전체'
+                                  category == selectedCategory ? Colors.black : Colors.grey,
+                              fontWeight: category == selectedCategory
                                   ? FontWeight.bold
                                   : FontWeight.normal,
                             ),
@@ -123,6 +137,7 @@ class _PlaceListScreenState extends State<PlaceListScreen> {
               ),
               PlaceList(
                   isEditing: isEditing,
+                  places: filteredPlaces,
                   selectedItems: selectedItems,
                   onCheckboxChanged: toggleCheckbox,
                   onReset: resetCheckboxes,
@@ -151,8 +166,8 @@ class _PlaceListScreenState extends State<PlaceListScreen> {
                         // selectedItems = [false, false, false];
                       });
                     },
-                    icon: Icon(Icons.close),
-                    label: Text('취소'),
+                    icon: Icon(Icons.cancel, color: Colors.white),
+                    label: Text('취소', style: TextStyle(color: Colors.white)),
                   ),
                   TextButton.icon(
                     onPressed: () {
@@ -161,15 +176,16 @@ class _PlaceListScreenState extends State<PlaceListScreen> {
                         //     List.generate(selectedItems.length, (_) => false);
                       });
                     },
-                    icon: Icon(Icons.delete),
-                    label: Text('삭제'),
+                    icon: Icon(Icons.delete, color: Colors.white),
+                    label: Text('삭제', style: TextStyle(color: Colors.white)),
                   ),
                 ],
               ),
             )
           : SizedBox.shrink(),
 
-      floatingActionButton: FloatingActionButton(
+
+      floatingActionButton: isEditing ? SizedBox.shrink():FloatingActionButton(
         backgroundColor: PRIMARY_COLOR,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(50.0),
@@ -179,7 +195,7 @@ class _PlaceListScreenState extends State<PlaceListScreen> {
               MaterialPageRoute(builder: (context) => DatepickerScreen()));
         },
         child: Icon(Icons.add, color: Colors.white),
-      ),
+      ) ,
     );
   }
 

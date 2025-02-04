@@ -2,70 +2,24 @@ import 'package:flutter/material.dart';
 
 import '../../constants/colors.dart';
 
-class PlaceList extends StatefulWidget {
+class PlaceList extends StatelessWidget {
   final bool isEditing;
   final ValueChanged<bool>? onEditingChanged;
-
+  final List<Map<String, dynamic>> places;
   final List<bool>? selectedItems;
   final ValueChanged<int>? onCheckboxChanged;
   final VoidCallback? onReset;
 
-  const PlaceList({super.key, required this.isEditing, this.onEditingChanged, this.selectedItems, this.onReset, this.onCheckboxChanged});
+  const PlaceList(
+      {super.key,
+      required this.isEditing,
+      this.onEditingChanged,
+      this.selectedItems,
+      this.onReset,
+      this.onCheckboxChanged,
+      required this.places});
 
-  @override
-  State<PlaceList> createState() => _PlaceListState();
-}
-
-class _PlaceListState extends State<PlaceList> {
-  final List<Map<String, dynamic>> places = [
-    {
-      'name': '헌스시',
-      'address': '부산 해운대구 중동2로 2길',
-      'rating': 4.3,
-      'image': 'https://picsum.photos/seed/picsum/100/100', // 이미지 경로
-    },
-    {
-      'name': '올리스 카페',
-      'address': '부산 해운대구 달맞이길 33',
-      'rating': 4.8,
-      'image': 'https://picsum.photos/seed/picsum/100/100',
-    },
-    {
-      'name': '빅다방 카페',
-      'address': '부산 사상구 빅도로 31',
-      'rating': 4.8,
-      'image': 'https://picsum.photos/seed/picsum/100/100',
-    },
-    {
-      'name': '빅다방 카페',
-      'address': '부산 사상구 빅도로 31',
-      'rating': 4.8,
-      'image': 'https://picsum.photos/seed/picsum/100/100',
-    },
-    {
-      'name': '빅다방 카페',
-      'address': '부산 사상구 빅도로 31',
-      'rating': 4.8,
-      'image': 'https://picsum.photos/seed/picsum/100/100',
-    },
-    {
-      'name': '빅다방 카페',
-      'address': '부산 사상구 빅도로 31',
-      'rating': 4.8,
-      'image': 'https://picsum.photos/seed/picsum/100/100',
-    },
-    {
-      'name': '빅다방 카페',
-      'address': '부산 사상구 빅도로 31',
-      'rating': 4.8,
-      'image': 'https://picsum.photos/seed/picsum/100/100',
-    },
-  ];
-
-  // late List<bool> selectedItems =
-  //     List.generate(places.length, (index) => false);
-
-
+  // final List<Map<String, dynamic>> places = [
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -104,14 +58,28 @@ class _PlaceListState extends State<PlaceList> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              place['name'],
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  place['name'],
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 12.0),
+                                  child: Text(
+                                    place['category'],
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
-                            SizedBox(height: 4),
                             Text(
                               place['address'],
                               style: TextStyle(
@@ -134,12 +102,12 @@ class _PlaceListState extends State<PlaceList> {
                           ],
                         ),
                       ),
-                      widget.isEditing
+                      isEditing
                           ? Checkbox(
-                              value: widget.selectedItems![index],
+                              value: selectedItems![index],
                               onChanged: (value) {
-                                if (widget.onCheckboxChanged != null) {
-                                  widget.onCheckboxChanged!(index);
+                                if (onCheckboxChanged != null) {
+                                  onCheckboxChanged!(index);
                                 }
                               })
                           : SizedBox.shrink(),
