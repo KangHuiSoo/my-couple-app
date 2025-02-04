@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_couple_app/core/constants/colors.dart';
 
 
 class CustomButton extends StatelessWidget {
@@ -6,7 +7,8 @@ class CustomButton extends StatelessWidget {
   final VoidCallback onPressed;
   final Color? backgroundColor;
   final Color? textColor;
-  const CustomButton({super.key, required this.onPressed, required this.buttonText, this.backgroundColor, this.textColor});
+  final Color? borderColor;
+  const CustomButton({super.key, required this.onPressed, required this.buttonText, this.backgroundColor, this.textColor, this.borderColor});
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +22,7 @@ class CustomButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(6.0),
           ),
+          side: BorderSide(color: borderColor ?? PRIMARY_COLOR)
         ),
         child: Text(
           buttonText,
