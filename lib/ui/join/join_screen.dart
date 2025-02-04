@@ -4,7 +4,14 @@ import 'package:my_couple_app/core/ui/component/custom_button.dart';
 import 'package:my_couple_app/core/ui/component/custom_text_field.dart';
 import 'package:my_couple_app/ui/join/couple_link_screen.dart';
 
-class JoinScreen extends StatelessWidget {
+class JoinScreen extends StatefulWidget {
+  @override
+  State<JoinScreen> createState() => _JoinScreenState();
+}
+
+class _JoinScreenState extends State<JoinScreen> {
+  String selectedGender = '남자';
+ // 기본 선택값
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -73,19 +80,34 @@ class JoinScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text('성별', style : TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                    Text(
+                      '성별',
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                    ),
                     Expanded(
-                      child: CheckboxListTile(
-                        value: true,
-                        onChanged: (bool? value) {},
+                      child: RadioListTile<String>(
+                        value: '남자',
+                        groupValue: selectedGender,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedGender = value!;
+                            print(selectedGender);
+                          });
+                        },
                         title: Text('남자'),
                         controlAffinity: ListTileControlAffinity.leading,
                       ),
                     ),
                     Expanded(
-                      child: CheckboxListTile(
-                        value: false,
-                        onChanged: (bool? value) {},
+                      child: RadioListTile<String>(
+                        value: '여자',
+                        groupValue: selectedGender,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedGender = value!;
+                            print(selectedGender);
+                          });
+                        },
                         title: Text('여자'),
                         controlAffinity: ListTileControlAffinity.leading,
                       ),
