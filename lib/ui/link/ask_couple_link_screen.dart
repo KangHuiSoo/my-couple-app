@@ -24,11 +24,6 @@ class AskCoupleLinkScreen extends StatelessWidget {
                 // 상단 로고
                 Column(
                   children: [
-                    // SvgPicture.asset(
-                    //   'assets/images/welcome_logo.svg',
-                    //   width: 144,
-                    //   height: 34,
-                    // ),
                     Text('연인과 연결하기', style: TextStyle(
                       fontFamily: 'okddung',
                       color: PRIMARY_COLOR,

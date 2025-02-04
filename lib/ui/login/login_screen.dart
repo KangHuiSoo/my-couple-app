@@ -23,7 +23,7 @@ class LoginScreen extends StatelessWidget {
                   children: [
                     SvgPicture.asset('assets/images/logo.svg',width: 56,height: 56),
                     SizedBox(height: 8),
-                    Text('COUPLE', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: PRIMARY_COLOR)),
+                    Text('데플리', style: TextStyle(fontFamily:'okddung',fontSize: 30, color: PRIMARY_COLOR)),
                   ],
                 ),
                 SizedBox(height: 40),

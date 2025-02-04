@@ -23,14 +23,13 @@ class CoupleLinkScreen extends StatelessWidget {
                 // 상단 로고
                 Column(
                   children: [
-                    SvgPicture.asset(
-                      'assets/images/welcome_logo.svg',
-                      width: 144,
-                      height: 34,
-                    ),
+                    Text('링크 입력', style: TextStyle(
+                        fontFamily: 'okddung',
+                        color: PRIMARY_COLOR,
+                        fontSize: 30.0
+                    )),
                     SizedBox(height: 15.0),
-                    Text("커플 링크를 인증해주시면"),
-                    Text("두사람의 데이트 일정과 사진을 공유할 수 있어요")
+                    Text("연인에게 요청받은 링크를 입력하세요"),
                   ],
                 ),
 
