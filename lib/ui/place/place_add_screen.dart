@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/draggable_bar.dart';
 import 'package:my_couple_app/ui/place/place_search_screen.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+import '../../core/ui/component/google_map/custom_google_map.dart';
 
 class PlaceAddScreen extends StatefulWidget {
   const PlaceAddScreen({super.key});
@@ -12,37 +16,71 @@ class PlaceAddScreen extends StatefulWidget {
 }
 
 class _PlaceAddScreenState extends State<PlaceAddScreen> {
-  bool isCategoryView = true; // true = 카테고리, false = 장소목록
-  late String selectedCategory; // 선택한 카테고리 (카테고리별 장소목록 출력을위해 사용)
-
+  bool isCategoryView = true; // true = 카테고리, false = 장소 목록
+  late String selectedCategory; // 선택한 카테고리
   final List<Map<String, dynamic>> categories = [
     {'icon': Icons.coffee, 'label': '카페'},
     {'icon': Icons.fastfood_rounded, 'label': '음식점'},
-    {'icon': Icons.park, 'label': '테마파크'},
+    {'icon': Icons.park, 'label': '테마 파크'},
     {'icon': Icons.image, 'label': '갤러리'},
     {'icon': Icons.apartment, 'label': '백화점'},
     {'icon': Icons.local_bar, 'label': 'BAR'},
     {'icon': Icons.local_convenience_store, 'label': '편의점'},
     {'icon': Icons.local_hospital, 'label': '병원'},
-  ]; //카테고리 종류
-
-  late GoogleMapController mapController;
-  final LatLng _center =
-      const LatLng(35.19343151233912, 129.0504196440337); //중심좌표
-
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
-  }
+  ];
 
   void _onCategorySelected(String category) async {
     // TODO: API 요청하여 장소 데이터 가져오기
-
     // 상태 업데이트: 장소 리스트로 변경
     setState(() {
       isCategoryView = false;
       selectedCategory = category;
       // places = fetchedPlaces;
     });
+  }
+
+  //GoogleMap
+  late GoogleMapController _mapController;
+  LatLng _currentPosition = LatLng(37.5665, 126.9780);
+
+  // 📍 위치 권한 요청 및 현재 위치 가져오기
+  Future<void> _determinePosition() async {
+    // 위치 정보 획득 가능한지 확인
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      //TODO : 셋팅창으로 이동할것인지 묻기
+      print('셋팅창 오픈');
+      openAppSettings();
+      return;
+    }
+
+    Position position = await Geolocator.getCurrentPosition();
+    setState(() {
+      _currentPosition = LatLng(position.latitude, position.longitude);
+      print(_currentPosition);
+    });
+    // 현재 위치로 지도 이동
+    _mapController.animateCamera(CameraUpdate.newLatLng(_currentPosition));
+  }
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _determinePosition();
   }
 
   @override
@@ -66,10 +104,19 @@ class _PlaceAddScreenState extends State<PlaceAddScreen> {
                   children: [
                     // Google Map 위젯
                     GoogleMap(
-                      onMapCreated: _onMapCreated,
-                      initialCameraPosition:
-                          CameraPosition(target: _center, zoom: 15.0),
+                      initialCameraPosition: CameraPosition(
+                        target: _currentPosition,
+                        zoom: 17.0,
+                      ),
+                      onMapCreated: (GoogleMapController controller) {
+                        _mapController = controller;
+                      },
+                      myLocationEnabled: true, // 현재 위치 마커 표시
+                      myLocationButtonEnabled: false, // 기본 제공되는 버튼 비활성화
+                      markers: Set.from([Marker(markerId: MarkerId('current'), position: _currentPosition)]),
                     ),
+
+
 
                     //검색창
                     Padding(
@@ -113,7 +160,8 @@ class _PlaceAddScreenState extends State<PlaceAddScreen> {
                       initialChildSize: 0.3,
                       minChildSize: 0.3,
                       maxChildSize: isCategoryView ? 0.3 : 1.0,
-                      builder: (BuildContext context, ScrollController scrollController) {
+                      builder: (BuildContext context,
+                          ScrollController scrollController) {
                         return DecoratedBox(
                           decoration: BoxDecoration(
                               color: Colors.white,
@@ -145,6 +193,10 @@ class _PlaceAddScreenState extends State<PlaceAddScreen> {
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _determinePosition, // 🔵 현재 위치 버튼 클릭 시 이동
+        child: Icon(Icons.my_location),
       ),
     );
   }

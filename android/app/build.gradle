@@ -8,7 +8,8 @@ plugins {
 android {
     namespace = "kr.woodie.mycoupleapp.my_couple_app"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+//    ndkVersion = flutter.ndkVersion
+    ndkVersion = 33
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
