@@ -46,3 +46,6 @@ app.*.map.json
 
 # .env file 업로드 제외
 assets/config/.env
+
+# ios apiKey 보안
+ios/Runner/appkey.plist
