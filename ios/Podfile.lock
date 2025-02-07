@@ -8,9 +8,9 @@ PODS:
     - Flutter
     - Google-Maps-iOS-Utils (< 7.0, >= 5.0)
     - GoogleMaps (< 10.0, >= 8.4)
-  - GoogleMaps (9.2.0):
-    - GoogleMaps/Maps (= 9.2.0)
-  - GoogleMaps/Maps (9.2.0)
+  - GoogleMaps (9.3.0):
+    - GoogleMaps/Maps (= 9.3.0)
+  - GoogleMaps/Maps (9.3.0)
   - image_picker_ios (0.0.1):
     - Flutter
   - permission_handler_apple (9.3.0):
@@ -45,7 +45,7 @@ SPEC CHECKSUMS:
   geolocator_apple: 9bcea1918ff7f0062d98345d238ae12718acfbc1
   Google-Maps-iOS-Utils: 0a484b05ed21d88c9f9ebbacb007956edd508a96
   google_maps_flutter_ios: e31555a04d1986ab130f2b9f24b6cdc861acc6d3
-  GoogleMaps: 634ec3ca99698b31ca2253d64f017217d70cfb38
+  GoogleMaps: b58e9627004f47043897eeae830c3ef023678f3b
   image_picker_ios: c560581cceedb403a6ff17f2f816d7fea1421fc1
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
 
