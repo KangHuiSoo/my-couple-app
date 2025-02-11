@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/draggable_bar.dart';
+import 'package:my_couple_app/data/provider/place/maker_provider.dart';
 import 'package:my_couple_app/ui/place/place_search_screen.dart';
 import '../../core/constants/place_category_enum.dart';
 import '../../data/model/place_request.dart';
@@ -32,13 +33,9 @@ class PlaceAddScreen extends ConsumerWidget {
         ),
       ),
     ): const AsyncValue.data(null);
-    final markers = {
-      Marker(
-          markerId: MarkerId('current'),
-          position: currentPosition)
-    };
 
-    // late GoogleMapController _mapController;
+
+
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -68,7 +65,7 @@ class PlaceAddScreen extends ConsumerWidget {
                       },
                       myLocationEnabled: true,
                       myLocationButtonEnabled: false,
-                      markers: markers,
+                      markers: ref.watch(markersProvider),
                     ),
 
                     // 🔍 검색창
