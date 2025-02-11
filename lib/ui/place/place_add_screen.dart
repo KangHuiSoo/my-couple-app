@@ -1,11 +1,14 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/draggable_bar.dart';
 import 'package:my_couple_app/data/view_model/place/place_view_model.dart';
 import 'package:my_couple_app/ui/place/place_search_screen.dart';
 
 import '../../core/constants/place_category_enum.dart';
+import '../../data/model/place_request.dart';
 import '../../data/view_model/place/place_add_view_model.dart';
 
 class PlaceAddScreen extends ConsumerWidget {
@@ -18,7 +21,16 @@ class PlaceAddScreen extends ConsumerWidget {
     final bool isCategoryView = ref.watch(isCategoryViewProvider);
     final selectedCategory = ref.watch(selectedCategoryProvider) ?? "카페";
     final categoryCode = PlaceCategory.getCodeByLabel(selectedCategory); // 변환
-    final placeAsyncValue = ref.watch(placeProvider(categoryCode));
+    final placeAsyncValue = ref.watch(
+      placesByCategoryProvider(
+        PlaceRequest(
+          categoryGroupCode: categoryCode,
+          x: currentPosition.longitude.toString(), // 선택적
+          y: currentPosition.latitude.toString(), // 선택적
+          radius: 5000, // 기본값 사용 가능
+        ),
+      ),
+    );
 
     // late GoogleMapController _mapController;
 
@@ -143,14 +155,14 @@ class PlaceAddScreen extends ConsumerWidget {
   // ✅ 카테고리 UI
   Widget _buildCategoryGrid(WidgetRef ref) {
     final List<Map<String, dynamic>> categories = [
-      {'icon': Icons.coffee, 'label': '카페'},
-      {'icon': Icons.fastfood_rounded, 'label': '음식점'},
-      {'icon': Icons.park, 'label': '테마 파크'},
-      {'icon': Icons.image, 'label': '갤러리'},
-      {'icon': Icons.apartment, 'label': '백화점'},
-      {'icon': Icons.local_bar, 'label': 'BAR'},
-      {'icon': Icons.local_convenience_store, 'label': '편의점'},
-      {'icon': Icons.local_hospital, 'label': '병원'},
+      {'icon': Icons.emoji_food_beverage, 'label': '카페'},
+      {'icon': Icons.restaurant, 'label': '음식점'},
+      {'icon': Icons.nature_people, 'label': '관광명소'},
+      {'icon': Icons.hotel, 'label': '숙박'},
+      {'icon': Icons.local_parking, 'label': '주차장'},
+      {'icon': Icons.theater_comedy, 'label': '문화시설'},
+      {'icon': CupertinoIcons.cart_fill, 'label': '대형마트'},
+      {'icon': Icons.storefront, 'label': '편의점'},
     ];
 
     return GridView.builder(
@@ -171,7 +183,7 @@ class PlaceAddScreen extends ConsumerWidget {
           child: Column(
             children: [
               CircleAvatar(
-                backgroundColor: Colors.blue,
+                backgroundColor: PRIMARY_COLOR,
                 radius: 26.0,
                 child: Icon(category['icon'], color: Colors.white),
               ),
