@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:my_couple_app/config/route/router.dart';
 import 'package:my_couple_app/ui/login/login_screen.dart';
 
 void main() async{
@@ -15,13 +16,13 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Flutter Demo',
       theme: ThemeData(
         fontFamily: "Pretendard",
         // primarySwatch: Colors.blue,
       ),
-      home: LoginScreen(),
+      routerConfig: router,
       // home: BottomNavigationScreen(),
     );
   }

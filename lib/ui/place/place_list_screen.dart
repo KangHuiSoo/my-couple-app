@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/place_list.dart';
 import 'package:my_couple_app/ui/place/datepicker_screen.dart';
@@ -191,8 +192,9 @@ class _PlaceListScreenState extends State<PlaceListScreen> {
           borderRadius: BorderRadius.circular(50.0),
         ),
         onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => DatepickerScreen()));
+          context.go('/datePicker');
+          // Navigator.push(context,
+          //     MaterialPageRoute(builder: (context) => DatepickerScreen()));
         },
         child: Icon(Icons.add, color: Colors.white),
       ) ,

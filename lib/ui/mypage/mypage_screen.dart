@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:my_couple_app/core/ui/component/profile_photo.dart';
 import 'package:my_couple_app/ui/mypage/password_edit_screen.dart';
 import 'package:my_couple_app/ui/mypage/profile_edit_screen.dart';
@@ -55,8 +56,8 @@ class MyPageScreen extends StatelessWidget {
           Expanded(
             child: ListView(
               children: [
-                _buildMenuItem(context, '회원 정보 수정', ProfileEditScreen()),
-                _buildMenuItem(context, '비밀번호 변경', PasswordEditScreen()),
+                _buildMenuItem(context, '회원 정보 수정', '/profileEdit'),
+                _buildMenuItem(context, '비밀번호 변경', '/passwordEdit'),
                 // _buildMenuItem(context, '커플인증/해제'),
                 // _buildMenuItem(context, '앱설정'),
                 // const SizedBox(height: 10),
@@ -70,12 +71,13 @@ class MyPageScreen extends StatelessWidget {
   }
 
   // 메뉴 항목 빌드
-  Widget _buildMenuItem(BuildContext context, String title, Widget page, {bool isDisabled = false}) {
+  Widget _buildMenuItem(BuildContext context, String title, String router, {bool isDisabled = false}) {
     return Column(
       children: [
         GestureDetector(
           onTap: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context)=> page));
+            context.go(router);
+            // Navigator.push(context, MaterialPageRoute(builder: (context)=> page));
           },
           child: ListTile(
             title: Text(

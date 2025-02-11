@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/custom_button.dart';
 import 'package:my_couple_app/core/ui/component/custom_calendar.dart';
@@ -50,7 +51,8 @@ class _DatepickerScreenState extends State<DatepickerScreen> {
               padding: const EdgeInsets.all(20.0),
               child: CustomButton(
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => PlaceAddScreen()));
+                    context.go('/placeAdd');
+                    // Navigator.push(context, MaterialPageRoute(builder: (context) => PlaceAddScreen()));
                   },
                   backgroundColor: PRIMARY_COLOR,
                   textColor: Colors.white,

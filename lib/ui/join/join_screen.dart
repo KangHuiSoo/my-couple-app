@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/custom_button.dart';
 import 'package:my_couple_app/core/ui/component/custom_text_field.dart';
@@ -118,7 +119,8 @@ class _JoinScreenState extends State<JoinScreen> {
 
                 // 회원가입 버튼
                 CustomButton(backgroundColor:PRIMARY_COLOR, textColor: Colors.white,buttonText: "회원가입", onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => AskCoupleLinkScreen()));
+                  context.go('/askCoupleLink');
+                  // Navigator.push(context, MaterialPageRoute(builder: (context) => AskCoupleLinkScreen()));
                   },
                 )
               ],

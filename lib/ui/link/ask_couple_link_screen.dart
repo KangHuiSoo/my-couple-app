@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/custom_button.dart';
 import 'package:my_couple_app/ui/home/home_screen.dart';
@@ -43,7 +44,7 @@ class AskCoupleLinkScreen extends StatelessWidget {
                 SizedBox(height: 16.0),
                 CustomButton(
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => CoupleLinkScreen()));
+                    context.go('/coupleLink');
                   },
                   buttonText: "링크 입력하기",
                   textColor: PRIMARY_COLOR,
@@ -51,7 +52,7 @@ class AskCoupleLinkScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 8.0),
                 TextButton(onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=> HomeScreen()));
+                  context.go('/');
                 }, child: Text('나중에하기', style: TextStyle(color: Colors.grey)))
               ],
             ),

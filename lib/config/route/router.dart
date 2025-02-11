@@ -1,0 +1,44 @@
+import 'package:go_router/go_router.dart';
+import 'package:my_couple_app/ui/bottom_navigation/main_screen.dart';
+import 'package:my_couple_app/ui/home/home_screen.dart';
+import 'package:my_couple_app/ui/join/join_screen.dart';
+import 'package:my_couple_app/ui/link/ask_couple_link_screen.dart';
+import 'package:my_couple_app/ui/link/couple_link_screen.dart';
+import 'package:my_couple_app/ui/login/login_screen.dart';
+import 'package:my_couple_app/ui/mypage/mypage_screen.dart';
+import 'package:my_couple_app/ui/mypage/password_edit_screen.dart';
+import 'package:my_couple_app/ui/mypage/profile_edit_screen.dart';
+import 'package:my_couple_app/ui/place/datepicker_screen.dart';
+import 'package:my_couple_app/ui/place/place_add_screen.dart';
+import 'package:my_couple_app/ui/place/place_list_screen.dart';
+import 'package:my_couple_app/ui/place/place_search_screen.dart';
+
+final GoRouter router = GoRouter(
+    // redirect: (context, state) {
+    //   final isLogin = false;
+    //   if (!isLogin && state.fullPath != '/login'){
+    //     return '/login';
+    //   }
+    //   return null;
+    // },
+    routes: [
+      GoRoute(path: '/login', builder: (context, state) => LoginScreen()),
+      GoRoute(path: '/join', builder: (context, state) => JoinScreen()),
+      GoRoute(path: '/askCoupleLink', builder: (context, state) => AskCoupleLinkScreen()),
+      GoRoute(path: '/coupleLink', builder: (context, state) => CoupleLinkScreen()),
+      ShellRoute(
+        builder: (context, state, child) {
+          return MainScreen(child: child);
+        },
+        routes: [
+          GoRoute(path: '/', builder: (context, state) => HomeScreen()),
+          GoRoute(path: '/placeList', builder: (context, state) => PlaceListScreen()),
+          GoRoute(path: '/placeAdd', builder: (context, state) => PlaceAddScreen()),
+          GoRoute(path: '/placeSearch', builder: (context, state) => PlaceSearchScreen()),
+          GoRoute(path: '/datePicker', builder: (context, state) => DatepickerScreen()),
+          GoRoute(path: '/myPage', builder: (context, state) => MyPageScreen()),
+          GoRoute(path: '/profileEdit', builder: (context, state) => ProfileEditScreen()),
+          GoRoute(path: '/passwordEdit', builder: (context, state) => PasswordEditScreen()),
+        ],
+      )
+    ]);
