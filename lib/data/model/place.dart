@@ -43,4 +43,22 @@ class Place {
       distance: json['distance']
     );
   }
+
+  // 📌 ✅ JSON 변환 메서드 추가
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'placeName': placeName,
+      'categoryName': categoryName,
+      'categoryGroupCode': categoryGroupCode,
+      'categoryGroupName': categoryGroupName,
+      'phone': phone,
+      'addressName': addressName,
+      'roadAddressName': roadAddressName,
+      'x': x,
+      'y': y,
+      'placeUrl': placeUrl,
+      'distance': distance,
+    };
+  }
 }
