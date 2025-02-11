@@ -4,12 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/draggable_bar.dart';
-import 'package:my_couple_app/data/view_model/place/place_view_model.dart';
 import 'package:my_couple_app/ui/place/place_search_screen.dart';
-
 import '../../core/constants/place_category_enum.dart';
 import '../../data/model/place_request.dart';
-import '../../data/view_model/place/place_add_view_model.dart';
+import '../../data/provider/place/google_map_provider.dart';
+import '../../data/provider/place/location_provider.dart';
+import '../../data/provider/place/category_provider.dart';
+import '../../data/provider/place/place_provider.dart';
 
 class PlaceAddScreen extends ConsumerWidget {
   const PlaceAddScreen({super.key});
@@ -19,18 +20,23 @@ class PlaceAddScreen extends ConsumerWidget {
     // 📍 Provider에서 상태 가져오기
     final LatLng currentPosition = ref.watch(currentLocationProvider);
     final bool isCategoryView = ref.watch(isCategoryViewProvider);
-    final selectedCategory = ref.watch(selectedCategoryProvider) ?? "카페";
-    final categoryCode = PlaceCategory.getCodeByLabel(selectedCategory); // 변환
-    final placeAsyncValue = ref.watch(
+    final selectedCategory = ref.watch(selectedCategoryProvider);
+    // final categoryCode = PlaceCategory.getCodeByLabel(selectedCategory); // 변환
+    final placeAsyncValue = selectedCategory != null ? ref.watch(
       placesByCategoryProvider(
         PlaceRequest(
-          categoryGroupCode: categoryCode,
+          categoryGroupCode: PlaceCategory.getCodeByLabel(selectedCategory),
           x: currentPosition.longitude.toString(), // 선택적
           y: currentPosition.latitude.toString(), // 선택적
           radius: 5000, // 기본값 사용 가능
         ),
       ),
-    );
+    ): const AsyncValue.data(null);
+    final markers = {
+      Marker(
+          markerId: MarkerId('current'),
+          position: currentPosition)
+    };
 
     // late GoogleMapController _mapController;
 
@@ -62,11 +68,7 @@ class PlaceAddScreen extends ConsumerWidget {
                       },
                       myLocationEnabled: true,
                       myLocationButtonEnabled: false,
-                      markers: {
-                        Marker(
-                            markerId: MarkerId('current'),
-                            position: currentPosition)
-                      },
+                      markers: markers,
                     ),
 
                     // 🔍 검색창
