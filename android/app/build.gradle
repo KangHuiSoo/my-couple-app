@@ -1,8 +1,17 @@
+
+
 plugins {
     id "com.android.application"
     id "kotlin-android"
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
+}
+
+// local.properties 파일 로드
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localProperties.load(new FileInputStream(localPropertiesFile))
 }
 
 android {
@@ -30,7 +39,8 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        manifestPlaceholders["KEY"] = properties['googleMapApiKey']
+        // googleMapApiKey 값이 비어있다면 기본값 "" 설정
+        manifestPlaceholders["googleMapApiKey"] = localProperties.getProperty("googleMapApiKey") ?: ""
     }
 
     buildTypes {
