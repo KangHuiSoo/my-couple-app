@@ -1,16 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../../datasource/kakao_api_service.dart';
 import '../../model/place_request.dart';
 import '../../model/place_response.dart';
 import '../../repository/place_repository.dart';
-
-// final placesByCategoryProvider = FutureProvider.autoDispose.family<PlaceResponse, String>(
-//       (ref, categoryGroupCode) async {
-//     final repository = ref.read(placeRepositoryProvider);
-//     return repository.getPlaces(categoryGroupCode);
-//   },
-// );
 
 final placesByCategoryProvider = FutureProvider.autoDispose.family<PlaceResponse, PlaceRequest>(
       (ref, request) async {
@@ -27,7 +19,6 @@ final placesByCategoryProvider = FutureProvider.autoDispose.family<PlaceResponse
     );
   },
 );
-
 
 final placeRepositoryProvider = Provider<PlaceRepository>((ref) {
   return PlaceRepository(KakaoApiService());
