@@ -7,8 +7,8 @@ class Place {
   final String phone;
   final String addressName;
   final String roadAddressName;
-  final double x;
-  final double y;
+  final String x;
+  final String y;
   final String placeUrl;
   final String distance;
 
@@ -37,8 +37,8 @@ class Place {
       phone: json['phone'],
       addressName: json['address_name'],
       roadAddressName: json['road_address_name'],
-      y: double.parse(json['y']),
-      x: double.parse(json['x']),
+      y: json['y'],
+      x: json['x'],
       placeUrl: json['place_url'],
       distance: json['distance']
     );
