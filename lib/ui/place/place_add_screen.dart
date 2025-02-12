@@ -22,7 +22,7 @@ class PlaceAddScreen extends ConsumerStatefulWidget {
 }
 
 class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
-  double _initialSheetChildSize = 0.25;
+  double _initialSheetChildSize = 0.3;
   double _dragScrollSheetExtent = 0;
 
   double _widgetHeight = 0;
@@ -70,11 +70,11 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        centerTitle: false,
-        backgroundColor: Colors.white,
-        title: Text("장소 검색"),
-      ),
+      // appBar: AppBar(
+      //   centerTitle: false,
+      //   backgroundColor: Colors.white,
+      //   title: Text("장소 검색"),
+      // ),
       body: SafeArea(
         child: DecoratedBox(
           decoration: BoxDecoration(color: Colors.white),
@@ -135,41 +135,53 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                     ),
 
                     // 🔍 검색창
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: GestureDetector(
-                        onTap: () {
-                          context.go('/placeSearch');
-                          // Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (context) => PlaceSearchScreen()));
-                        },
-                        child: Container(
-                          height: 44,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    spreadRadius: 1,
-                                    blurRadius: 3,
-                                    offset: Offset(4, 4))
-                              ]),
+                    Row(
+                      children: [
+                        Expanded(
                           child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("이곳에서 검색 하세요"),
-                                Icon(Icons.search)
-                              ],
+                            padding: const EdgeInsets.all(16.0),
+                            child: GestureDetector(
+                              onTap: () {context.go('/placeSearch');},
+                              child: Container(
+                                height: 44,
+                                // width: double.infinity,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: Colors.grey.withOpacity(0.5),
+                                          spreadRadius: 1,
+                                          blurRadius: 3,
+                                          offset: Offset(4, 4))
+                                    ],
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(selectedCategory ?? '이곳에서 검색하세요'),
+                                      selectedCategory != null
+                                          ? IconButton(
+                                        padding: EdgeInsets.zero,
+                                        onPressed: () {
+                                          ref.read(isCategoryViewProvider.notifier).state = true;
+                                          ref.read(selectedCategoryProvider.notifier).state = null;
+                                          ref.read(markersProvider.notifier).state = {};
+                                        },
+                                        icon: Icon(CupertinoIcons.xmark),
+                                      )
+                                          : Icon(Icons.search),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
+
+                      ],
                     ),
 
                     // 🔽 하단 Draggable Sheet
