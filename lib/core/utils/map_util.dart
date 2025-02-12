@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:my_couple_app/data/provider/place/maker_provider.dart';
+import 'package:my_couple_app/data/provider/place/place_provider.dart';
 
 import '../../data/model/place.dart';
 
@@ -18,6 +19,9 @@ void addSearchMarkers(Ref ref, List<Place> places) {
   // 📌 API에서 받아온 데이터를 기반으로 검색 마커 생성
   final newMarkers = places.map((place) {
     return Marker(
+      onTap: (){
+        ref.read(selectedPlaceProvider.notifier).state = place;
+      },
       markerId: MarkerId(place.id),
       position: LatLng(
           double.parse(place.y), double.parse(place.x)), // ✅ 위도(y), 경도(x) 사용

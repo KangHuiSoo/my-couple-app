@@ -1,8 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/utils/map_util.dart';
+import '../../model/place.dart';
 import '../../model/place_request.dart';
 import '../../model/place_response.dart';
 import '../core/repository_provider.dart';
+
+final selectedPlaceProvider = StateProvider<Place?>((ref) => null);
 
 final placesByCategoryProvider =
     FutureProvider.autoDispose.family<PlaceResponse, PlaceRequest>(

@@ -5,8 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/draggable_bar.dart';
+import 'package:my_couple_app/data/model/place.dart';
 import 'package:my_couple_app/data/provider/place/maker_provider.dart';
-import 'package:my_couple_app/ui/place/place_search_screen.dart';
 import '../../core/constants/place_category_enum.dart';
 import '../../data/model/place_request.dart';
 import '../../data/provider/place/google_map_provider.dart';
@@ -14,29 +14,59 @@ import '../../data/provider/place/location_provider.dart';
 import '../../data/provider/place/category_provider.dart';
 import '../../data/provider/place/place_provider.dart';
 
-class PlaceAddScreen extends ConsumerWidget {
+class PlaceAddScreen extends ConsumerStatefulWidget {
   const PlaceAddScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PlaceAddScreen> createState() => _PlaceAddScreenState();
+}
+
+class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
+  double _initialSheetChildSize = 0.25;
+  double _dragScrollSheetExtent = 0;
+
+  double _widgetHeight = 0;
+  double _fabPosition = 0;
+  double _fabPositionPadding = 10;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        // render the floating button on widget
+        _fabPosition = _initialSheetChildSize * context.size!.height;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    ref.read(googleMapControllerProvider)?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     // 📍 Provider에서 상태 가져오기
     final LatLng currentPosition = ref.watch(currentLocationProvider);
     final bool isCategoryView = ref.watch(isCategoryViewProvider);
     final selectedCategory = ref.watch(selectedCategoryProvider);
-    // final categoryCode = PlaceCategory.getCodeByLabel(selectedCategory); // 변환
-    final placeAsyncValue = selectedCategory != null ? ref.watch(
-      placesByCategoryProvider(
-        PlaceRequest(
-          categoryGroupCode: PlaceCategory.getCodeByLabel(selectedCategory),
-          x: currentPosition.longitude.toString(), // 선택적
-          y: currentPosition.latitude.toString(), // 선택적
-          radius: 5000, // 기본값 사용 가능
-        ),
-      ),
-    ): const AsyncValue.data(null);
-
-
-
+    final placeAsyncValue = selectedCategory != null
+        ? ref.watch(
+            placesByCategoryProvider(
+              PlaceRequest(
+                categoryGroupCode: PlaceCategory.getCodeByLabel(
+                    selectedCategory), // 카테코리 코드로 변환
+                x: currentPosition.longitude.toString(), // 선택적
+                y: currentPosition.latitude.toString(), // 선택적
+                radius: 5000, // 기본값 사용 가능
+              ),
+            ),
+          )
+        : const AsyncValue.data(null);
+    final selectedPlace = ref.watch(selectedPlaceProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -56,17 +86,52 @@ class PlaceAddScreen extends ConsumerWidget {
                   children: [
                     // 📍 Google Map 위젯
                     GoogleMap(
+                      key: ValueKey('google_map_key'),
                       initialCameraPosition: CameraPosition(
                         target: currentPosition,
                         zoom: 17.0,
                       ),
                       onMapCreated: (GoogleMapController controller) {
-                        ref.read(googleMapControllerProvider.notifier).state =
-                            controller;
+                        ref.read(googleMapControllerProvider.notifier).state = controller;
                       },
                       myLocationEnabled: true,
                       myLocationButtonEnabled: false,
                       markers: ref.watch(markersProvider),
+                    ),
+
+                    // FAB with dynamic position
+                    Positioned(
+                      bottom: _fabPosition + _fabPositionPadding,
+                      right: _fabPositionPadding, // 위치 조절
+                      child: Column(
+                        children: [
+                          FloatingActionButton(
+                            onPressed: () async {
+                              ref.read(selectedPlaceProvider.notifier).state = null;
+                            },
+                            backgroundColor: Colors.grey[200],
+                            shape: CircleBorder(),
+                            mini: true,
+                            child: Icon(CupertinoIcons.back),
+                            heroTag: 'backToList',
+                          ),
+                          SizedBox(height: 16.0),
+                          FloatingActionButton(
+                            onPressed: () async {
+                              final newPosition = await ref.read(locationUpdateProvider.future);
+                              final mapController = ref.read(googleMapControllerProvider);
+                              if (mapController != null) {
+                                mapController.animateCamera(CameraUpdate.newLatLng(newPosition));
+                              }
+                            },
+                            backgroundColor: Colors.grey[200],
+                            shape: CircleBorder(),
+                            mini: true,
+                            child: Icon(Icons.my_location),
+                            heroTag: 'myLocation',
+                          ),
+                        ],
+                      ),
                     ),
 
                     // 🔍 검색창
@@ -108,30 +173,42 @@ class PlaceAddScreen extends ConsumerWidget {
                     ),
 
                     // 🔽 하단 Draggable Sheet
-                    DraggableScrollableSheet(
-                      initialChildSize: 0.3,
-                      minChildSize: 0.3,
-                      maxChildSize: isCategoryView ? 0.3 : 1.0,
-                      builder: (BuildContext context,
-                          ScrollController scrollController) {
-                        return DecoratedBox(
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(16))),
-                          child: Column(
-                            children: [
-                              DraggableBar(),
-                              Expanded(
-                                child: isCategoryView
-                                    ? _buildCategoryGrid(ref)
-                                    : _buildPlaceList(
-                                        scrollController, placeAsyncValue),
-                              ),
-                            ],
-                          ),
-                        );
+                    NotificationListener<DraggableScrollableNotification>(
+                      onNotification: (DraggableScrollableNotification notification) {
+                        setState(() {
+                          _widgetHeight = context.size!.height;
+                          _dragScrollSheetExtent = notification.extent;
+
+                          // Calculate FAB position based on parent widget height and DraggableScrollable position
+                          _fabPosition = _dragScrollSheetExtent * _widgetHeight;
+                        });
+                        return true;
                       },
+                      child: DraggableScrollableSheet(
+                        initialChildSize: 0.3,
+                        minChildSize: 0.3,
+                        maxChildSize: isCategoryView ? 0.3 : 1.0,
+                        builder: (BuildContext context,
+                            ScrollController scrollController) {
+                          return DecoratedBox(
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(16))),
+                            child: Column(
+                              children: [
+                                DraggableBar(),
+                                Expanded(
+                                  child: isCategoryView
+                                      ? _buildCategoryGrid(ref)
+                                      : _buildPlaceList(scrollController,
+                                          placeAsyncValue, selectedPlace),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     )
                   ],
                 ),
@@ -139,16 +216,6 @@ class PlaceAddScreen extends ConsumerWidget {
             ],
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final newPosition = await ref.read(locationUpdateProvider.future);
-          final mapController = ref.read(googleMapControllerProvider);
-          if (mapController != null) {
-            mapController.animateCamera(CameraUpdate.newLatLng(newPosition));
-          }
-        },
-        child: Icon(Icons.my_location),
       ),
     );
   }
@@ -198,16 +265,19 @@ class PlaceAddScreen extends ConsumerWidget {
   }
 
   // ✅ 장소 목록 UI
-  Widget _buildPlaceList(
-      ScrollController scrollController, AsyncValue placeAsyncValue) {
+  Widget _buildPlaceList(ScrollController scrollController,
+      AsyncValue placeAsyncValue, selectedPlace) {
     return placeAsyncValue.when(
       data: (placeResponse) {
+        List<Place> filteredPlaces =
+            selectedPlace != null ? [selectedPlace] : placeResponse.places;
+
         return ListView.builder(
           shrinkWrap: true,
           controller: scrollController,
-          itemCount: placeResponse.places.length,
+          itemCount: filteredPlaces.length,
           itemBuilder: (context, index) {
-            final place = placeResponse.places[index];
+            final place = filteredPlaces[index];
             return Column(
               children: [
                 Row(
@@ -219,9 +289,10 @@ class PlaceAddScreen extends ConsumerWidget {
                           children: [
                             Expanded(
                               child: Text(
-                                '${place.placeName}',
+                                place.placeName,
                                 style: TextStyle(
-                                    fontSize: 16.0, fontWeight: FontWeight.bold),
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.bold),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 softWrap: true,
@@ -236,10 +307,11 @@ class PlaceAddScreen extends ConsumerWidget {
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('${place.addressName}', maxLines: 2, overflow: TextOverflow.ellipsis),
-                            Text('${place.distance}'),
+                            Text(place.addressName,
+                                maxLines: 2, overflow: TextOverflow.ellipsis),
+                            Text(place.distance),
                             // Text('평점 3.8'),
-                            Text('${place.phone}'),
+                            Text(place.phone),
                           ],
                         ),
                       ),
