@@ -5,11 +5,13 @@ import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/draggable_bar.dart';
+import 'package:my_couple_app/core/ui/component/google_map/custom_google_map.dart';
 import 'package:my_couple_app/data/model/place.dart';
 import 'package:my_couple_app/data/provider/place/maker_provider.dart';
 import '../../core/constants/place_category_enum.dart';
 import '../../core/utils/web_view_helper.dart';
 import '../../data/model/place_request.dart';
+import '../../data/model/place_response.dart';
 import '../../data/provider/place/google_map_provider.dart';
 import '../../data/provider/place/location_provider.dart';
 import '../../data/provider/place/category_provider.dart';
@@ -69,6 +71,17 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
         : const AsyncValue.data(null);
     final selectedPlace = ref.watch(selectedPlaceProvider);
 
+    final valueKey = ValueKey('google_map_key');
+    final initialZoom = 17.0;
+    final initialCameraPosition = CameraPosition(
+      target: currentPosition,
+      zoom: initialZoom,
+    );
+    final markers = ref.watch(markersProvider);
+    void _onMapCreated(GoogleMapController controller, WidgetRef ref) {
+      ref.read(googleMapControllerProvider.notifier).state = controller;
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       // appBar: AppBar(
@@ -86,149 +99,175 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                   alignment: Alignment.topCenter,
                   children: [
                     // 📍 Google Map 위젯
-                    GoogleMap(
-                      key: ValueKey('google_map_key'),
-                      initialCameraPosition: CameraPosition(
-                        target: currentPosition,
-                        zoom: 17.0,
-                      ),
-                      onMapCreated: (GoogleMapController controller) {
-                        ref.read(googleMapControllerProvider.notifier).state = controller;
-                      },
-                      myLocationEnabled: true,
-                      myLocationButtonEnabled: false,
-                      markers: ref.watch(markersProvider),
+                    // GoogleMap(
+                    //   key: ValueKey('google_map_key'),
+                    //   initialCameraPosition: CameraPosition(
+                    //     target: currentPosition,
+                    //     zoom: 17.0,
+                    //   ),
+                    //   onMapCreated: (GoogleMapController controller) {
+                    //     ref.read(googleMapControllerProvider.notifier).state = controller;
+                    //   },
+                    //   myLocationEnabled: true,
+                    //   myLocationButtonEnabled: false,
+                    //   markers: ref.watch(markersProvider),
+                    // ),
+
+                    // 📍 Google Map 위젯
+                    CustomGoogleMap(
+                      valueKey: valueKey,
+                      initialPosition: initialCameraPosition,
+                      onMapCreated: (controller) => _onMapCreated(controller, ref),
+                      markers: markers,
                     ),
 
-                    // FAB with dynamic position
-                    Positioned(
-                      bottom: _fabPosition + _fabPositionPadding,
-                      right: _fabPositionPadding, // 위치 조절
-                      child: Column(
-                        children: [
-                          FloatingActionButton(
-                            onPressed: () async {
-                              ref.read(selectedPlaceProvider.notifier).state = null;
-                            },
-                            backgroundColor: Colors.grey[200],
-                            shape: CircleBorder(),
-                            mini: true,
-                            child: Icon(CupertinoIcons.back),
-                            heroTag: 'backToList',
-                          ),
-                          SizedBox(height: 16.0),
-                          FloatingActionButton(
-                            onPressed: () async {
-                              final newPosition = await ref.read(locationUpdateProvider.future);
-                              final mapController = ref.read(googleMapControllerProvider);
-                              if (mapController != null) {
-                                mapController.animateCamera(CameraUpdate.newLatLng(newPosition));
-                              }
-                            },
-                            backgroundColor: Colors.grey[200],
-                            shape: CircleBorder(),
-                            mini: true,
-                            child: Icon(Icons.my_location),
-                            heroTag: 'myLocation',
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // 🔍 검색창
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: GestureDetector(
-                              onTap: () {context.go('/placeSearch');},
-                              child: Container(
-                                height: 44,
-                                // width: double.infinity,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10),
-                                    boxShadow: [
-                                      BoxShadow(
-                                          color: Colors.grey.withOpacity(0.5),
-                                          spreadRadius: 1,
-                                          blurRadius: 3,
-                                          offset: Offset(4, 4))
-                                    ],
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(selectedCategory ?? '이곳에서 검색하세요'),
-                                      selectedCategory != null
-                                          ? IconButton(
-                                        padding: EdgeInsets.zero,
-                                        onPressed: () {
-                                          ref.read(isCategoryViewProvider.notifier).state = true;
-                                          ref.read(selectedCategoryProvider.notifier).state = null;
-                                          ref.read(markersProvider.notifier).state = {};
-                                        },
-                                        icon: Icon(CupertinoIcons.xmark),
-                                      )
-                                          : Icon(Icons.search),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                      ],
-                    ),
-
-                    // 🔽 하단 Draggable Sheet
-                    NotificationListener<DraggableScrollableNotification>(
-                      onNotification: (DraggableScrollableNotification notification) {
-                        setState(() {
-                          _widgetHeight = context.size!.height;
-                          _dragScrollSheetExtent = notification.extent;
-
-                          // Calculate FAB position based on parent widget height and DraggableScrollable position
-                          _fabPosition = _dragScrollSheetExtent * _widgetHeight;
-                        });
-                        return true;
-                      },
-                      child: DraggableScrollableSheet(
-                        initialChildSize: 0.3,
-                        minChildSize: 0.3,
-                        maxChildSize: isCategoryView ? 0.3 : 1.0,
-                        builder: (BuildContext context,
-                            ScrollController scrollController) {
-                          return DecoratedBox(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(16))),
-                            child: Column(
-                              children: [
-                                DraggableBar(),
-                                Expanded(
-                                  child: isCategoryView
-                                      ? _buildCategoryGrid(ref)
-                                      : _buildPlaceList(scrollController,
-                                          placeAsyncValue, selectedPlace),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    )
+                    // FAB
+                    _buildFloatingActionButtons(),
+                    // Search Bar
+                    _buildSearchBar(selectedCategory),
+                    // BottomSheet
+                    _buildBottomSheet(isCategoryView, placeAsyncValue, selectedPlace),
                   ],
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  // ✅ 하단 바텀 시트 UI
+  Widget _buildBottomSheet(bool isCategoryView,
+      AsyncValue<PlaceResponse?> placeAsyncValue, Place? selectedPlace) {
+    return NotificationListener<DraggableScrollableNotification>(
+      onNotification: (DraggableScrollableNotification notification) {
+        setState(() {
+          _widgetHeight = context.size!.height;
+          _dragScrollSheetExtent = notification.extent;
+
+          // Calculate FAB position based on parent widget height and DraggableScrollable position
+          _fabPosition = _dragScrollSheetExtent * _widgetHeight;
+        });
+        return true;
+      },
+      child: DraggableScrollableSheet(
+        initialChildSize: 0.3,
+        minChildSize: 0.3,
+        maxChildSize: isCategoryView ? 0.3 : 1.0,
+        builder: (BuildContext context, ScrollController scrollController) {
+          return DecoratedBox(
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+            child: Column(
+              children: [
+                DraggableBar(),
+                Expanded(
+                  child: isCategoryView
+                      ? _buildCategoryGrid(ref)
+                      : _buildPlaceList(
+                          scrollController, placeAsyncValue, selectedPlace),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // ✅ 검색바 UI
+  Widget _buildSearchBar(String? selectedCategory) {
+    return Row(
+      children: [
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: GestureDetector(
+              onTap: () {
+                context.go('/placeSearch');
+              },
+              child: Container(
+                height: 44,
+                // width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 1,
+                        blurRadius: 3,
+                        offset: Offset(4, 4))
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(selectedCategory ?? '이곳에서 검색하세요'),
+                      selectedCategory != null
+                          ? IconButton(
+                              padding: EdgeInsets.zero,
+                              onPressed: () {
+                                ref
+                                    .read(isCategoryViewProvider.notifier)
+                                    .state = true;
+                                ref
+                                    .read(selectedCategoryProvider.notifier)
+                                    .state = null;
+                                ref.read(markersProvider.notifier).state = {};
+                              },
+                              icon: Icon(CupertinoIcons.xmark),
+                            )
+                          : Icon(Icons.search),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ✅ FAB
+  Widget _buildFloatingActionButtons() {
+    return Positioned(
+      bottom: _fabPosition + _fabPositionPadding,
+      right: _fabPositionPadding, // 위치 조절
+      child: Column(
+        children: [
+          FloatingActionButton(
+            onPressed: () async {
+              ref.read(selectedPlaceProvider.notifier).state = null;
+            },
+            backgroundColor: Colors.grey[200],
+            shape: CircleBorder(),
+            mini: true,
+            child: Icon(CupertinoIcons.back),
+            heroTag: 'backToList',
+          ),
+          SizedBox(height: 16.0),
+          FloatingActionButton(
+            onPressed: () async {
+              final newPosition = await ref.read(locationUpdateProvider.future);
+              final mapController = ref.read(googleMapControllerProvider);
+              if (mapController != null) {
+                mapController
+                    .animateCamera(CameraUpdate.newLatLng(newPosition));
+              }
+            },
+            backgroundColor: Colors.grey[200],
+            shape: CircleBorder(),
+            mini: true,
+            child: Icon(Icons.my_location),
+            heroTag: 'myLocation',
+          ),
+        ],
       ),
     );
   }
@@ -298,7 +337,7 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                     // Left side (Title and Subtitle)
                     Expanded(
                       child: ListTile(
-                        onTap: (){
+                        onTap: () {
                           // GoRouter.of(context).go('/placeDetail?url=${place.placeUrl}');
                           WebViewHelper.openWebView(context, place.placeUrl);
                         },
