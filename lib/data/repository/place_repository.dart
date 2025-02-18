@@ -8,8 +8,16 @@ class PlaceRepository {
 
   PlaceRepository(this.apiService);
 
-  Future<PlaceResponse> getPlaces(String categoryGroupCode, {String? x, String? y, int? radius = 3000}) async{
-    Future<PlaceResponse> placeResponseResult= apiService.fetchPlaces(categoryGroupCode, x: x, y: y, radius: radius);
+  Future<PlaceResponse> getPlacesByKeyword(String keyword, {String? categoryGroupCode, String? x, String? y, int? radius}) async{
+    Future<PlaceResponse> placeResponseResult= apiService.fetchPlacesByKeyword(keyword, categoryGroupCode:categoryGroupCode, x: x, y: y, radius: radius);
+    PlaceResponse response = await placeResponseResult;
+    // print("✅ API 응답 데이터: $response");
+    printFullResponse(response);
+    return placeResponseResult;
+  }
+
+  Future<PlaceResponse> getPlacesByCategory(String categoryGroupCode, {String? x, String? y, int? radius = 3000}) async{
+    Future<PlaceResponse> placeResponseResult= apiService.fetchPlacesByCategory(categoryGroupCode, x: x, y: y, radius: radius);
     PlaceResponse response = await placeResponseResult;
     // print("✅ API 응답 데이터: $response");
     printFullResponse(response);

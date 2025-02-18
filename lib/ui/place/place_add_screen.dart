@@ -10,7 +10,7 @@ import 'package:my_couple_app/data/model/place.dart';
 import 'package:my_couple_app/data/provider/place/maker_provider.dart';
 import '../../core/constants/place_category_enum.dart';
 import '../../core/utils/web_view_helper.dart';
-import '../../data/model/place_request.dart';
+import '../../data/model/place_category_request.dart';
 import '../../data/model/place_response.dart';
 import '../../data/provider/place/google_map_provider.dart';
 import '../../data/provider/place/location_provider.dart';
@@ -59,7 +59,7 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
     final placeAsyncValue = selectedCategory != null
         ? ref.watch(
             placesByCategoryProvider(
-              PlaceRequest(
+              PlaceCategoryRequest(
                 categoryGroupCode: PlaceCategory.getCodeByLabel(
                     selectedCategory), // 카테코리 코드로 변환
                 x: currentPosition.longitude.toString(), // 선택적

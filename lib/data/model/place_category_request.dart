@@ -1,10 +1,10 @@
-class PlaceRequest {
+class PlaceCategoryRequest {
   final String categoryGroupCode;
   final String? x;
   final String? y;
   final int? radius;
 
-  PlaceRequest({
+  PlaceCategoryRequest({
     required this.categoryGroupCode,
     this.x,
     this.y,
@@ -15,7 +15,7 @@ class PlaceRequest {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is PlaceRequest &&
+          other is PlaceCategoryRequest &&
               runtimeType == other.runtimeType &&
               categoryGroupCode == other.categoryGroupCode &&
               x == other.x &&
