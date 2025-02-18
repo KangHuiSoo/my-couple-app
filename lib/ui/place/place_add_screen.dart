@@ -8,6 +8,7 @@ import 'package:my_couple_app/core/ui/component/draggable_bar.dart';
 import 'package:my_couple_app/data/model/place.dart';
 import 'package:my_couple_app/data/provider/place/maker_provider.dart';
 import '../../core/constants/place_category_enum.dart';
+import '../../core/utils/web_view_helper.dart';
 import '../../data/model/place_request.dart';
 import '../../data/provider/place/google_map_provider.dart';
 import '../../data/provider/place/location_provider.dart';
@@ -40,12 +41,12 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
     });
   }
 
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    ref.read(googleMapControllerProvider)?.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   // TODO: implement dispose
+  //   ref.read(googleMapControllerProvider)?.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -297,6 +298,10 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                     // Left side (Title and Subtitle)
                     Expanded(
                       child: ListTile(
+                        onTap: (){
+                          // GoRouter.of(context).go('/placeDetail?url=${place.placeUrl}');
+                          WebViewHelper.openWebView(context, place.placeUrl);
+                        },
                         title: Row(
                           children: [
                             Expanded(
