@@ -26,6 +26,11 @@ final GoRouter router = GoRouter(
       GoRoute(path: '/join', builder: (context, state) => JoinScreen()),
       GoRoute(path: '/askCoupleLink', builder: (context, state) => AskCoupleLinkScreen()),
       GoRoute(path: '/coupleLink', builder: (context, state) => CoupleLinkScreen()),
+      // GoRoute(path: '/placeDetail', builder: (context, state) {
+      //   final url = state.uri.queryParameters['url'];  // id 값 가져오기
+      //   print(" ==========>>>>>>>>>>>>> $url");
+      //   return PlaceDetailWebview(url: url!);
+      // }),
       ShellRoute(
         builder: (context, state, child) {
           return MainScreen(child: child);
@@ -35,6 +40,7 @@ final GoRouter router = GoRouter(
           GoRoute(path: '/placeList', builder: (context, state) => PlaceListScreen()),
           GoRoute(path: '/placeAdd', builder: (context, state) => PlaceAddScreen()),
           GoRoute(path: '/placeSearch', builder: (context, state) => PlaceSearchScreen()),
+
           GoRoute(path: '/datePicker', builder: (context, state) => DatepickerScreen()),
           GoRoute(path: '/myPage', builder: (context, state) => MyPageScreen()),
           GoRoute(path: '/profileEdit', builder: (context, state) => ProfileEditScreen()),
