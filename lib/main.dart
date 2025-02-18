@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:my_couple_app/config/route/router.dart';
-import 'package:my_couple_app/ui/login/login_screen.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized(); //Flutter의 비동기 작업 초기화
@@ -23,7 +22,6 @@ class MyApp extends StatelessWidget {
         // primarySwatch: Colors.blue,
       ),
       routerConfig: router,
-      // home: BottomNavigationScreen(),
     );
   }
 }
