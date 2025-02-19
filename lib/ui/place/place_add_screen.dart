@@ -18,7 +18,9 @@ import '../../data/provider/place/category_provider.dart';
 import '../../data/provider/place/place_provider.dart';
 
 class PlaceAddScreen extends ConsumerStatefulWidget {
-  const PlaceAddScreen({super.key});
+  final Place? searchPlace;
+
+  const PlaceAddScreen(this.searchPlace, {super.key});
 
   @override
   ConsumerState<PlaceAddScreen> createState() => _PlaceAddScreenState();
@@ -35,6 +37,13 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
   @override
   void initState() {
     super.initState();
+    if (widget.searchPlace != null) {
+      Future.microtask(() {
+        ref.read(isCategoryViewProvider.notifier).state = false;
+        ref.read(selectedPlaceProvider.notifier).state = widget.searchPlace;
+      });
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
         // render the floating button on widget

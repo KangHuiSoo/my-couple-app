@@ -13,6 +13,8 @@ import 'package:my_couple_app/ui/place/place_add_screen.dart';
 import 'package:my_couple_app/ui/place/place_list_screen.dart';
 import 'package:my_couple_app/ui/place/place_search_screen.dart';
 
+import '../../data/model/place.dart';
+
 final GoRouter router = GoRouter(
     // redirect: (context, state) {
     //   final isLogin = false;
@@ -38,9 +40,11 @@ final GoRouter router = GoRouter(
         routes: [
           GoRoute(path: '/', builder: (context, state) => HomeScreen()),
           GoRoute(path: '/placeList', builder: (context, state) => PlaceListScreen()),
-          GoRoute(path: '/placeAdd', builder: (context, state) => PlaceAddScreen()),
+          GoRoute(path: '/placeAdd', builder: (context, state) {
+            final searchPlace = state.extra as Place?;
+            return PlaceAddScreen(searchPlace);
+          }),
           GoRoute(path: '/placeSearch', builder: (context, state) => PlaceSearchScreen()),
-
           GoRoute(path: '/datePicker', builder: (context, state) => DatepickerScreen()),
           GoRoute(path: '/myPage', builder: (context, state) => MyPageScreen()),
           GoRoute(path: '/profileEdit', builder: (context, state) => ProfileEditScreen()),

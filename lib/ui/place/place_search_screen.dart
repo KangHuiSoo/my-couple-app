@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:my_couple_app/core/ui/component/custom_text_field.dart';
+import 'package:my_couple_app/data/model/place_keyword_request.dart';
+import 'package:my_couple_app/data/provider/place/place_provider.dart';
 
-import '../../data/provider/place/place_notifier.dart';
+import '../../data/model/place.dart';
+import '../../data/model/place_response.dart';
 
 class PlaceSearchScreen extends ConsumerStatefulWidget {
   const PlaceSearchScreen({super.key});
@@ -13,15 +17,21 @@ class PlaceSearchScreen extends ConsumerStatefulWidget {
 
 class _PlaceSearchScreenState extends ConsumerState<PlaceSearchScreen> {
   TextEditingController searchController = TextEditingController();
+  PlaceKeywordRequest? request;
 
   void _searchPlaces() {
-    final notifier = ref.read(placesProvider.notifier);
-    notifier.searchPlaces(searchController.text);
+    // final notifier = ref.read(placesProvider.notifier);
+    // notifier.searchPlaces(searchController.text);
+    setState(() {
+      request = PlaceKeywordRequest(keyword: searchController.text);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final places = ref.watch(placesProvider);
+    final placeAsyncValue = request == null
+        ? AsyncValue.data(PlaceResponse(places: [])) // ✅ 기본값을 명확하게 지정
+        : ref.watch(placesByKeywordProvider(request!));
 
     return Scaffold(
       appBar: AppBar(
@@ -51,40 +61,54 @@ class _PlaceSearchScreenState extends ConsumerState<PlaceSearchScreen> {
               ],
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: places.length,
-                itemBuilder: (context, index) {
-                  Map<String, dynamic> place = places[index];
-                  return Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Icon(Icons.location_on_rounded),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                place["name"],
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16.0),
-                              ),
-                              Text(
-                                place["address"],
-                                style: TextStyle(color: Colors.grey),
-                              )
-                            ],
+              child: placeAsyncValue.when(
+                  data: (placeResponse) {
+                    List<Place> filteredPlaces = placeResponse.places;
+
+                    return ListView.builder(
+                      itemCount: filteredPlaces.length,
+                      itemBuilder: (context, index) {
+                        final place = filteredPlaces[index];
+                        // Map<String, dynamic> place = places[index];
+                        return GestureDetector(
+                          onTap: () {
+                            GoRouter.of(context).go('/placeAdd', extra: place);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Icon(Icons.location_on_rounded),
+                                SizedBox(width: 10),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        place.placeName,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16.0),
+                                      ),
+                                      Text(
+                                        place.roadAddressName,
+                                        style: TextStyle(color: Colors.grey),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                Text(place.distance)
+                              ],
+                            ),
                           ),
-                        ),
-                        Text(place['distance'])
-                      ],
-                    ),
-                  );
-                },
-              ),
+                        );
+                      },
+                    );
+                  },
+                  error: (err, stack) => Center(child: Text("Error: \$err")),
+                  loading: () => Center(child: CircularProgressIndicator())),
             )
           ],
         ),
