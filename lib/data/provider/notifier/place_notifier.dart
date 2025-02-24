@@ -1,13 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/utils/map_util.dart';
 import '../../datasource/kakao_api_service.dart';
 import '../../model/place_response.dart';
 import '../../repository/place_repository.dart';
 
 
 class PlaceNotifier extends StateNotifier<AsyncValue<PlaceResponse?>> {
+  final Ref ref;
   final PlaceRepository repository;
 
-  PlaceNotifier(this.repository) : super(const AsyncValue.loading());
+  PlaceNotifier(this.ref, this.repository) : super(const AsyncValue.loading());
 
   Future<void> fetchPlacesByKeyword(String keyword, {String? categoryGroupCode, String? x, String? y, int? radius}) async{
     try{
@@ -24,6 +26,7 @@ class PlaceNotifier extends StateNotifier<AsyncValue<PlaceResponse?>> {
       state = const AsyncValue.loading();
       final result = await repository.getPlacesByCategory(categoryGroupCode, x: x, y: y, radius: radius);
       state = AsyncValue.data(result);
+      addSearchMarkers(ref, result.places);
     }catch(e){
       state = AsyncValue.error(e, StackTrace.current);
     }
@@ -32,7 +35,7 @@ class PlaceNotifier extends StateNotifier<AsyncValue<PlaceResponse?>> {
 
 final placeRepositoryProvider = Provider((ref) => PlaceRepository(KakaoApiService()));
 final placeNotifierProvider = StateNotifierProvider<PlaceNotifier, AsyncValue<PlaceResponse?>>(
-      (ref) => PlaceNotifier(ref.watch(placeRepositoryProvider)),
+      (ref) => PlaceNotifier(ref, ref.watch(placeRepositoryProvider)),
 );
 
 

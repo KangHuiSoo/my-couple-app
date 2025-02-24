@@ -41,7 +41,7 @@ class PlaceRepository {
     }
 
     try{
-      PlaceResponse response = await apiService.fetchPlacesByCategory(categoryGroupCode);
+      PlaceResponse response = await apiService.fetchPlacesByCategory(categoryGroupCode, x: x, y: y, radius: radius);
       _cache[cacheKey] = response;
       _cacheTimestamp[cacheKey] = DateTime.now();
       printFullResponse(response);

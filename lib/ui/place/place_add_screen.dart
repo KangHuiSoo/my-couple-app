@@ -6,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/draggable_bar.dart';
 import 'package:my_couple_app/core/ui/component/google_map/custom_google_map.dart';
+import 'package:my_couple_app/core/utils/map_util.dart';
 import 'package:my_couple_app/data/model/place.dart';
 import 'package:my_couple_app/data/provider/notifier/place_notifier.dart';
 import 'package:my_couple_app/data/provider/place/maker_provider.dart';
@@ -37,14 +38,37 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.searchPlace != null) {
-      Future.microtask(() {
-        ref.read(isCategoryViewProvider.notifier).state = false;
-        ref.read(selectedPlaceProvider.notifier).state = widget.searchPlace;
-      });
-    }
 
+    // 📌 UI 빌드 완료 후 실행 (지도 컨트롤러 초기화 고려)
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.searchPlace != null) {
+        Future.microtask(() {
+          ref.read(isCategoryViewProvider.notifier).state = false;
+          ref.read(selectedPlaceProvider.notifier).state = widget.searchPlace;
+
+          // ✅ 마커 추가
+          final notifierRef = ref.read(placeNotifierProvider.notifier).ref;
+          addSearchMarkers(notifierRef, [widget.searchPlace!]);
+
+          // ✅ 새로운 위치 설정 (검색된 장소)
+          final newPosition = LatLng(
+            double.parse(widget.searchPlace!.y), // 위도 (y)
+            double.parse(widget.searchPlace!.x), // 경도 (x)
+          );
+          ref.read(currentLocationProvider.notifier).state = newPosition;
+
+          // ✅ 지도 이동을 위한 대기 시간 추가
+          Future.delayed(Duration(milliseconds: 500), () {
+            final mapController = ref.read(googleMapControllerProvider);
+            if (mapController != null) {
+              print("✅ 지도 이동: $newPosition");
+              mapController.animateCamera(CameraUpdate.newLatLng(newPosition));
+            } else {
+              print("❌ GoogleMapController가 아직 초기화되지 않음");
+            }
+          });
+        });
+      }
       setState(() {
         // render the floating button on widget
         _fabPosition = _initialSheetChildSize * context.size!.height;
@@ -79,25 +103,12 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
     //     : const AsyncValue.data(null);
     final placeAsyncValue = ref.watch(placeNotifierProvider);
     final selectedPlace = ref.watch(selectedPlaceProvider);
-
+    final markers = ref.watch(markersProvider);
     final valueKey = ValueKey('google_map_key');
     final initialZoom = 17.0;
-    final initialCameraPosition = CameraPosition(
-      target: currentPosition,
-      zoom: initialZoom,
-    );
-    final markers = ref.watch(markersProvider);
-    void _onMapCreated(GoogleMapController controller, WidgetRef ref) {
-      ref.read(googleMapControllerProvider.notifier).state = controller;
-    }
 
     return Scaffold(
       backgroundColor: Colors.white,
-      // appBar: AppBar(
-      //   centerTitle: false,
-      //   backgroundColor: Colors.white,
-      //   title: Text("장소 검색"),
-      // ),
       body: SafeArea(
         child: DecoratedBox(
           decoration: BoxDecoration(color: Colors.white),
@@ -125,8 +136,13 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                     // 📍 Google Map 위젯
                     CustomGoogleMap(
                       valueKey: valueKey,
-                      initialPosition: initialCameraPosition,
-                      onMapCreated: (controller) => _onMapCreated(controller, ref),
+                      initialPosition: CameraPosition(
+                        target: currentPosition,
+                        zoom: initialZoom,
+                      ),
+                      onMapCreated: (controller) {
+                        ref.read(googleMapControllerProvider.notifier).state = controller;
+                      },
                       markers: markers,
                     ),
 
@@ -135,7 +151,7 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                     // Search Bar
                     _buildSearchBar(selectedCategory),
                     // BottomSheet
-                    _buildBottomSheet(isCategoryView, placeAsyncValue, selectedPlace),
+                    _buildBottomSheet(isCategoryView, placeAsyncValue, selectedPlace, currentPosition),
                   ],
                 ),
               ),
@@ -148,7 +164,7 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
 
   // ✅ 하단 바텀 시트 UI
   Widget _buildBottomSheet(bool isCategoryView,
-      AsyncValue<PlaceResponse?> placeAsyncValue, Place? selectedPlace) {
+      AsyncValue<PlaceResponse?> placeAsyncValue, Place? selectedPlace, LatLng currentPosition) {
     return NotificationListener<DraggableScrollableNotification>(
       onNotification: (DraggableScrollableNotification notification) {
         setState(() {
@@ -174,7 +190,7 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                 DraggableBar(),
                 Expanded(
                   child: isCategoryView
-                      ? _buildCategoryGrid(ref)
+                      ? _buildCategoryGrid(ref, currentPosition)
                       : _buildPlaceList(
                       scrollController, placeAsyncValue, selectedPlace),
                 ),
@@ -264,11 +280,17 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
           FloatingActionButton(
             onPressed: () async {
               final newPosition = await ref.read(locationUpdateProvider.future);
-              final mapController = ref.read(googleMapControllerProvider);
-              if (mapController != null) {
-                mapController
-                    .animateCamera(CameraUpdate.newLatLng(newPosition));
-              }
+              ref.read(currentLocationProvider.notifier).state = newPosition;
+
+              Future.delayed(Duration(milliseconds: 500), () {
+                final mapController = ref.read(googleMapControllerProvider);
+                if (mapController != null) {
+                  print("✅ 현재 위치 이동: $newPosition");
+                  mapController.animateCamera(CameraUpdate.newLatLng(newPosition));
+                } else {
+                  print("❌ GoogleMapController가 아직 초기화되지 않음");
+                }
+              });
             },
             backgroundColor: Colors.grey[200],
             shape: CircleBorder(),
@@ -282,7 +304,7 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
   }
 
   // ✅ 카테고리 UI
-  Widget _buildCategoryGrid(WidgetRef ref) {
+  Widget _buildCategoryGrid(WidgetRef ref, LatLng currentPosition) {
     final List<Map<String, dynamic>> categories = [
       {'icon': Icons.emoji_food_beverage, 'label': '카페'},
       {'icon': Icons.restaurant, 'label': '음식점'},
@@ -307,7 +329,10 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
           onTap: () {
             ref.read(selectedCategoryProvider.notifier).state = category['label'];
             ref.read(isCategoryViewProvider.notifier).state = false;
-            ref.read(placeNotifierProvider.notifier).fetchPlacesByCategory(PlaceCategory.getCodeByLabel(category['label']));
+            print("위도경도 확인 ------");
+            print(currentPosition.latitude.toString());
+            print(currentPosition.longitude.toString());
+            ref.read(placeNotifierProvider.notifier).fetchPlacesByCategory(PlaceCategory.getCodeByLabel(category['label']), x: currentPosition.longitude.toString(), y: currentPosition.latitude.toString(), radius: 5000);
           },
           child: Column(
             children: [
