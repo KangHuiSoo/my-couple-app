@@ -350,6 +350,55 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
     );
   }
 
+  // 해당 장소 클릭시 다이얼로그 출력
+  void _showPlaceDialog(BuildContext context, Place place) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  place.placeName,
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 8),
+                Text("📍 ${place.roadAddressName}"),
+                Text("📞 ${place.phone}"),
+                Text("📏 거리: ${place.distance}m"),
+                TextButton(onPressed: (){WebViewHelper.openWebView(context, place.placeUrl);}, child: Text('자세히 >')),
+                SizedBox(height: 12),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Row(
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text("닫기", style: TextStyle(color: Colors.blue)),
+                      ),
+                      TextButton(
+                        onPressed: () => print("장소 추가 로직 구현 필요"),
+                        child: Text("추가", style: TextStyle(color: Colors.blue)),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+
   // ✅ 장소 목록 UI
   Widget _buildPlaceList(ScrollController scrollController,
       AsyncValue placeAsyncValue, selectedPlace) {
@@ -373,7 +422,8 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                       child: ListTile(
                         onTap: () {
                           // GoRouter.of(context).go('/placeDetail?url=${place.placeUrl}');
-                          WebViewHelper.openWebView(context, place.placeUrl);
+                          // WebViewHelper.openWebView(context, place.placeUrl);
+                          _showPlaceDialog(context, place);
                         },
                         title: Row(
                           children: [
