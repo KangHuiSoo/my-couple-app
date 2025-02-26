@@ -3,7 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:my_couple_app/data/provider/place/maker_provider.dart';
 import 'package:my_couple_app/data/provider/place/place_provider.dart';
 
-import '../../data/model/place.dart';
+import '../../data/model/place/place.dart';
 
 // 📌 현재 위치 마커 추가
 void setCurrentLocationMarker(WidgetRef ref, LatLng currentPosition) {}

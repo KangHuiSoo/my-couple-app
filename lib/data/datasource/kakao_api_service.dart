@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import '../model/place_response.dart';
+import '../model/place/place_response.dart';
 
 class KakaoApiService {
   static const String baseUrl = "https://dapi.kakao.com/v2/local/search/";

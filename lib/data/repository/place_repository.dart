@@ -1,6 +1,6 @@
 import 'package:my_couple_app/core/utils/cache_manager.dart';
 import '../datasource/kakao_api_service.dart';
-import '../model/place_response.dart';
+import '../model/place/place_response.dart';
 
 class PlaceRepository {
   final KakaoApiService apiService;

@@ -1,9 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/utils/map_util.dart';
 import '../../datasource/kakao_api_service.dart';
-import '../../model/place_response.dart';
+import '../../model/place/place_response.dart';
 import '../../repository/place_repository.dart';
-
 
 class PlaceNotifier extends StateNotifier<AsyncValue<PlaceResponse?>> {
   final PlaceRepository repository;

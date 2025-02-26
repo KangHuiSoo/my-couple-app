@@ -13,7 +13,7 @@ import 'package:my_couple_app/ui/place/place_add_screen.dart';
 import 'package:my_couple_app/ui/place/place_list_screen.dart';
 import 'package:my_couple_app/ui/place/place_search_screen.dart';
 
-import '../../data/model/place.dart';
+import '../../data/model/place/place.dart';
 
 final GoRouter router = GoRouter(
     // redirect: (context, state) {

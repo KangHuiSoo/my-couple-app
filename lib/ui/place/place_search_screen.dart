@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_couple_app/core/ui/component/custom_text_field.dart';
-import 'package:my_couple_app/data/model/place_keyword_request.dart';
+import 'package:my_couple_app/data/model/place/place_keyword_request.dart';
 import 'package:my_couple_app/data/provider/notifier/place_notifier.dart';
 import 'package:my_couple_app/data/provider/place/place_provider.dart';
 
-import '../../data/model/place.dart';
-import '../../data/model/place_response.dart';
+import '../../data/model/place/place.dart';
+import '../../data/model/place/place_response.dart';
 
 class PlaceSearchScreen extends ConsumerStatefulWidget {
   const PlaceSearchScreen({super.key});

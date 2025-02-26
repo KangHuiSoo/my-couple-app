@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:my_couple_app/data/model/place_keyword_request.dart';
+import 'package:my_couple_app/data/model/place/place_keyword_request.dart';
 import '../../../core/utils/map_util.dart';
-import '../../model/place.dart';
-import '../../model/place_category_request.dart';
-import '../../model/place_response.dart';
+import '../../model/place/place.dart';
+import '../../model/place/place_category_request.dart';
+import '../../model/place/place_response.dart';
 import '../core/repository_provider.dart';
 
 // //키워드로 장소 검색
