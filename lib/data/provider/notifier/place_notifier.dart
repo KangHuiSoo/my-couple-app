@@ -6,24 +6,23 @@ import '../../repository/place_repository.dart';
 
 
 class PlaceNotifier extends StateNotifier<AsyncValue<PlaceResponse?>> {
-  final Ref ref;
   final PlaceRepository repository;
 
-  PlaceNotifier(this.ref, this.repository) : super(const AsyncValue.loading());
+  PlaceNotifier(this.repository) : super(const AsyncValue.loading());
 
   Future<void> fetchPlacesByKeyword(String keyword, {String? categoryGroupCode, String? x, String? y, int? radius}) async{
+    state = const AsyncValue.loading();
     try{
-      state = const AsyncValue.loading();
       final result = await repository.getPlacesByKeyword(keyword, categoryGroupCode: categoryGroupCode, x: x, y: y, radius: radius);
       state = AsyncValue.data(result);
-    }catch(e){
-      state = AsyncValue.error(e, StackTrace.current);
+    }catch(e, stackTrace){
+      state = AsyncValue.error("🔴 장소 검색 실패: $e", stackTrace);
     }
   }
 
-  Future<void> fetchPlacesByCategory(String categoryGroupCode, {String? x, String? y, int? radius}) async{
+  Future<void> fetchPlacesByCategory(WidgetRef ref, String categoryGroupCode, {String? x, String? y, int? radius}) async{
+    state = const AsyncValue.loading();
     try{
-      state = const AsyncValue.loading();
       final result = await repository.getPlacesByCategory(categoryGroupCode, x: x, y: y, radius: radius);
       state = AsyncValue.data(result);
       addSearchMarkers(ref, result.places);
@@ -35,8 +34,49 @@ class PlaceNotifier extends StateNotifier<AsyncValue<PlaceResponse?>> {
 
 final placeRepositoryProvider = Provider((ref) => PlaceRepository(KakaoApiService()));
 final placeNotifierProvider = StateNotifierProvider<PlaceNotifier, AsyncValue<PlaceResponse?>>(
-      (ref) => PlaceNotifier(ref, ref.watch(placeRepositoryProvider)),
+      (ref) => PlaceNotifier(ref.watch(placeRepositoryProvider)),
 );
+
+
+// import 'package:flutter_riverpod/flutter_riverpod.dart';
+// import '../../../core/utils/map_util.dart';
+// import '../../datasource/kakao_api_service.dart';
+// import '../../model/place_response.dart';
+// import '../../repository/place_repository.dart';
+//
+//
+// class PlaceNotifier extends StateNotifier<AsyncValue<PlaceResponse?>> {
+//   final Ref ref;
+//   final PlaceRepository repository;
+//
+//   PlaceNotifier(this.ref, this.repository) : super(const AsyncValue.loading());
+//
+//   Future<void> fetchPlacesByKeyword(String keyword, {String? categoryGroupCode, String? x, String? y, int? radius}) async{
+//     try{
+//       state = const AsyncValue.loading();
+//       final result = await repository.getPlacesByKeyword(keyword, categoryGroupCode: categoryGroupCode, x: x, y: y, radius: radius);
+//       state = AsyncValue.data(result);
+//     }catch(e){
+//       state = AsyncValue.error(e, StackTrace.current);
+//     }
+//   }
+//
+//   Future<void> fetchPlacesByCategory(String categoryGroupCode, {String? x, String? y, int? radius}) async{
+//     try{
+//       state = const AsyncValue.loading();
+//       final result = await repository.getPlacesByCategory(categoryGroupCode, x: x, y: y, radius: radius);
+//       state = AsyncValue.data(result);
+//       addSearchMarkers(ref, result.places);
+//     }catch(e){
+//       state = AsyncValue.error(e, StackTrace.current);
+//     }
+//   }
+// }
+//
+// final placeRepositoryProvider = Provider((ref) => PlaceRepository(KakaoApiService()));
+// final placeNotifierProvider = StateNotifierProvider<PlaceNotifier, AsyncValue<PlaceResponse?>>(
+//       (ref) => PlaceNotifier(ref, ref.watch(placeRepositoryProvider)),
+// );
 
 
 

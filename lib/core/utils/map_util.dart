@@ -9,7 +9,7 @@ import '../../data/model/place.dart';
 void setCurrentLocationMarker(WidgetRef ref, LatLng currentPosition) {}
 
 // 📌 검색된 장소 마커 추가
-void addSearchMarkers(Ref ref, List<Place> places) {
+void addSearchMarkers(WidgetRef ref, List<Place> places) {
   final markers = ref.read(markersProvider.notifier);
 
   // ✅ 기존 현재 위치 마커 유지

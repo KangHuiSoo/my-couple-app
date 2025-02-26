@@ -47,8 +47,8 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
           ref.read(selectedPlaceProvider.notifier).state = widget.searchPlace;
 
           // ✅ 마커 추가
-          final notifierRef = ref.read(placeNotifierProvider.notifier).ref;
-          addSearchMarkers(notifierRef, [widget.searchPlace!]);
+          // final notifierRef = ref.read(placeNotifierProvider.notifier).ref;
+          addSearchMarkers(ref, [widget.searchPlace!]);
 
           // ✅ 새로운 위치 설정 (검색된 장소)
           final newPosition = LatLng(
@@ -332,7 +332,7 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
             print("위도경도 확인 ------");
             print(currentPosition.latitude.toString());
             print(currentPosition.longitude.toString());
-            ref.read(placeNotifierProvider.notifier).fetchPlacesByCategory(PlaceCategory.getCodeByLabel(category['label']), x: currentPosition.longitude.toString(), y: currentPosition.latitude.toString(), radius: 5000);
+            ref.read(placeNotifierProvider.notifier).fetchPlacesByCategory(ref, PlaceCategory.getCodeByLabel(category['label']), x: currentPosition.longitude.toString(), y: currentPosition.latitude.toString(), radius: 5000);
           },
           child: Column(
             children: [
@@ -434,7 +434,7 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
           },
         );
       },
-      error: (err, stack) => Center(child: Text("Error: \$err")),
+      error: (err, stack) => Center(child: Text("Error: $err")),
       loading: () => Center(child: CircularProgressIndicator()),
     );
   }
