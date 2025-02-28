@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/custom_button.dart';
-import 'package:my_couple_app/ui/home/home_screen.dart';
-import 'couple_link_screen.dart';
+
 
 
 class AskCoupleLinkScreen extends StatelessWidget {

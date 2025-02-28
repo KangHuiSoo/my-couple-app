@@ -1,13 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/utils/map_util.dart';
-import '../../datasource/kakao_api_service.dart';
-import '../../model/place/place_response.dart';
-import '../../repository/place_repository.dart';
+import '../../../data/datasource/kakao_api_service.dart';
+import '../../../data/model/place/place_response.dart';
+import '../../../data/repository/place_repository.dart';
 
-class PlaceNotifier extends StateNotifier<AsyncValue<PlaceResponse?>> {
+class PlaceViewModel extends StateNotifier<AsyncValue<PlaceResponse?>> {
   final PlaceRepository repository;
 
-  PlaceNotifier(this.repository) : super(const AsyncValue.loading());
+  PlaceViewModel(this.repository) : super(const AsyncValue.loading());
 
   Future<void> fetchPlacesByKeyword(String keyword, {String? categoryGroupCode, String? x, String? y, int? radius}) async{
     state = const AsyncValue.loading();
@@ -32,8 +32,8 @@ class PlaceNotifier extends StateNotifier<AsyncValue<PlaceResponse?>> {
 }
 
 final placeRepositoryProvider = Provider((ref) => PlaceRepository(KakaoApiService()));
-final placeNotifierProvider = StateNotifierProvider<PlaceNotifier, AsyncValue<PlaceResponse?>>(
-      (ref) => PlaceNotifier(ref.watch(placeRepositoryProvider)),
+final placeNotifierProvider = StateNotifierProvider<PlaceViewModel, AsyncValue<PlaceResponse?>>(
+      (ref) => PlaceViewModel(ref.watch(placeRepositoryProvider)),
 );
 
 

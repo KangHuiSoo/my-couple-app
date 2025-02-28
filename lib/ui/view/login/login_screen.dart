@@ -4,13 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/custom_button.dart';
 import 'package:my_couple_app/core/ui/component/custom_text_field.dart';
-import 'package:my_couple_app/ui/join/join_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.white,
         body: Center(
           child: Padding(
@@ -36,7 +34,7 @@ class LoginScreen extends StatelessWidget {
 
                 // 로그인 버튼
                 CustomButton(backgroundColor: PRIMARY_COLOR, textColor: Colors.white,buttonText: "로그인", onPressed: () {
-                      context.go('/');
+                      context.go('/home');
                 }),
                 SizedBox(height: 16),
 
@@ -51,7 +49,8 @@ class LoginScreen extends StatelessWidget {
                     Text('|', style: TextStyle(color: Colors.grey)),
                     TextButton(
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => JoinScreen()));
+                        // Navigator.push(context, MaterialPageRoute(builder: (context) => JoinScreen()));
+                        context.go('/join');
                       },
                       child: Text('회원가입',style: TextStyle(color: Colors.grey)),
                     ),
@@ -61,7 +60,6 @@ class LoginScreen extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 }

@@ -3,9 +3,7 @@ import 'package:my_couple_app/core/constants/genders.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/custom_button.dart';
 import 'package:my_couple_app/core/ui/component/custom_text_field.dart';
-
-import '../../core/ui/component/profile_photo.dart';
-
+import 'package:my_couple_app/core/ui/component/profile_photo.dart';
 class ProfileEditScreen extends StatefulWidget {
   const ProfileEditScreen({super.key});
 

@@ -1,30 +1,30 @@
 import 'package:go_router/go_router.dart';
-import 'package:my_couple_app/ui/bottom_navigation/main_screen.dart';
-import 'package:my_couple_app/ui/home/home_screen.dart';
-import 'package:my_couple_app/ui/join/join_screen.dart';
-import 'package:my_couple_app/ui/link/ask_couple_link_screen.dart';
-import 'package:my_couple_app/ui/link/couple_link_screen.dart';
-import 'package:my_couple_app/ui/login/login_screen.dart';
-import 'package:my_couple_app/ui/mypage/mypage_screen.dart';
-import 'package:my_couple_app/ui/mypage/password_edit_screen.dart';
-import 'package:my_couple_app/ui/mypage/profile_edit_screen.dart';
-import 'package:my_couple_app/ui/place/datepicker_screen.dart';
-import 'package:my_couple_app/ui/place/place_add_screen.dart';
-import 'package:my_couple_app/ui/place/place_list_screen.dart';
-import 'package:my_couple_app/ui/place/place_search_screen.dart';
+import 'package:my_couple_app/ui/view/bottom_navigation/main_screen.dart';
+import 'package:my_couple_app/ui/view/home/home_screen.dart';
+import 'package:my_couple_app/ui/view/join/join_screen.dart';
+import 'package:my_couple_app/ui/view/link/ask_couple_link_screen.dart';
+import 'package:my_couple_app/ui/view/link/couple_link_screen.dart';
+import 'package:my_couple_app/ui/view/login/login_screen.dart';
+import 'package:my_couple_app/ui/view/mypage/mypage_screen.dart';
+import 'package:my_couple_app/ui/view/mypage/password_edit_screen.dart';
+import 'package:my_couple_app/ui/view/mypage/profile_edit_screen.dart';
+import 'package:my_couple_app/ui/view/place/datepicker_screen.dart';
+import 'package:my_couple_app/ui/view/place/place_add_screen.dart';
+import 'package:my_couple_app/ui/view/place/place_list_screen.dart';
+import 'package:my_couple_app/ui/view/place/place_search_screen.dart';
 
 import '../../data/model/place/place.dart';
 
 final GoRouter router = GoRouter(
     // redirect: (context, state) {
-    //   final isLogin = false;
+    //   final isLogin = true;
     //   if (!isLogin && state.fullPath != '/login'){
     //     return '/login';
     //   }
     //   return null;
     // },
     routes: [
-      GoRoute(path: '/login', builder: (context, state) => LoginScreen()),
+      GoRoute(path: '/', builder: (context, state) => LoginScreen()),
       GoRoute(path: '/join', builder: (context, state) => JoinScreen()),
       GoRoute(path: '/askCoupleLink', builder: (context, state) => AskCoupleLinkScreen()),
       GoRoute(path: '/coupleLink', builder: (context, state) => CoupleLinkScreen()),
@@ -38,7 +38,7 @@ final GoRouter router = GoRouter(
           return MainScreen(child: child);
         },
         routes: [
-          GoRoute(path: '/', builder: (context, state) => HomeScreen()),
+          GoRoute(path: '/home', builder: (context, state) => HomeScreen()),
           GoRoute(path: '/placeList', builder: (context, state) => PlaceListScreen()),
           GoRoute(path: '/placeAdd', builder: (context, state) {
             final searchPlace = state.extra as Place?;

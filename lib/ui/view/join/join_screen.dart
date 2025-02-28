@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/custom_button.dart';
 import 'package:my_couple_app/core/ui/component/custom_text_field.dart';
-import 'package:my_couple_app/ui/link/ask_couple_link_screen.dart';
 
 class JoinScreen extends StatefulWidget {
   @override

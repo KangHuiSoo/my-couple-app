@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_couple_app/core/ui/component/profile_photo.dart';
-import 'package:my_couple_app/ui/mypage/password_edit_screen.dart';
-import 'package:my_couple_app/ui/mypage/profile_edit_screen.dart';
 
 class MyPageScreen extends StatelessWidget {
   const MyPageScreen({Key? key}) : super(key: key);
@@ -28,7 +26,12 @@ class MyPageScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(height: 20),
-          ProfilePhoto(outsideSize: 120, insideSize: 100, radius: 52,imageUrl: 'assets/images/profile.png'),          const SizedBox(height: 10),
+          ProfilePhoto(
+              outsideSize: 120,
+              insideSize: 100,
+              radius: 52,
+              imageUrl: 'assets/images/profile.png'),
+          const SizedBox(height: 10),
           // 사용자 이름
           const Text(
             'woody',
@@ -71,11 +74,12 @@ class MyPageScreen extends StatelessWidget {
   }
 
   // 메뉴 항목 빌드
-  Widget _buildMenuItem(BuildContext context, String title, String router, {bool isDisabled = false}) {
+  Widget _buildMenuItem(BuildContext context, String title, String router,
+      {bool isDisabled = false}) {
     return Column(
       children: [
         GestureDetector(
-          onTap: (){
+          onTap: () {
             context.go(router);
             // Navigator.push(context, MaterialPageRoute(builder: (context)=> page));
           },
@@ -90,10 +94,10 @@ class MyPageScreen extends StatelessWidget {
             trailing: isDisabled
                 ? null
                 : const Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-              color: Colors.grey,
-            ),
+                    Icons.arrow_forward_ios,
+                    size: 16,
+                    color: Colors.grey,
+                  ),
           ),
         ),
         Padding(

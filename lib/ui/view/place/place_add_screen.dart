@@ -4,19 +4,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
+import 'package:my_couple_app/core/constants/place_category_enum.dart';
 import 'package:my_couple_app/core/ui/component/draggable_bar.dart';
 import 'package:my_couple_app/core/ui/component/google_map/custom_google_map.dart';
 import 'package:my_couple_app/core/utils/map_util.dart';
+import 'package:my_couple_app/core/utils/web_view_helper.dart';
 import 'package:my_couple_app/data/model/place/place.dart';
-import 'package:my_couple_app/data/provider/notifier/place_notifier.dart';
+import 'package:my_couple_app/data/model/place/place_response.dart';
+import 'package:my_couple_app/ui/view/place/place_view_model.dart';
+import 'package:my_couple_app/data/provider/place/category_provider.dart';
+import 'package:my_couple_app/data/provider/place/google_map_provider.dart';
+import 'package:my_couple_app/data/provider/place/location_provider.dart';
 import 'package:my_couple_app/data/provider/place/maker_provider.dart';
-import '../../core/constants/place_category_enum.dart';
-import '../../core/utils/web_view_helper.dart';
-import '../../data/model/place/place_response.dart';
-import '../../data/provider/place/google_map_provider.dart';
-import '../../data/provider/place/location_provider.dart';
-import '../../data/provider/place/category_provider.dart';
-import '../../data/provider/place/place_provider.dart';
+import 'package:my_couple_app/data/provider/place/place_provider.dart';
+
 
 class PlaceAddScreen extends ConsumerStatefulWidget {
   final Place? searchPlace;

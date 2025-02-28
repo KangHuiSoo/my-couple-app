@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/custom_button.dart';
 import 'package:my_couple_app/core/ui/component/custom_calendar.dart';
-import 'package:my_couple_app/ui/place/place_add_screen.dart';
 
 class DatepickerScreen extends StatefulWidget {
   const DatepickerScreen({super.key});
