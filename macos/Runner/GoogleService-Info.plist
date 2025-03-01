@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyCE7nK8Nus04Js06WBJkRTF4s6Y0W5r1yQ</string>
+	<key>GCM_SENDER_ID</key>
+	<string>354502300600</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>kr.woodie.mycoupleapp.myCoupleApp</string>
+	<key>PROJECT_ID</key>
+	<string>my-couple-app-92477</string>
+	<key>STORAGE_BUCKET</key>
+	<string>my-couple-app-92477.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:354502300600:ios:0f7c8b1d6aa0d966efb54d</string>
+</dict>
+</plist>
