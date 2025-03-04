@@ -16,12 +16,17 @@ class _JoinScreenState extends ConsumerState<JoinScreen> {
   String selectedGender = '남자'; // 기본 선택값
   TextEditingController _idController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  TextEditingController _displayNameController = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authViewModelProvider);
+
+    print("디스플레이 네임 : ${_displayNameController.text}");
     print(authState.user);
     print(authState.runtimeType);
+
     // 🔥 상태 변화를 감지하여 처리 (ref.listen을 build 내부에서 사용)
     ref.listen<AuthState>(authViewModelProvider, (previous, next) {
       if (next.errorMessage != null) {
@@ -93,7 +98,7 @@ class _JoinScreenState extends ConsumerState<JoinScreen> {
 
                 // 이름 입력
                 Text('이름', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-                CustomTextField(hintText: ""),
+                CustomTextField(controller:_displayNameController, hintText: ""),
                 SizedBox(height: 16),
 
                 // 성별 선택
@@ -142,7 +147,7 @@ class _JoinScreenState extends ConsumerState<JoinScreen> {
                   textColor: Colors.white,
                   buttonText: "회원가입",
                   onPressed: () async {
-                    await ref.read(authViewModelProvider.notifier).signUp(_idController.text, _passwordController.text);
+                    await ref.read(authViewModelProvider.notifier).signUp(_idController.text, _passwordController.text, _displayNameController.text);
                   },
                 )
               ],

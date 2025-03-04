@@ -20,9 +20,6 @@ class LoginScreen extends ConsumerWidget {
     ref.listen<AuthState>(authViewModelProvider, (previous, next) {
       if (next.errorMessage != null) {
         debugPrint("로그인 실패: ${next.errorMessage}");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(next.errorMessage!), backgroundColor: Colors.red),
-        );
       } else if (next.user != null) {
         debugPrint("로그인 성공: ${next.user!.email}");
         context.go('/home'); // 회원가입 성공 시 이동

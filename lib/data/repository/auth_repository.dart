@@ -6,11 +6,12 @@ class AuthRepository {
 
   AuthRepository(this._firebaseAuthService);
 
-  Future<User?> signUp(String email, String password){
-    return _firebaseAuthService.signUp(email, password);
-  }
-
   Future<User?> signIn(String email, String password){
     return _firebaseAuthService.signIn(email, password);
+  }
+
+  Future<User?> signUp(String email, String password, String displayName){
+    print('리포지토리2');
+    return _firebaseAuthService.signUp(email, password, displayName);
   }
 }

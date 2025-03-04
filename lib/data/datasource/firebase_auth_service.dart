@@ -18,13 +18,23 @@ class FirebaseAuthService {
   }
 
   // 회원가입
-  Future<User?> signUp(String email, String password) async {
+  Future<User?> signUp(String email, String password, String displayName) async {
+    print('서비스 3');
     try {
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-      return userCredential.user;
+
+      User? user = userCredential.user;
+
+      if (user != null) {
+        await user.updateDisplayName(displayName); // 🔥 displayName 설정
+        await user.reload(); // 🔥 변경된 정보 반영
+        user = _auth.currentUser; // 🔥 업데이트된 유저 정보 가져오기
+      }
+
+      return user;
     } on FirebaseAuthException catch (e) {
       throw Exception(AuthExceptionHandler.generateErrorMessage(e));
     }
