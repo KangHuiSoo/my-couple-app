@@ -2,51 +2,53 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_couple_app/data/repository/auth_repository.dart';
 
-enum Status { uninitialized, authenticated, authenticating, unauthenticated }
+class AuthState {
+  final User? user;
+  final bool isLoading;
+  final String? errorMessage;
 
-class LoginViewModel extends StateNotifier{
-  final FirebaseAuth _auth;
-  Status _status;
-  User? _user;
+  AuthState({this.user, this.isLoading = false, this.errorMessage});
 
-  LoginViewModel(super._state)
-      : _auth = FirebaseAuth.instance,
-        _user = FirebaseAuth.instance.currentUser,
-        _status = FirebaseAuth.instance.currentUser != null
-            ? Status.authenticated
-            : Status.unauthenticated {
-    _auth.authStateChanges().listen(_onStateChanged);
+  AuthState copyWith({User? user, bool? isLoading, String? errorMessage}) {
+    return AuthState(
+        user : user ?? this.user,
+        isLoading: isLoading ?? this.isLoading,
+        errorMessage: errorMessage
+    );
   }
+}
 
-  // final loginProvider = StateNotifierProvider<UserProvider>
-  void signUp(String email, String password){
-    try{
-      //TODO : repository 호출
-      AuthRepository.login(email, password);
-    }catch(e){
-      //TODO : 에외 핸들링 처리
+class AuthViewModel extends StateNotifier<AuthState> {
+  final AuthRepository _repository;
+
+  AuthViewModel(this._repository) : super(AuthState());
+
+  Future<void> signIn(String email, String password) async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+    try {
+      User? user = await _repository.signIn(email, password);
+      state = state.copyWith(user: user, isLoading: false);
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString(), isLoading: false);
     }
   }
 
-  void signIn(String email, String password){
-    try{
-      //TODO : firebase 가입 기능 구현
-    }catch(e){
-      //TODO : 에외 핸들링 처리
+  Future<void> signUp(String email, String password) async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+    try {
+      User? user = await _repository.signUp(email, password);
+      state = state.copyWith(user: user, isLoading: false);
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString(), isLoading: false);
     }
   }
-  void logout(){
-    //TODO: 로그아웃 기능 구현
-  }
-  void findId(){}
-  void findPw(){}
 
-  Future<void> _onStateChanged(User? user) async {
-    if (user == null) {
-      _status = Status.unauthenticated;
-    } else {
-      _status = Status.authenticated;
-      _user = user; // Add this line
-    }
-  }
+  // Future<void> signOut() async {
+  //   try {
+  //     await _repository.signOut();
+  //     state = AuthState(); // 초기 상태로 리셋
+  //   } catch (e) {
+  //     state = state.copyWith(errorMessage: e.toString());
+  //   }
+  // }
 }

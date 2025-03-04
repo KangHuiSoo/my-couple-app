@@ -1,13 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/custom_button.dart';
 import 'package:my_couple_app/core/ui/component/custom_text_field.dart';
+import 'package:my_couple_app/data/provider/auth/auth_provider.dart';
 
-class LoginScreen extends StatelessWidget {
+import 'auth_view_model.dart';
+
+class LoginScreen extends ConsumerWidget {
+  TextEditingController _idController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authViewModelProvider);
+    // 🔥 상태 변화를 감지하여 처리 (ref.listen을 build 내부에서 사용)
+    ref.listen<AuthState>(authViewModelProvider, (previous, next) {
+      if (next.errorMessage != null) {
+        debugPrint("로그인 실패: ${next.errorMessage}");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(next.errorMessage!), backgroundColor: Colors.red),
+        );
+      } else if (next.user != null) {
+        debugPrint("로그인 성공: ${next.user!.email}");
+        context.go('/home'); // 회원가입 성공 시 이동
+      }
+    });
+
     return Scaffold(
         backgroundColor: Colors.white,
         body: Center(
@@ -26,15 +47,15 @@ class LoginScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 40),
 
-                CustomTextField(hintText: "ID 입력"), // ID 입력 필드
+                CustomTextField(controller: _idController, hintText: "ID 입력"), // ID 입력 필드
                 SizedBox(height: 16),
 
-                CustomTextField(hintText: "PW 입력"), // PW 입력 필드
+                CustomTextField(controller: _passwordController, hintText: "PW 입력"), // PW 입력 필드
                 SizedBox(height: 24),
 
                 // 로그인 버튼
-                CustomButton(backgroundColor: PRIMARY_COLOR, textColor: Colors.white,buttonText: "로그인", onPressed: () {
-                      context.go('/home');
+                CustomButton(backgroundColor: PRIMARY_COLOR, textColor: Colors.white,buttonText: "로그인", onPressed: () async {
+                  await ref.read(authViewModelProvider.notifier).signIn(_idController.text, _passwordController.text);
                 }),
                 SizedBox(height: 16),
 

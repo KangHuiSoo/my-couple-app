@@ -1,19 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/custom_button.dart';
 import 'package:my_couple_app/core/ui/component/custom_text_field.dart';
+import 'package:my_couple_app/data/provider/auth/auth_provider.dart';
+import 'package:my_couple_app/ui/view/login/auth_view_model.dart';
 
-class JoinScreen extends StatefulWidget {
+class JoinScreen extends ConsumerStatefulWidget {
   @override
-  State<JoinScreen> createState() => _JoinScreenState();
+  ConsumerState<JoinScreen> createState() => _JoinScreenState();
 }
 
-class _JoinScreenState extends State<JoinScreen> {
-  String selectedGender = '남자';
- // 기본 선택값
+class _JoinScreenState extends ConsumerState<JoinScreen> {
+  String selectedGender = '남자'; // 기본 선택값
+  TextEditingController _idController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authViewModelProvider);
+    print(authState.user);
+    print(authState.runtimeType);
+    // 🔥 상태 변화를 감지하여 처리 (ref.listen을 build 내부에서 사용)
+    ref.listen<AuthState>(authViewModelProvider, (previous, next) {
+      if (next.errorMessage != null) {
+        debugPrint("회원가입 실패: ${next.errorMessage}");
+      } else if (next.user != null) {
+        debugPrint("회원가입 성공: ${next.user!.email}");
+        context.go('/askCoupleLink'); // 회원가입 성공 시 이동
+      }
+    });
+
+
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -25,11 +44,13 @@ class _JoinScreenState extends State<JoinScreen> {
               Navigator.of(context).pop();
             },
           ),
-          title: Text('회원가입',style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold)),
+          title: Text(
+            '회원가입',
+            style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
           centerTitle: true,
         ),
         backgroundColor: Colors.white,
-
         body: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.all(16.0),
@@ -38,10 +59,9 @@ class _JoinScreenState extends State<JoinScreen> {
               children: [
                 // ID 입력
                 Text('ID', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-
                 Row(
                   children: [
-                    Expanded(child: CustomTextField(hintText: "영문 + 숫자 조합 8자 이상")),
+                    Expanded(child: CustomTextField(controller: _idController, hintText: "영문 + 숫자 조합 8자 이상")),
                     SizedBox(width: 8),
                     SizedBox(
                       height: 44,
@@ -54,7 +74,7 @@ class _JoinScreenState extends State<JoinScreen> {
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                         ),
-                        child: Text('중복확인',style: TextStyle(color: PRIMARY_COLOR)),
+                        child: Text('중복확인', style: TextStyle(color: PRIMARY_COLOR)),
                       ),
                     ),
                   ],
@@ -63,7 +83,7 @@ class _JoinScreenState extends State<JoinScreen> {
 
                 // PW 입력
                 Text('PW', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-                CustomTextField(hintText: "영문 + 숫자 조합 5자 이상"), //id 입력 필드
+                CustomTextField(controller: _passwordController, hintText: "영문 + 숫자 조합 5자 이상"),
                 SizedBox(height: 16),
 
                 // PW 확인
@@ -117,9 +137,12 @@ class _JoinScreenState extends State<JoinScreen> {
                 SizedBox(height: 24),
 
                 // 회원가입 버튼
-                CustomButton(backgroundColor:PRIMARY_COLOR, textColor: Colors.white,buttonText: "회원가입", onPressed: () {
-                  context.go('/askCoupleLink');
-                  // Navigator.push(context, MaterialPageRoute(builder: (context) => AskCoupleLinkScreen()));
+                CustomButton(
+                  backgroundColor: PRIMARY_COLOR,
+                  textColor: Colors.white,
+                  buttonText: "회원가입",
+                  onPressed: () async {
+                    await ref.read(authViewModelProvider.notifier).signUp(_idController.text, _passwordController.text);
                   },
                 )
               ],
