@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_couple_app/core/ui/component/profile_photo.dart';
+import 'package:my_couple_app/data/provider/auth/auth_provider.dart';
 
-class MyPageScreen extends StatelessWidget {
+class MyPageScreen extends ConsumerWidget {
   const MyPageScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -61,10 +63,9 @@ class MyPageScreen extends StatelessWidget {
               children: [
                 _buildMenuItem(context, '회원 정보 수정', '/profileEdit'),
                 _buildMenuItem(context, '비밀번호 변경', '/passwordEdit'),
-                // _buildMenuItem(context, '커플인증/해제'),
-                // _buildMenuItem(context, '앱설정'),
-                // const SizedBox(height: 10),
-                // _buildMenuItem(context, '로그아웃', isDisabled: true),
+                _buildMenuItem(context, '커플인증/해제', ''),
+                _buildMenuItem(context, '앱설정', ''),
+                _buildMenuItem(context, '로그아웃', '/', ref: ref),
               ],
             ),
           ),
@@ -75,13 +76,17 @@ class MyPageScreen extends StatelessWidget {
 
   // 메뉴 항목 빌드
   Widget _buildMenuItem(BuildContext context, String title, String router,
-      {bool isDisabled = false}) {
+      {bool isDisabled = false, WidgetRef? ref}) {
     return Column(
       children: [
         GestureDetector(
           onTap: () {
-            context.go(router);
-            // Navigator.push(context, MaterialPageRoute(builder: (context)=> page));
+            if (router == '/') {
+              ref!.read(authViewModelProvider.notifier).signOut();
+              context.go(router);
+            } else {
+              context.go(router);
+            }
           },
           child: ListTile(
             title: Text(

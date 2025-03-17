@@ -5,7 +5,8 @@ import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/custom_button.dart';
 import 'package:my_couple_app/core/ui/component/custom_text_field.dart';
 import 'package:my_couple_app/data/provider/auth/auth_provider.dart';
-import 'package:my_couple_app/ui/view/login/auth_view_model.dart';
+
+import 'auth_view_model.dart';
 
 class JoinScreen extends ConsumerStatefulWidget {
   @override
@@ -23,9 +24,9 @@ class _JoinScreenState extends ConsumerState<JoinScreen> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authViewModelProvider);
 
-    print("디스플레이 네임 : ${_displayNameController.text}");
-    print(authState.user);
-    print(authState.runtimeType);
+    // print("디스플레이 네임 : ${_displayNameController.text}");
+    // print(authState.user);
+    // print(authState.runtimeType);
 
     // 🔥 상태 변화를 감지하여 처리 (ref.listen을 build 내부에서 사용)
     ref.listen<AuthState>(authViewModelProvider, (previous, next) {
@@ -147,7 +148,7 @@ class _JoinScreenState extends ConsumerState<JoinScreen> {
                   textColor: Colors.white,
                   buttonText: "회원가입",
                   onPressed: () async {
-                    await ref.read(authViewModelProvider.notifier).signUp(_idController.text, _passwordController.text, _displayNameController.text);
+                    await ref.read(authViewModelProvider.notifier).signUp(_idController.text, _passwordController.text, _displayNameController.text, selectedGender);
                   },
                 )
               ],

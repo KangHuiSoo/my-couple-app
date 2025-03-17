@@ -28,7 +28,7 @@ class MainScreen extends StatelessWidget {
         showUnselectedLabels: false,
         onTap: (index) {
           if (index == 0) {
-            context.go('/');
+            context.go('/home');
           } else if (index == 1) {
             context.go('/placeList');
           } else if (index == 2) {

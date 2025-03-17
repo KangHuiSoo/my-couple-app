@@ -6,8 +6,7 @@ import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/custom_button.dart';
 import 'package:my_couple_app/core/ui/component/custom_text_field.dart';
 import 'package:my_couple_app/data/provider/auth/auth_provider.dart';
-
-import 'auth_view_model.dart';
+import '../auth/auth_view_model.dart';
 
 class LoginScreen extends ConsumerWidget {
   TextEditingController _idController = TextEditingController();
@@ -25,6 +24,9 @@ class LoginScreen extends ConsumerWidget {
         context.go('/home'); // 회원가입 성공 시 이동
       }
     });
+
+    print('===================================');
+    print(authState.user);
 
     return Scaffold(
         backgroundColor: Colors.white,
@@ -53,6 +55,11 @@ class LoginScreen extends ConsumerWidget {
                 // 로그인 버튼
                 CustomButton(backgroundColor: PRIMARY_COLOR, textColor: Colors.white,buttonText: "로그인", onPressed: () async {
                   await ref.read(authViewModelProvider.notifier).signIn(_idController.text, _passwordController.text);
+                  if (authState.errorMessage == null && authState.user != null) {
+                    context.go('/home');
+                  } else {
+                    debugPrint("로그인 실패: ${authState.errorMessage}");
+                  }
                 }),
                 SizedBox(height: 16),
 
@@ -68,7 +75,7 @@ class LoginScreen extends ConsumerWidget {
                     TextButton(
                       onPressed: () {
                         // Navigator.push(context, MaterialPageRoute(builder: (context) => JoinScreen()));
-                        context.go('/join');
+                        context.push('/join');
                       },
                       child: Text('회원가입',style: TextStyle(color: Colors.grey)),
                     ),

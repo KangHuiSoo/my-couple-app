@@ -1,24 +1,37 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:my_couple_app/data/model/auth/user.dart';
 import '../../core/utils/auth_exception_handler.dart';
 
 class FirebaseAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // 로그인
-  Future<User?> signIn(String email, String password) async {
+  Future<MyUser?> signIn(String email, String password) async {
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      return userCredential.user;
+
+      User? firebaseUser = userCredential.user;
+      if(firebaseUser == null) return null;
+
+      DocumentSnapshot doc = await _firestore.collection('user').doc(firebaseUser.uid).get();
+      if(!doc.exists) {
+        throw Exception("Firestore에 사용자 정보가 없습니다.");
+      }
+
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      return MyUser(uid: data['uid'], email: data['email'], nickname: data['nickname'], gender: data['gender']);
     } on FirebaseAuthException catch (e) {
       throw Exception(AuthExceptionHandler.generateErrorMessage(e));
     }
   }
 
   // 회원가입
-  Future<User?> signUp(String email, String password, String displayName) async {
+  Future<MyUser?> signUp(String email, String password, String displayName, String gender) async {
     print('서비스 3');
     try {
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
@@ -26,31 +39,58 @@ class FirebaseAuthService {
         password: password,
       );
 
-      User? user = userCredential.user;
+      User? firebaseUser = userCredential.user;
+      if(firebaseUser != null) {
+        await firebaseUser.updateDisplayName(displayName);
+        await firebaseUser.reload();
 
-      if (user != null) {
-        await user.updateDisplayName(displayName); // 🔥 displayName 설정
-        await user.reload(); // 🔥 변경된 정보 반영
-        user = _auth.currentUser; // 🔥 업데이트된 유저 정보 가져오기
+        //TODO: Firestore 저장 로직 구현
+        await _firestore.collection('user').doc(firebaseUser.uid).set({
+          'uid' : firebaseUser.uid,
+          'email': firebaseUser.email ?? '',
+          'nickname': displayName,
+          'gender': gender
+        });
       }
 
-      return user;
+      return MyUser(
+          uid: firebaseUser!.uid,
+          email: firebaseUser.email ?? '',
+          nickname: displayName,
+          gender: gender
+      );
     } on FirebaseAuthException catch (e) {
       throw Exception(AuthExceptionHandler.generateErrorMessage(e));
     }
   }
 
-  // 로그아웃
-  Future<void> signOut() async {
-    try {
-      await _auth.signOut();
-    } catch (e) {
-      throw Exception("로그아웃 중 오류가 발생했습니다.");
-    }
+  // 🔥 Firestore에서 현재 로그인된 유저 정보 가져오기
+  Future<MyUser?> getCurrentUser() async {
+    User? firebaseUser = _auth.currentUser;
+    if (firebaseUser == null) return null;
+
+    DocumentSnapshot doc = await _firestore.collection('user').doc(firebaseUser.uid).get();
+    if (!doc.exists) return null;
+
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    return MyUser(
+      uid: data['uid'],
+      email: data['email'],
+      nickname: data['nickname'],
+      gender: data['gender'],
+    );
   }
 
-  // 현재 로그인한 사용자 가져오기
-  User? getCurrentUser() {
-    return _auth.currentUser;
+  // 🔥 Firebase 인증 상태 변경 감지 → `MyUser` 변환하여 반환
+  Stream<MyUser?> authStateChanges() {
+    return _auth.authStateChanges().asyncMap((User? firebaseUser) async {
+      if (firebaseUser == null) return null;
+      return await getCurrentUser();
+    });
+  }
+
+  // 로그아웃
+  Future<void> signOut() async {
+    await _auth.signOut();
   }
 }
