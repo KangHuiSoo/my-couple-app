@@ -18,7 +18,6 @@ import 'package:my_couple_app/data/provider/place/location_provider.dart';
 import 'package:my_couple_app/data/provider/place/maker_provider.dart';
 import 'package:my_couple_app/data/provider/place/place_provider.dart';
 
-
 class PlaceAddScreen extends ConsumerStatefulWidget {
   final Place? searchPlace;
 
@@ -142,7 +141,8 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                         zoom: initialZoom,
                       ),
                       onMapCreated: (controller) {
-                        ref.read(googleMapControllerProvider.notifier).state = controller;
+                        ref.read(googleMapControllerProvider.notifier).state =
+                            controller;
                       },
                       markers: markers,
                     ),
@@ -152,7 +152,8 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                     // Search Bar
                     _buildSearchBar(selectedCategory),
                     // BottomSheet
-                    _buildBottomSheet(isCategoryView, placeAsyncValue, selectedPlace, currentPosition),
+                    _buildBottomSheet(isCategoryView, placeAsyncValue,
+                        selectedPlace, currentPosition),
                   ],
                 ),
               ),
@@ -164,8 +165,11 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
   }
 
   // ✅ 하단 바텀 시트 UI
-  Widget _buildBottomSheet(bool isCategoryView,
-      AsyncValue<PlaceResponse?> placeAsyncValue, Place? selectedPlace, LatLng currentPosition) {
+  Widget _buildBottomSheet(
+      bool isCategoryView,
+      AsyncValue<PlaceResponse?> placeAsyncValue,
+      Place? selectedPlace,
+      LatLng currentPosition) {
     return NotificationListener<DraggableScrollableNotification>(
       onNotification: (DraggableScrollableNotification notification) {
         setState(() {
@@ -193,7 +197,7 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                   child: isCategoryView
                       ? _buildCategoryGrid(ref, currentPosition)
                       : _buildPlaceList(
-                      scrollController, placeAsyncValue, selectedPlace),
+                          scrollController, placeAsyncValue, selectedPlace),
                 ),
               ],
             ),
@@ -236,18 +240,18 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                       Text(selectedCategory ?? '이곳에서 검색하세요'),
                       selectedCategory != null
                           ? IconButton(
-                        padding: EdgeInsets.zero,
-                        onPressed: () {
-                          ref
-                              .read(isCategoryViewProvider.notifier)
-                              .state = true;
-                          ref
-                              .read(selectedCategoryProvider.notifier)
-                              .state = null;
-                          ref.read(markersProvider.notifier).state = {};
-                        },
-                        icon: Icon(CupertinoIcons.xmark),
-                      )
+                              padding: EdgeInsets.zero,
+                              onPressed: () {
+                                ref
+                                    .read(isCategoryViewProvider.notifier)
+                                    .state = true;
+                                ref
+                                    .read(selectedCategoryProvider.notifier)
+                                    .state = null;
+                                ref.read(markersProvider.notifier).state = {};
+                              },
+                              icon: Icon(CupertinoIcons.xmark),
+                            )
                           : Icon(Icons.search),
                     ],
                   ),
@@ -287,7 +291,8 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                 final mapController = ref.read(googleMapControllerProvider);
                 if (mapController != null) {
                   print("✅ 현재 위치 이동: $newPosition");
-                  mapController.animateCamera(CameraUpdate.newLatLng(newPosition));
+                  mapController
+                      .animateCamera(CameraUpdate.newLatLng(newPosition));
                 } else {
                   print("❌ GoogleMapController가 아직 초기화되지 않음");
                 }
@@ -328,12 +333,17 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
         var category = categories[index];
         return GestureDetector(
           onTap: () {
-            ref.read(selectedCategoryProvider.notifier).state = category['label'];
+            ref.read(selectedCategoryProvider.notifier).state =
+                category['label'];
             ref.read(isCategoryViewProvider.notifier).state = false;
             print("위도경도 확인 ------");
             print(currentPosition.latitude.toString());
             print(currentPosition.longitude.toString());
-            ref.read(placeNotifierProvider.notifier).fetchPlacesByCategory(ref, PlaceCategory.getCodeByLabel(category['label']), x: currentPosition.longitude.toString(), y: currentPosition.latitude.toString(), radius: 5000);
+            ref.read(placeNotifierProvider.notifier).fetchPlacesByCategory(
+                ref, PlaceCategory.getCodeByLabel(category['label']),
+                x: currentPosition.longitude.toString(),
+                y: currentPosition.latitude.toString(),
+                radius: 5000);
           },
           child: Column(
             children: [
@@ -374,7 +384,11 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                 Text("📍 ${place.roadAddressName}"),
                 Text("📞 ${place.phone}"),
                 Text("📏 거리: ${place.distance}m"),
-                TextButton(onPressed: (){WebViewHelper.openWebView(context, place.placeUrl);}, child: Text('자세히 >')),
+                TextButton(
+                    onPressed: () {
+                      WebViewHelper.openWebView(context, place.placeUrl);
+                    },
+                    child: Text('자세히 >')),
                 SizedBox(height: 12),
                 Align(
                   alignment: Alignment.centerRight,
@@ -385,7 +399,11 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                         child: Text("닫기", style: TextStyle(color: Colors.blue)),
                       ),
                       TextButton(
-                        onPressed: () => print("장소 추가 로직 구현 필요"),
+                        onPressed: () {
+                          ref
+                              .read(placeNotifierProvider.notifier)
+                              .addPlace(place);
+                        },
                         child: Text("추가", style: TextStyle(color: Colors.blue)),
                       ),
                     ],
@@ -399,14 +417,13 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
     );
   }
 
-
   // ✅ 장소 목록 UI
   Widget _buildPlaceList(ScrollController scrollController,
       AsyncValue placeAsyncValue, selectedPlace) {
     return placeAsyncValue.when(
       data: (placeResponse) {
         List<Place> filteredPlaces =
-        selectedPlace != null ? [selectedPlace] : placeResponse.places;
+            selectedPlace != null ? [selectedPlace] : placeResponse.places;
 
         return ListView.builder(
           shrinkWrap: true,
@@ -490,9 +507,6 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
     );
   }
 }
-
-
-
 
 // import 'package:flutter/cupertino.dart';
 // import 'package:flutter/material.dart';

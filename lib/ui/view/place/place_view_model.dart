@@ -3,37 +3,55 @@ import '../../../core/utils/map_util.dart';
 import '../../../data/datasource/kakao_api_service.dart';
 import '../../../data/model/place/place_response.dart';
 import '../../../data/repository/place_repository.dart';
+import '../../../data/model/place/place.dart';
+import '../../../data/datasource/firestore_place_service.dart';
 
 class PlaceViewModel extends StateNotifier<AsyncValue<PlaceResponse?>> {
   final PlaceRepository repository;
 
   PlaceViewModel(this.repository) : super(const AsyncValue.loading());
 
-  Future<void> fetchPlacesByKeyword(String keyword, {String? categoryGroupCode, String? x, String? y, int? radius}) async{
+  Future<void> addPlace(Place place) async {
+    try {
+      await repository.addPlace(place);
+    } catch (e) {
+      throw Exception("장소 추가 실패: $e");
+    }
+  }
+
+  Future<void> fetchPlacesByKeyword(String keyword,
+      {String? categoryGroupCode, String? x, String? y, int? radius}) async {
     state = const AsyncValue.loading();
-    try{
-      final result = await repository.getPlacesByKeyword(keyword, categoryGroupCode: categoryGroupCode, x: x, y: y, radius: radius);
+    try {
+      final result = await repository.getPlacesByKeyword(keyword,
+          categoryGroupCode: categoryGroupCode, x: x, y: y, radius: radius);
       state = AsyncValue.data(result);
-    }catch(e, stackTrace){
+    } catch (e, stackTrace) {
       state = AsyncValue.error("🔴 장소 검색 실패: $e", stackTrace);
     }
   }
 
-  Future<void> fetchPlacesByCategory(WidgetRef ref, String categoryGroupCode, {String? x, String? y, int? radius}) async{
+  Future<void> fetchPlacesByCategory(WidgetRef ref, String categoryGroupCode,
+      {String? x, String? y, int? radius}) async {
     state = const AsyncValue.loading();
-    try{
-      final result = await repository.getPlacesByCategory(categoryGroupCode, x: x, y: y, radius: radius);
+    try {
+      final result = await repository.getPlacesByCategory(categoryGroupCode,
+          x: x, y: y, radius: radius);
       state = AsyncValue.data(result);
       addSearchMarkers(ref, result.places);
-    }catch(e){
+    } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
     }
   }
 }
 
-final placeRepositoryProvider = Provider((ref) => PlaceRepository(KakaoApiService()));
-final placeNotifierProvider = StateNotifierProvider<PlaceViewModel, AsyncValue<PlaceResponse?>>(
-      (ref) => PlaceViewModel(ref.watch(placeRepositoryProvider)),
+final placeRepositoryProvider = Provider((ref) => PlaceRepository(
+      KakaoApiService(),
+      FirestorePlaceService(),
+    ));
+final placeNotifierProvider =
+    StateNotifierProvider<PlaceViewModel, AsyncValue<PlaceResponse?>>(
+  (ref) => PlaceViewModel(ref.watch(placeRepositoryProvider)),
 );
 
 

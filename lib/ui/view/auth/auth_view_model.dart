@@ -49,7 +49,6 @@ class AuthViewModel extends StateNotifier<AuthState> {
   }
 
   Future<void> signUp(String email, String password, String displayName, String gender) async {
-    print("1. 뷰모델");
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
       MyUser? user = await _repository.signUp(email, password, displayName, gender);

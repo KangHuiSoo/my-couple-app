@@ -1,40 +1,33 @@
 import 'package:my_couple_app/core/utils/cache_manager.dart';
 import '../datasource/kakao_api_service.dart';
 import '../model/place/place_response.dart';
+import '../model/place/place.dart';
+import '../datasource/firestore_place_service.dart';
 
 class PlaceRepository {
   final KakaoApiService apiService;
+  final FirestorePlaceService firestoreService;
   final CacheManager<PlaceResponse> cacheManager = CacheManager();
 
-  PlaceRepository(this.apiService);
+  PlaceRepository(this.apiService, this.firestoreService);
 
-  Future<PlaceResponse> getPlacesByKeyword(String keyword, {String? categoryGroupCode, String? x, String? y, int? radius}) async {
-    String cacheKey = "keyword-$keyword-${categoryGroupCode ?? ''}-${x ?? ''}-${y ?? ''}-${radius ?? ''}";
+  Future<Place> addPlace(Place place) async {
+    return await firestoreService.addPlace(place);
+  }
+
+  Future<PlaceResponse> getPlacesByKeyword(String keyword,
+      {String? categoryGroupCode, String? x, String? y, int? radius}) async {
+    String cacheKey =
+        "keyword-$keyword-${categoryGroupCode ?? ''}-${x ?? ''}-${y ?? ''}-${radius ?? ''}";
 
     if (cacheManager.isCashed(cacheKey)) {
       print("🔥 캐싱된 데이터 반환 (Keyword: $keyword)");
       return cacheManager.getCachedData(cacheKey)!;
     }
-    
-    try{
-      PlaceResponse response = await apiService.fetchPlacesByKeyword(keyword, categoryGroupCode: categoryGroupCode, x: x, y: y, radius: radius);
-      cacheManager.saveToCache(cacheKey, response);
-      return response;
-    } catch(e) {
-      throw Exception("🔴 API 요청 실패: $e");
-    }
-  }
-
-  Future<PlaceResponse> getPlacesByCategory(String categoryGroupCode, {String? x, String? y, int? radius = 3000}) async {
-    String cacheKey = "categoryGroupCode-$categoryGroupCode-${x ?? ''}-${y ?? ''}-${radius ?? ''}";
-
-    if (cacheManager.isCashed(cacheKey)) {
-      print("🔥 캐싱된 데이터 반환 (categoryGroupCode: $categoryGroupCode)");
-      return cacheManager.getCachedData(cacheKey)!;
-    }
 
     try {
-      PlaceResponse response = await apiService.fetchPlacesByCategory(categoryGroupCode, x: x, y: y, radius: radius);
+      PlaceResponse response = await apiService.fetchPlacesByKeyword(keyword,
+          categoryGroupCode: categoryGroupCode, x: x, y: y, radius: radius);
       cacheManager.saveToCache(cacheKey, response);
       return response;
     } catch (e) {
@@ -42,6 +35,25 @@ class PlaceRepository {
     }
   }
 
+  Future<PlaceResponse> getPlacesByCategory(String categoryGroupCode,
+      {String? x, String? y, int? radius = 3000}) async {
+    String cacheKey =
+        "categoryGroupCode-$categoryGroupCode-${x ?? ''}-${y ?? ''}-${radius ?? ''}";
+
+    if (cacheManager.isCashed(cacheKey)) {
+      print("🔥 캐싱된 데이터 반환 (categoryGroupCode: $categoryGroupCode)");
+      return cacheManager.getCachedData(cacheKey)!;
+    }
+
+    try {
+      PlaceResponse response = await apiService
+          .fetchPlacesByCategory(categoryGroupCode, x: x, y: y, radius: radius);
+      cacheManager.saveToCache(cacheKey, response);
+      return response;
+    } catch (e) {
+      throw Exception("🔴 API 요청 실패: $e");
+    }
+  }
 }
 
 

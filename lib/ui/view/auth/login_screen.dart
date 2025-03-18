@@ -68,6 +68,9 @@ class LoginScreen extends ConsumerWidget {
                       if (authState.errorMessage == null && authState.user != null) {
                         context.go('/home');
                       } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text("로그인 실패: ${authState.errorMessage}"),
+                        ));
                         debugPrint("로그인 실패: ${authState.errorMessage}");
                       }
                     }
