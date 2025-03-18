@@ -11,6 +11,10 @@ class PlaceViewModel extends StateNotifier<AsyncValue<PlaceResponse?>> {
 
   PlaceViewModel(this.repository) : super(const AsyncValue.loading());
 
+  Future<List<Place>> fetchPlaceByCoupleId() async {
+    return await repository.fetchPlaceByCoupleId();
+  }
+
   Future<void> addPlace(Place place) async {
     try {
       await repository.addPlace(place);

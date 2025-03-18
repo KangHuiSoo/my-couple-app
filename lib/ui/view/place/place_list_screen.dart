@@ -1,39 +1,58 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/place_list.dart';
+import 'package:my_couple_app/ui/view/place/place_view_model.dart';
 
-class PlaceListScreen extends StatefulWidget {
+import '../../../data/model/place/place.dart';
+
+class PlaceListScreen extends ConsumerStatefulWidget {
   const PlaceListScreen({super.key});
 
   @override
-  State<PlaceListScreen> createState() => _PlaceListScreenState();
+  ConsumerState<PlaceListScreen> createState() => _PlaceListScreenState();
 }
 
-class _PlaceListScreenState extends State<PlaceListScreen> {
+class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
   bool isEditing = false; // 편집 모드 상태
   DateTime focusedDay = DateTime.now();
-  DateTime selectedDay = DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  DateTime selectedDay = DateTime.utc(
+      DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
-  final categories = ['전체', '카페', '식당', 'bar', '백화점', '테마파크', '갤러리'];
+  final categories = ['전체', '카페', '음식점', '관광명소', '숙박', '주차장', '문화시설', '대형마트', '편의점'];
   String selectedCategory = '전체';
-  final List<Map<String, dynamic>> places = [
-    {'name': '헌스시', 'category': '식당', 'address': '부산 해운대구 중동2로 2길', 'rating': 4.3, 'image': 'https://picsum.photos/seed/picsum/100/100'},
-    {'name': '올리스 카페', 'category': '카페', 'address': '부산 해운대구 달맞이길 33', 'rating': 4.8, 'image': 'https://picsum.photos/seed/picsum/100/100'},
-    {'name': '빅다방 카페', 'category': '카페', 'address': '부산 사상구 빅도로 31', 'rating': 4.8, 'image': 'https://picsum.photos/seed/picsum/100/100'},
-    {'name': '스타 바', 'category': 'bar', 'address': '부산 해운대구 바거리 12', 'rating': 4.6, 'image': 'https://picsum.photos/seed/picsum/100/100'},
-    {'name': '백화점 쇼핑몰', 'category': '백화점', 'address': '부산 센텀시티 123', 'rating': 4.5, 'image': 'https://picsum.photos/seed/picsum/100/100'},
-    {'name': '테마파크', 'category': '테마파크', 'address': '부산 기장군 45번지', 'rating': 4.7, 'image': 'https://picsum.photos/seed/picsum/100/100'},
-    {'name': '장 갤러리', 'category': '갤러리', 'address': '부산 기장군 45번지', 'rating': 4.7, 'image': 'https://picsum.photos/seed/picsum/100/100'},
-  ];
+  List<Place> places = [];
+  // final List<Map<String, dynamic>> places = [
+  //   {'name': '헌스시', 'category': '식당', 'address': '부산 해운대구 중동2로 2길', 'rating': 4.3, 'image': 'https://picsum.photos/seed/picsum/100/100'},
+  //   {'name': '올리스 카페', 'category': '카페', 'address': '부산 해운대구 달맞이길 33', 'rating': 4.8, 'image': 'https://picsum.photos/seed/picsum/100/100'},
+  //   {'name': '빅다방 카페', 'category': '카페', 'address': '부산 사상구 빅도로 31', 'rating': 4.8, 'image': 'https://picsum.photos/seed/picsum/100/100'},
+  //   {'name': '스타 바', 'category': 'bar', 'address': '부산 해운대구 바거리 12', 'rating': 4.6, 'image': 'https://picsum.photos/seed/picsum/100/100'},
+  //   {'name': '백화점 쇼핑몰', 'category': '백화점', 'address': '부산 센텀시티 123', 'rating': 4.5, 'image': 'https://picsum.photos/seed/picsum/100/100'},
+  //   {'name': '테마파크', 'category': '테마파크', 'address': '부산 기장군 45번지', 'rating': 4.7, 'image': 'https://picsum.photos/seed/picsum/100/100'},
+  //   {'name': '장 갤러리', 'category': '갤러리', 'address': '부산 기장군 45번지', 'rating': 4.7, 'image': 'https://picsum.photos/seed/picsum/100/100'},
+  // ];
 
   late List<bool> selectedItems;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    // 데이터 로딩
+    _loadPlaces();
     selectedItems = List.generate(places.length, (_) => false);
+  }
+
+  Future<void> _loadPlaces() async {
+    try {
+      final loadedPlaces = await ref.read(placeNotifierProvider.notifier).fetchPlaceByCoupleId();
+      setState(() {
+        places = loadedPlaces;
+        selectedItems = List.generate(places.length, (_) => false);
+      });
+    } catch (e) {
+      print('장소 로딩 실패: $e');
+    }
   }
 
   void toggleCheckbox(int index) {
@@ -48,11 +67,13 @@ class _PlaceListScreenState extends State<PlaceListScreen> {
     });
   }
 
-  List<Map<String, dynamic>> get filteredPlaces {
+  List<Place> get filteredPlaces {
     if (selectedCategory == '전체') {
       return places;
     }
-    return places.where((place) => place['category'] == selectedCategory).toList();
+    return places
+        .where((place) => place.categoryGroupName == selectedCategory)
+        .toList();
   }
 
   @override
@@ -83,8 +104,9 @@ class _PlaceListScreenState extends State<PlaceListScreen> {
                           child: Text(
                             category,
                             style: TextStyle(
-                              color:
-                                  category == selectedCategory ? Colors.black : Colors.grey,
+                              color: category == selectedCategory
+                                  ? Colors.black
+                                  : Colors.grey,
                               fontWeight: category == selectedCategory
                                   ? FontWeight.bold
                                   : FontWeight.normal,
@@ -108,7 +130,7 @@ class _PlaceListScreenState extends State<PlaceListScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'TOTAL 5',
+                      'total ${places.length.toString()}',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 12.0,
@@ -183,20 +205,20 @@ class _PlaceListScreenState extends State<PlaceListScreen> {
               ),
             )
           : SizedBox.shrink(),
-
-
-      floatingActionButton: isEditing ? SizedBox.shrink():FloatingActionButton(
-        backgroundColor: PRIMARY_COLOR,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50.0),
-        ),
-        onPressed: () {
-          context.go('/datePicker');
-          // Navigator.push(context,
-          //     MaterialPageRoute(builder: (context) => DatepickerScreen()));
-        },
-        child: Icon(Icons.add, color: Colors.white),
-      ) ,
+      floatingActionButton: isEditing
+          ? SizedBox.shrink()
+          : FloatingActionButton(
+              backgroundColor: PRIMARY_COLOR,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50.0),
+              ),
+              onPressed: () {
+                context.go('/datePicker');
+                // Navigator.push(context,
+                //     MaterialPageRoute(builder: (context) => DatepickerScreen()));
+              },
+              child: Icon(Icons.add, color: Colors.white),
+            ),
     );
   }
 

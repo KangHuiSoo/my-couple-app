@@ -11,6 +11,10 @@ class PlaceRepository {
 
   PlaceRepository(this.apiService, this.firestoreService);
 
+  Future<List<Place>> fetchPlaceByCoupleId() async {
+    return await firestoreService.fetchPlaceByCoupleId();
+  }
+
   Future<Place> addPlace(Place place) async {
     return await firestoreService.addPlace(place);
   }

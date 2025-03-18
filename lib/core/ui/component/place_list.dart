@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:my_couple_app/data/model/place/place.dart';
 
 import '../../constants/colors.dart';
 
 class PlaceList extends StatelessWidget {
   final bool isEditing;
   final ValueChanged<bool>? onEditingChanged;
-  final List<Map<String, dynamic>> places;
+  final List<Place> places;
   final List<bool>? selectedItems;
   final ValueChanged<int>? onCheckboxChanged;
   final VoidCallback? onReset;
@@ -45,7 +46,7 @@ class PlaceList extends StatelessWidget {
                     children: [
                       ClipRRect(
                           borderRadius: BorderRadius.circular(5.0),
-                          child: Image.network(place['image'])
+                          child: Image.network('https://picsum.photos/seed/picsum/100/100')
                           // Image.asset(
                           //   place['image'], // 이미지 경로
                           //   width: 100,
@@ -62,7 +63,7 @@ class PlaceList extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  place['name'],
+                                  place.placeName,
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -71,7 +72,7 @@ class PlaceList extends StatelessWidget {
                                 Padding(
                                   padding: const EdgeInsets.only(right: 12.0),
                                   child: Text(
-                                    place['category'],
+                                    place.categoryGroupName,
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: Colors.grey[600],
@@ -81,7 +82,7 @@ class PlaceList extends StatelessWidget {
                               ],
                             ),
                             Text(
-                              place['address'],
+                              place.addressName,
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Colors.grey[600],
@@ -94,7 +95,7 @@ class PlaceList extends StatelessWidget {
                                     color: Colors.yellow[700], size: 16),
                                 SizedBox(width: 4),
                                 Text(
-                                  place['rating'].toString(),
+                                  '4.8',
                                   style: TextStyle(fontSize: 14),
                                 ),
                               ],
