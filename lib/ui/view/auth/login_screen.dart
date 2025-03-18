@@ -9,6 +9,7 @@ import 'package:my_couple_app/data/provider/auth/auth_provider.dart';
 import '../auth/auth_view_model.dart';
 
 class LoginScreen extends ConsumerWidget {
+  final GlobalKey<FormState> formKey = GlobalKey();
   TextEditingController _idController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
 
@@ -33,55 +34,69 @@ class LoginScreen extends ConsumerWidget {
         body: Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 32.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // 상단 로고
-                Column(
-                  children: [
-                    SvgPicture.asset('assets/images/logo.svg',width: 56,height: 56),
-                    SizedBox(height: 8),
-                    Text('데플리', style: TextStyle(fontFamily:'okddung',fontSize: 30, color: PRIMARY_COLOR)),
-                  ],
-                ),
-                SizedBox(height: 40),
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // 상단 로고
+                  Column(
+                    children: [
+                      SvgPicture.asset('assets/images/logo.svg',width: 56,height: 56),
+                      SizedBox(height: 8),
+                      Text('데플리', style: TextStyle(fontFamily:'okddung',fontSize: 30, color: PRIMARY_COLOR)),
+                    ],
+                  ),
+                  SizedBox(height: 40),
 
-                CustomTextField(controller: _idController, hintText: "ID 입력"), // ID 입력 필드
-                SizedBox(height: 16),
+                  CustomTextField(controller: _idController, hintText: "ID 입력"), // ID 입력 필드
+                  SizedBox(height: 16),
 
-                CustomTextField(controller: _passwordController, hintText: "PW 입력"), // PW 입력 필드
-                SizedBox(height: 24),
+                  CustomTextField(controller: _passwordController, hintText: "PW 입력", isObscureText: true), // PW 입력 필드
+                  SizedBox(height: 24),
 
-                // 로그인 버튼
-                CustomButton(backgroundColor: PRIMARY_COLOR, textColor: Colors.white,buttonText: "로그인", onPressed: () async {
-                  await ref.read(authViewModelProvider.notifier).signIn(_idController.text, _passwordController.text);
-                  if (authState.errorMessage == null && authState.user != null) {
-                    context.go('/home');
-                  } else {
-                    debugPrint("로그인 실패: ${authState.errorMessage}");
-                  }
-                }),
-                SizedBox(height: 16),
+                  // 로그인 버튼
+                  CustomButton(backgroundColor: PRIMARY_COLOR, textColor: Colors.white,buttonText: "로그인", onPressed: () async {
+                    if (formKey.currentState == null) {
+                      return;
+                    }
 
-                // ID 찾기, 회원 가입
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextButton(
-                      onPressed: () {},
-                      child: Text('ID찾기', style: TextStyle(color: Colors.grey)),
-                    ),
-                    Text('|', style: TextStyle(color: Colors.grey)),
-                    TextButton(
-                      onPressed: () {
-                        // Navigator.push(context, MaterialPageRoute(builder: (context) => JoinScreen()));
-                        context.push('/join');
-                      },
-                      child: Text('회원가입',style: TextStyle(color: Colors.grey)),
-                    ),
-                  ],
-                ),
-              ],
+                    if (formKey.currentState!.validate()){
+                      formKey.currentState!.save();
+
+                      await ref.read(authViewModelProvider.notifier).signIn(_idController.text, _passwordController.text);
+                      if (authState.errorMessage == null && authState.user != null) {
+                        context.go('/home');
+                      } else {
+                        debugPrint("로그인 실패: ${authState.errorMessage}");
+                      }
+                    }
+
+
+
+                  }),
+                  SizedBox(height: 16),
+
+                  // ID 찾기, 회원 가입
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        onPressed: () {},
+                        child: Text('ID찾기', style: TextStyle(color: Colors.grey)),
+                      ),
+                      Text('|', style: TextStyle(color: Colors.grey)),
+                      TextButton(
+                        onPressed: () {
+                          // Navigator.push(context, MaterialPageRoute(builder: (context) => JoinScreen()));
+                          context.push('/join');
+                        },
+                        child: Text('회원가입',style: TextStyle(color: Colors.grey)),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

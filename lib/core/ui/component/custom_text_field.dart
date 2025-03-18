@@ -5,14 +5,17 @@ class CustomTextField extends StatelessWidget {
   final String hintText;
   final Color? color;
   final bool isBorder;
+  final bool isObscureText;
+
+  // final FormFieldSetter<String> onSaved;
   final TextEditingController? controller;
 
-  const CustomTextField(
-      {super.key,
-      required this.hintText,
-      this.color,
-      this.isBorder = false,
-      this.controller});
+  const CustomTextField({super.key,
+    required this.hintText,
+    this.color,
+    this.isBorder = false,
+    this.controller,
+    this.isObscureText = false});
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +27,14 @@ class CustomTextField extends StatelessWidget {
       width: double.infinity,
       height: 44.0,
       child: TextFormField(
+          validator: (String? value) {
+            if (value == null || value.isEmpty) {
+              return "값을 입력 하세요";
+            }
+            return null;
+          },
+          obscureText: isObscureText,
+          // onSaved: onSaved,
           controller: controller,
           decoration: InputDecoration(
             hintText: hintText,
@@ -34,9 +45,9 @@ class CustomTextField extends StatelessWidget {
             // focusedBorder: InputBorder.none, // 활성화 상태에서 밑줄 없앰
             enabledBorder: isBorder
                 ? OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: BorderSide(color: Colors.grey, width: 0.5),
-                  )
+              borderRadius: BorderRadius.circular(8.0),
+              borderSide: BorderSide(color: Colors.grey, width: 0.5),
+            )
                 : InputBorder.none,
             // 비활성화 상태에서 밑줄 없앰
             border: OutlineInputBorder(
