@@ -130,7 +130,7 @@ class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'total ${places.length.toString()}',
+                      'total ${filteredPlaces.length.toString()}',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 12.0,
