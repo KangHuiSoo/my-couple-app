@@ -6,8 +6,14 @@ class ProfilePhoto extends StatelessWidget {
   final double outsideSize;
   final double insideSize;
   final double radius;
-  final String imageUrl;
-  const ProfilePhoto({super.key, required this.outsideSize, required this.insideSize, required this.imageUrl, required this.radius});
+  final String? imageUrl;
+
+  const ProfilePhoto(
+      {super.key,
+      required this.outsideSize,
+      required this.insideSize,
+      this.imageUrl,
+      required this.radius});
 
   @override
   Widget build(BuildContext context) {
@@ -41,11 +47,24 @@ class ProfilePhoto extends StatelessWidget {
           ),
         ),
         // 프로필 이미지
-        CircleAvatar(
-          radius: radius, // 프로필 이미지 크기
-          backgroundColor: PRIMARY_COLOR,
-          backgroundImage: AssetImage(
-              imageUrl), // 이미지 경로
+        GestureDetector(
+          onTap: () {
+            print('click !');
+          },
+          child: imageUrl != null
+              ? CircleAvatar(
+                  radius: radius,
+                  backgroundColor: Colors.white,
+                  backgroundImage: AssetImage(imageUrl!),
+                )
+              : CircleAvatar(
+                  radius: radius, // 프로필 이미지 크기
+                  backgroundColor: Colors.white,
+                  child: Icon(Icons.person, size: 40, color: PRIMARY_COLOR),
+                  // backgroundImage: AssetImage(
+                  //   imageUrl,
+                  // ), // 이미지 경로
+                ),
         ),
       ],
     );

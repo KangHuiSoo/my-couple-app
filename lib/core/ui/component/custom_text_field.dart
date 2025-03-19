@@ -10,12 +10,13 @@ class CustomTextField extends StatelessWidget {
   // final FormFieldSetter<String> onSaved;
   final TextEditingController? controller;
 
-  const CustomTextField({super.key,
-    required this.hintText,
-    this.color,
-    this.isBorder = false,
-    this.controller,
-    this.isObscureText = false});
+  const CustomTextField(
+      {super.key,
+      required this.hintText,
+      this.color,
+      this.isBorder = false,
+      this.controller,
+      this.isObscureText = false});
 
   @override
   Widget build(BuildContext context) {
@@ -27,43 +28,45 @@ class CustomTextField extends StatelessWidget {
       width: double.infinity,
       height: 44.0,
       child: TextFormField(
-          validator: (String? value) {
-            if (value == null || value.isEmpty) {
-              return "값을 입력 하세요";
-            }
-            return null;
-          },
-          obscureText: isObscureText,
-          // onSaved: onSaved,
-          controller: controller,
-          decoration: InputDecoration(
-            hintText: hintText,
-            hintStyle: TextStyle(color: Colors.grey),
-            filled: true,
-            fillColor: color ?? Color(0xFFF9F9F9),
-            // border: InputBorder.none, // 기본 밑줄 없앰
-            // focusedBorder: InputBorder.none, // 활성화 상태에서 밑줄 없앰
-            enabledBorder: isBorder
-                ? OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-              borderSide: BorderSide(color: Colors.grey, width: 0.5),
-            )
-                : InputBorder.none,
-            // 비활성화 상태에서 밑줄 없앰
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-              borderSide: BorderSide(
-                color: PRIMARY_COLOR,
-              ),
+        validator: (String? value) {
+          if (value == null || value.isEmpty) {
+            return "값을 입력 하세요";
+          }
+          return null;
+        },
+        obscureText: isObscureText,
+        // onSaved: onSaved,
+        controller: controller,
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: TextStyle(color: Colors.grey),
+          filled: true,
+          fillColor: color ?? Color(0xFFF9F9F9),
+          // border: InputBorder.none, // 기본 밑줄 없앰
+          // focusedBorder: InputBorder.none, // 활성화 상태에서 밑줄 없앰
+          enabledBorder: isBorder
+              ? OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  borderSide: BorderSide(color: Colors.grey, width: 0.5),
+                )
+              : InputBorder.none,
+          // 비활성화 상태에서 밑줄 없앰
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: BorderSide(
+              color: PRIMARY_COLOR,
             ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-              borderSide: BorderSide(
-                color: PRIMARY_COLOR,
-                width: 2.0,
-              ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: BorderSide(
+              color: PRIMARY_COLOR,
+              width: 2.0,
             ),
-          )),
+          ),
+          errorStyle: TextStyle(height: 0),
+        ),
+      ),
     );
   }
 }

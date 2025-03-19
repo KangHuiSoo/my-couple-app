@@ -97,19 +97,20 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: Container(
                                 color: Colors.white,
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    ProfilePhoto(outsideSize: 80, insideSize: 72, radius: 32, imageUrl: 'assets/images/profile.png'),
-                                    SizedBox(width: 12.0),
+                                    ProfilePhoto(outsideSize: 80, insideSize: 72, radius: 32, imageUrl: 'assets/images/profile.png',),
+                                    SizedBox(width: 16.0),
                                     Column(
                                       children: [
                                         Icon(
                                           Icons.favorite,
-                                          color: PRIMARY_COLOR,
+                                          color: Colors.red,
                                           size: 20,
                                         ),
+                                        SizedBox(height: 10.0),
                                         Text(
-                                          "2021. 12. 11",
+                                          "D - 1200",
                                           style: TextStyle(
                                             fontSize: 18,
                                             color: PRIMARY_COLOR,
@@ -117,8 +118,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(width: 12.0),
-                                    ProfilePhoto(outsideSize: 80, insideSize: 72, radius:32, imageUrl: 'assets/images/profile.png'),
+                                    SizedBox(width: 16.0),
+                                    ProfilePhoto(outsideSize: 80, insideSize: 72, radius:32),
                                   ],
                                 ),
                               ),
