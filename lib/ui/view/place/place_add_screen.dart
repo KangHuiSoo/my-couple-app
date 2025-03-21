@@ -17,11 +17,13 @@ import 'package:my_couple_app/data/provider/place/google_map_provider.dart';
 import 'package:my_couple_app/data/provider/place/location_provider.dart';
 import 'package:my_couple_app/data/provider/place/maker_provider.dart';
 import 'package:my_couple_app/data/provider/place/place_provider.dart';
+import 'package:intl/intl.dart';
 
 class PlaceAddScreen extends ConsumerStatefulWidget {
   final Place? searchPlace;
+  final DateTime? selectedDate;
 
-  const PlaceAddScreen(this.searchPlace, {super.key});
+  const PlaceAddScreen({this.searchPlace, this.selectedDate, super.key});
 
   @override
   ConsumerState<PlaceAddScreen> createState() => _PlaceAddScreenState();
@@ -38,7 +40,6 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
   @override
   void initState() {
     super.initState();
-
     // 📌 UI 빌드 완료 후 실행 (지도 컨트롤러 초기화 고려)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.searchPlace != null) {
@@ -400,9 +401,16 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                       ),
                       TextButton(
                         onPressed: () {
+                          final updatedPlace = place.copyWith(
+                            selectedDate: widget.selectedDate != null
+                                ? DateFormat('yyyyMMdd')
+                                    .format(widget.selectedDate!)
+                                : null,
+                          );
                           ref
                               .read(placeNotifierProvider.notifier)
-                              .addPlace(place);
+                              .addPlace(updatedPlace);
+                          Navigator.pop(context);
                         },
                         child: Text("추가", style: TextStyle(color: Colors.blue)),
                       ),
@@ -467,7 +475,7 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                           children: [
                             Text(place.addressName,
                                 maxLines: 2, overflow: TextOverflow.ellipsis),
-                            Text(place.distance),
+                            Text('${place.distance}m'),
                             // Text('평점 3.8'),
                             Text(place.phone),
                           ],

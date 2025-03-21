@@ -11,21 +11,22 @@ class Place {
   final String y;
   final String placeUrl;
   final String distance;
+  final String? selectedDate;
 
-  Place({
-    required this.id,
-    required this.placeName,
-    required this.categoryName,
-    required this.categoryGroupCode,
-    required this.categoryGroupName,
-    required this.phone,
-    required this.addressName,
-    required this.roadAddressName,
-    required this.x,
-    required this.y,
-    required this.placeUrl,
-    required this.distance,
-  });
+  Place(
+      {required this.id,
+      required this.placeName,
+      required this.categoryName,
+      required this.categoryGroupCode,
+      required this.categoryGroupName,
+      required this.phone,
+      required this.addressName,
+      required this.roadAddressName,
+      required this.x,
+      required this.y,
+      required this.placeUrl,
+      required this.distance,
+      this.selectedDate});
 
   factory Place.fromJson(Map<String, dynamic> json) {
     return Place(
@@ -40,7 +41,8 @@ class Place {
       y: json['y'],
       x: json['x'],
       placeUrl: json['place_url'],
-      distance: json['distance']
+      distance: json['distance'],
+      selectedDate: json['selectedDate'],
     );
   }
 
@@ -59,6 +61,27 @@ class Place {
       'y': y,
       'placeUrl': placeUrl,
       'distance': distance,
+      'selectedDate': selectedDate
     };
+  }
+
+  Place copyWith({
+    String? selectedDate,
+  }) {
+    return Place(
+      id: id,
+      placeName: placeName,
+      categoryName: categoryName,
+      categoryGroupCode: categoryGroupCode,
+      categoryGroupName: categoryGroupName,
+      phone: phone,
+      addressName: addressName,
+      roadAddressName: roadAddressName,
+      x: x,
+      y: y,
+      placeUrl: placeUrl,
+      distance: distance,
+      selectedDate: selectedDate ?? this.selectedDate,
+    );
   }
 }

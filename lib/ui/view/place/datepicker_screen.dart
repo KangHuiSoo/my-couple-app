@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/custom_button.dart';
 import 'package:my_couple_app/core/ui/component/custom_calendar.dart';
+import 'package:my_couple_app/data/model/place/place_add_argument.dart';
 
 class DatepickerScreen extends StatefulWidget {
   const DatepickerScreen({super.key});
@@ -27,9 +28,7 @@ class _DatepickerScreenState extends State<DatepickerScreen> {
         title: Text('날짜선택'),
       ),
       body: DecoratedBox(
-        decoration: BoxDecoration(
-          color: Colors.white
-        ),
+        decoration: BoxDecoration(color: Colors.white),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -41,17 +40,17 @@ class _DatepickerScreenState extends State<DatepickerScreen> {
             Text(
               '방문할 날짜를 선택 하세요!',
               style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                color: PRIMARY_COLOR
-              ),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: PRIMARY_COLOR),
             ),
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: CustomButton(
                   onPressed: () {
-                    context.go('/placeAdd');
-                    // Navigator.push(context, MaterialPageRoute(builder: (context) => PlaceAddScreen()));
+                    //TODO: 선택한 날짜 파라미터 전달
+                    context.push('/placeAdd',
+                        extra: PlaceAddArgument(selectedDate: focusedDay));
                   },
                   backgroundColor: PRIMARY_COLOR,
                   textColor: Colors.white,
