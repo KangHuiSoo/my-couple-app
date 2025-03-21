@@ -27,6 +27,11 @@ class AuthViewModel extends StateNotifier<AuthState> {
     _checkAuthStatus();
   }
 
+
+  Future<void>? pickAndUploadImage (){
+    _repository.pickAndUploadImage();
+  }
+
   // ✅ 로그인 여부 확인 (앱 시작 시 실행)
   void _checkAuthStatus() {
     _repository.authStateChanges().listen((MyUser? user) {

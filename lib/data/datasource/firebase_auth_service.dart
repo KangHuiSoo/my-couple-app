@@ -1,11 +1,39 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:my_couple_app/data/model/auth/user.dart';
 import '../../core/utils/auth_exception_handler.dart';
 
 class FirebaseAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
+  final ImagePicker _picker = ImagePicker();
+
+
+  //프로필 사진 업데이트
+  Future<void> pickAndUploadImage() async{
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile == null) return;
+
+    User? user = _auth.currentUser;
+    print('1. user ======');
+    print(user);
+
+    File file = File(pickedFile.path);
+    Reference ref = _storage.ref().child('profile_images/${user!.uid}.jpg');
+    UploadTask uploadTask = ref.putFile(file);
+
+    TaskSnapshot snapshot = await uploadTask;
+    String downloadUrl = await snapshot.ref.getDownloadURL();
+    await user.updatePhotoURL(downloadUrl);
+
+    print('2. user ======');
+    print(user);
+  }
 
   // 로그인
   Future<MyUser?> signIn(String email, String password) async {

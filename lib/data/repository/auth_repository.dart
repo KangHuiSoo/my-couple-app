@@ -7,6 +7,10 @@ class AuthRepository {
 
   AuthRepository(this._firebaseAuthService);
 
+  Future<void> pickAndUploadImage(){
+    return _firebaseAuthService.pickAndUploadImage();
+  }
+
   Stream<MyUser?> authStateChanges(){
     return _firebaseAuthService.authStateChanges();
   }
