@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/custom_button.dart';
 import 'package:my_couple_app/core/ui/component/custom_text_field.dart';
@@ -16,6 +18,11 @@ class _PasswordEditScreenState extends State<PasswordEditScreen> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          leading: IconButton(
+              onPressed: () {
+                context.pop();
+              },
+              icon: Icon(CupertinoIcons.back)),
           backgroundColor: Colors.white,
           title: Text("비밀번호 변경"),
         ),

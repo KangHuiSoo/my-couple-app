@@ -4,6 +4,7 @@ import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/custom_button.dart';
 import 'package:my_couple_app/core/ui/component/custom_calendar.dart';
 import 'package:my_couple_app/data/model/place/place_add_argument.dart';
+import 'package:flutter/cupertino.dart';
 
 class DatepickerScreen extends StatefulWidget {
   const DatepickerScreen({super.key});
@@ -24,6 +25,11 @@ class _DatepickerScreenState extends State<DatepickerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+            onPressed: () {
+              context.pop();
+            },
+            icon: Icon(CupertinoIcons.back)),
         backgroundColor: Colors.white,
         title: Text('날짜선택'),
       ),
@@ -48,7 +54,6 @@ class _DatepickerScreenState extends State<DatepickerScreen> {
               padding: const EdgeInsets.all(20.0),
               child: CustomButton(
                   onPressed: () {
-                    //TODO: 선택한 날짜 파라미터 전달
                     context.push('/placeAdd',
                         extra: PlaceAddArgument(selectedDate: focusedDay));
                   },

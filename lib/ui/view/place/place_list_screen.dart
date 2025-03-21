@@ -20,7 +20,17 @@ class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
   DateTime selectedDay = DateTime.utc(
       DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
-  final categories = ['전체', '카페', '음식점', '관광명소', '숙박', '주차장', '문화시설', '대형마트', '편의점'];
+  final categories = [
+    '전체',
+    '카페',
+    '음식점',
+    '관광명소',
+    '숙박',
+    '주차장',
+    '문화시설',
+    '대형마트',
+    '편의점'
+  ];
   String selectedCategory = '전체';
   List<Place> places = [];
   // final List<Map<String, dynamic>> places = [
@@ -45,7 +55,8 @@ class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
 
   Future<void> _loadPlaces() async {
     try {
-      final loadedPlaces = await ref.read(placeNotifierProvider.notifier).fetchPlaceByCoupleId();
+      final loadedPlaces =
+          await ref.read(placeNotifierProvider.notifier).fetchPlaceByCoupleId();
       setState(() {
         places = loadedPlaces;
         selectedItems = List.generate(places.length, (_) => false);
@@ -213,7 +224,7 @@ class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
                 borderRadius: BorderRadius.circular(50.0),
               ),
               onPressed: () {
-                context.go('/datePicker');
+                context.push('/datePicker');
                 // Navigator.push(context,
                 //     MaterialPageRoute(builder: (context) => DatepickerScreen()));
               },
