@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/custom_title.dart';
@@ -12,14 +14,15 @@ import 'package:my_couple_app/core/ui/component/profile_photo.dart';
 
 import '../../../data/model/place/place.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  String? _profileImageUrl;
   String? backgroundImage;
   final List<Place> places = [];
   // final List<Map<String, dynamic>> places = [
@@ -41,6 +44,12 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundImage = pickedFile.path;
       });
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _profileImageUrl = FirebaseAuth.instance.currentUser!.photoURL;
   }
 
   @override
@@ -97,9 +106,15 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: Container(
                                 color: Colors.white,
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    ProfilePhoto(outsideSize: 80, insideSize: 72, radius: 32, imageUrl: 'assets/images/profile.png',),
+                                    ProfilePhoto(
+                                      outsideSize: 80,
+                                      insideSize: 72,
+                                      radius: 32,
+                                      imageUrl: _profileImageUrl,
+                                    ),
                                     SizedBox(width: 16.0),
                                     Column(
                                       children: [
@@ -119,7 +134,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ],
                                     ),
                                     SizedBox(width: 16.0),
-                                    ProfilePhoto(outsideSize: 80, insideSize: 72, radius:32),
+                                    ProfilePhoto(
+                                        outsideSize: 80,
+                                        insideSize: 72,
+                                        radius: 32),
                                   ],
                                 ),
                               ),
@@ -132,7 +150,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Column(
                               children: [
                                 CustomTitle(titleText: '데이트 장소'),
-                                PlaceList(isEditing: false, places: places,)
+                                PlaceList(
+                                  isEditing: false,
+                                  places: places,
+                                )
                               ],
                             ),
                           ),

@@ -47,25 +47,12 @@ class ProfilePhoto extends StatelessWidget {
           ),
         ),
         // 프로필 이미지
-        GestureDetector(
-          onTap: () {
-            print('click !');
-          },
-          child: imageUrl != null
-              ? CircleAvatar(
-                  radius: radius,
-                  backgroundColor: Colors.white,
-                  backgroundImage: AssetImage(imageUrl!),
-                )
-              : CircleAvatar(
-                  radius: radius, // 프로필 이미지 크기
-                  backgroundColor: Colors.white,
-                  child: Icon(Icons.person, size: 40, color: PRIMARY_COLOR),
-                  // backgroundImage: AssetImage(
-                  //   imageUrl,
-                  // ), // 이미지 경로
-                ),
-        ),
+        CircleAvatar(
+          radius: radius,
+          backgroundColor: Colors.white,
+          backgroundImage: imageUrl != null ? NetworkImage(imageUrl!) : null,
+          child: imageUrl == null ? Icon(Icons.person) : null,
+        )
       ],
     );
   }

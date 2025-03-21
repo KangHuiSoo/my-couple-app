@@ -1,14 +1,28 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_couple_app/core/ui/component/profile_photo.dart';
 import 'package:my_couple_app/data/provider/auth/auth_provider.dart';
 
-class MyPageScreen extends ConsumerWidget {
+class MyPageScreen extends ConsumerStatefulWidget {
   const MyPageScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MyPageScreen> createState() => _MyPageScreenState();
+}
+
+class _MyPageScreenState extends ConsumerState<MyPageScreen> {
+  String? _profileImageUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _profileImageUrl = FirebaseAuth.instance.currentUser!.photoURL;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -29,10 +43,12 @@ class MyPageScreen extends ConsumerWidget {
         children: [
           const SizedBox(height: 20),
           ProfilePhoto(
-              outsideSize: 120,
-              insideSize: 100,
-              radius: 52,
-              imageUrl: 'assets/images/profile.png'),
+            outsideSize: 120,
+            insideSize: 100,
+            radius: 52,
+            imageUrl: _profileImageUrl,
+          ),
+
           const SizedBox(height: 10),
           // 사용자 이름
           const Text(

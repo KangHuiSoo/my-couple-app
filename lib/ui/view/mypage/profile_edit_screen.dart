@@ -1,18 +1,56 @@
+import 'dart:io';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:my_couple_app/core/constants/genders.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/custom_button.dart';
 import 'package:my_couple_app/core/ui/component/custom_text_field.dart';
 import 'package:my_couple_app/core/ui/component/profile_photo.dart';
-class ProfileEditScreen extends StatefulWidget {
+
+class ProfileEditScreen extends ConsumerStatefulWidget {
   const ProfileEditScreen({super.key});
 
   @override
-  State<ProfileEditScreen> createState() => _ProfileEditScreenState();
+  ConsumerState<ProfileEditScreen> createState() => _ProfileEditScreenState();
 }
 
-class _ProfileEditScreenState extends State<ProfileEditScreen> {
+class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
   Genders? genders = Genders.man;
+  String? _profileImageUrl;
+
+  Future<void> _updateProfileImage() async {
+    print("=-=-=-=--=-");
+    print(FirebaseAuth.instance.currentUser);
+    try {
+      final XFile? pickedImage =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (pickedImage == null) return;
+
+      final File file = File(pickedImage.path);
+      final ref = FirebaseStorage.instance
+          .ref('profile_images/${FirebaseAuth.instance.currentUser!.uid}');
+      await ref.putFile(file);
+
+      final String downloadUrl = await ref.getDownloadURL();
+      await FirebaseAuth.instance.currentUser?.updatePhotoURL(downloadUrl);
+
+      setState(() {
+        _profileImageUrl = downloadUrl;
+      });
+    } catch (e) {
+      debugPrint('프로필 사진 변경 실패: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _profileImageUrl = FirebaseAuth.instance.currentUser?.photoURL;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,24 +66,27 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           const SizedBox(height: 20),
           Column(
             children: [
-              Stack(
-                children: [
-                  ProfilePhoto(
-                    outsideSize: 120,
-                    insideSize: 100,
-                    radius: 52,
-                    imageUrl: 'assets/images/profile.png',
-                  ),
-                  Positioned(
-                    top: 90,
-                    left: 90,
-                    child: Icon(
-                      Icons.camera_alt,
-                      size: 30,
-                      color: Colors.grey,
+              GestureDetector(
+                onTap: _updateProfileImage,
+                child: Stack(
+                  children: [
+                    ProfilePhoto(
+                      outsideSize: 120,
+                      insideSize: 100,
+                      radius: 52,
+                      imageUrl: _profileImageUrl,
                     ),
-                  ),
-                ],
+                    Positioned(
+                      top: 90,
+                      left: 90,
+                      child: Icon(
+                        Icons.camera_alt,
+                        size: 30,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
               )
             ],
           ),
