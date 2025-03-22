@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_couple_app/core/ui/component/profile_photo.dart';
 import 'package:my_couple_app/data/provider/auth/auth_provider.dart';
+import 'package:my_couple_app/ui/view/place/place_view_model.dart';
 
 class MyPageScreen extends ConsumerStatefulWidget {
   const MyPageScreen({Key? key}) : super(key: key);
@@ -51,9 +52,9 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
 
           const SizedBox(height: 10),
           // 사용자 이름
-          const Text(
-            'woody',
-            style: TextStyle(
+          Text(
+            FirebaseAuth.instance.currentUser?.displayName ?? '이름없음',
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
