@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 
 import '../../constants/colors.dart';
 
@@ -7,13 +8,15 @@ class ProfilePhoto extends StatelessWidget {
   final double insideSize;
   final double radius;
   final String? imageUrl;
+  final File? imageFile;
 
-  const ProfilePhoto(
-      {super.key,
-      required this.outsideSize,
-      required this.insideSize,
-      this.imageUrl,
-      required this.radius});
+  const ProfilePhoto({
+    required this.outsideSize,
+    required this.insideSize,
+    required this.radius,
+    this.imageUrl,
+    this.imageFile,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -50,8 +53,13 @@ class ProfilePhoto extends StatelessWidget {
         CircleAvatar(
           radius: radius,
           backgroundColor: Colors.white,
-          backgroundImage: imageUrl != null ? NetworkImage(imageUrl!) : null,
-          child: imageUrl == null ? Icon(Icons.person) : null,
+          backgroundImage: imageFile != null
+              ? Image.file(imageFile!, fit: BoxFit.cover).image
+              : (imageUrl != null
+                  ? Image.network(imageUrl!, fit: BoxFit.cover).image
+                  : null),
+          child:
+              imageFile == null && imageUrl == null ? Icon(Icons.person) : null,
         )
       ],
     );

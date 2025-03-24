@@ -11,6 +11,7 @@ import 'package:my_couple_app/core/ui/component/place_list.dart';
 import 'package:my_couple_app/core/ui/component/positioned_decorated_box.dart';
 import 'package:my_couple_app/core/ui/component/positioned_text.dart';
 import 'package:my_couple_app/core/ui/component/profile_photo.dart';
+import 'package:my_couple_app/data/provider/auth/auth_provider.dart';
 
 import '../../../data/model/place/place.dart';
 
@@ -55,6 +56,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    final authState = ref.watch(authViewModelProvider);
 
     return Scaffold(
       body: Stack(
@@ -113,7 +115,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       outsideSize: 80,
                                       insideSize: 72,
                                       radius: 32,
-                                      imageUrl: _profileImageUrl,
+                                      imageUrl: authState.profileImageUrl ??
+                                          _profileImageUrl,
                                     ),
                                     SizedBox(width: 16.0),
                                     Column(

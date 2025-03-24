@@ -6,24 +6,13 @@ import 'package:my_couple_app/core/ui/component/profile_photo.dart';
 import 'package:my_couple_app/data/provider/auth/auth_provider.dart';
 import 'package:my_couple_app/ui/view/place/place_view_model.dart';
 
-class MyPageScreen extends ConsumerStatefulWidget {
+class MyPageScreen extends ConsumerWidget {
   const MyPageScreen({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<MyPageScreen> createState() => _MyPageScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authViewModelProvider);
 
-class _MyPageScreenState extends ConsumerState<MyPageScreen> {
-  String? _profileImageUrl;
-
-  @override
-  void initState() {
-    super.initState();
-    _profileImageUrl = FirebaseAuth.instance.currentUser!.photoURL;
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -47,7 +36,8 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
             outsideSize: 120,
             insideSize: 100,
             radius: 52,
-            imageUrl: _profileImageUrl,
+            imageUrl: authState.profileImageUrl ??
+                FirebaseAuth.instance.currentUser!.photoURL,
           ),
 
           const SizedBox(height: 10),
@@ -100,9 +90,9 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
           onTap: () {
             if (router == '/') {
               ref!.read(authViewModelProvider.notifier).signOut();
-              context.go(router);
+              context.push(router);
             } else {
-              context.go(router);
+              context.push(router);
             }
           },
           child: ListTile(

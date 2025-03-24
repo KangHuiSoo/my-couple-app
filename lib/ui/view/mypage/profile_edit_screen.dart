@@ -12,6 +12,7 @@ import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/custom_button.dart';
 import 'package:my_couple_app/core/ui/component/custom_text_field.dart';
 import 'package:my_couple_app/core/ui/component/profile_photo.dart';
+import 'package:my_couple_app/data/provider/auth/auth_provider.dart';
 
 class ProfileEditScreen extends ConsumerStatefulWidget {
   const ProfileEditScreen({super.key});
@@ -22,29 +23,34 @@ class ProfileEditScreen extends ConsumerStatefulWidget {
 
 class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
   Genders? genders = Genders.man;
+  File? _selectedImage;
   String? _profileImageUrl;
+  bool _isUploading = false;
 
   Future<void> _updateProfileImage() async {
-    print("=-=-=-=--=-");
-    print(FirebaseAuth.instance.currentUser);
     try {
-      final XFile? pickedImage =
-          await ImagePicker().pickImage(source: ImageSource.gallery);
+      final XFile? pickedImage = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 70,
+      );
       if (pickedImage == null) return;
 
-      final File file = File(pickedImage.path);
-      final ref = FirebaseStorage.instance
-          .ref('profile_images/${FirebaseAuth.instance.currentUser!.uid}');
-      await ref.putFile(file);
+      setState(() {
+        _selectedImage = File(pickedImage.path);
+        _isUploading = true;
+      });
 
-      final String downloadUrl = await ref.getDownloadURL();
-      await FirebaseAuth.instance.currentUser?.updatePhotoURL(downloadUrl);
+      await ref
+          .read(authViewModelProvider.notifier)
+          .updateProfileImage(_selectedImage!);
 
       setState(() {
-        _profileImageUrl = downloadUrl;
+        _isUploading = false;
       });
     } catch (e) {
-      debugPrint('프로필 사진 변경 실패: $e');
+      setState(() => _isUploading = false);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('프로필 사진 변경 실패: $e')));
     }
   }
 
@@ -81,8 +87,15 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                       outsideSize: 120,
                       insideSize: 100,
                       radius: 52,
+                      imageFile: _selectedImage,
                       imageUrl: _profileImageUrl,
                     ),
+                    if (_isUploading)
+                      Positioned.fill(
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
                     Positioned(
                       top: 90,
                       left: 90,
