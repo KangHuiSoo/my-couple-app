@@ -17,7 +17,6 @@ import 'package:my_couple_app/data/provider/place/google_map_provider.dart';
 import 'package:my_couple_app/data/provider/place/location_provider.dart';
 import 'package:my_couple_app/data/provider/place/maker_provider.dart';
 import 'package:my_couple_app/data/provider/place/place_provider.dart';
-import 'package:intl/intl.dart';
 
 class PlaceAddScreen extends ConsumerStatefulWidget {
   final Place? searchPlace;
