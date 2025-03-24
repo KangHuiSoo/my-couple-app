@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/custom_button.dart';
 import 'package:my_couple_app/core/ui/component/custom_calendar.dart';
-import 'package:my_couple_app/data/model/place/place_add_argument.dart';
-import 'package:flutter/cupertino.dart';
 
-class DatepickerScreen extends StatefulWidget {
+import 'package:flutter/cupertino.dart';
+import 'package:my_couple_app/data/provider/place/place_provider.dart';
+
+class DatepickerScreen extends ConsumerStatefulWidget {
   const DatepickerScreen({super.key});
 
   @override
-  State<DatepickerScreen> createState() => _DatepickerScreenState();
+  ConsumerState<DatepickerScreen> createState() => _DatepickerScreenState();
 }
 
-class _DatepickerScreenState extends State<DatepickerScreen> {
+class _DatepickerScreenState extends ConsumerState<DatepickerScreen> {
   DateTime selectedDay = DateTime.utc(
     DateTime.now().year,
     DateTime.now().month,
@@ -54,8 +56,9 @@ class _DatepickerScreenState extends State<DatepickerScreen> {
               padding: const EdgeInsets.all(20.0),
               child: CustomButton(
                   onPressed: () {
-                    context.push('/placeAdd',
-                        extra: PlaceAddArgument(selectedDate: focusedDay));
+                    ref.read(selectedDateProvider.notifier).state =
+                        focusedDay.toString();
+                    context.push('/placeAdd');
                   },
                   backgroundColor: PRIMARY_COLOR,
                   textColor: Colors.white,

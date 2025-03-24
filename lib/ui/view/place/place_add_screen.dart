@@ -21,9 +21,8 @@ import 'package:intl/intl.dart';
 
 class PlaceAddScreen extends ConsumerStatefulWidget {
   final Place? searchPlace;
-  final DateTime? selectedDate;
 
-  const PlaceAddScreen({this.searchPlace, this.selectedDate, super.key});
+  const PlaceAddScreen({this.searchPlace, super.key});
 
   @override
   ConsumerState<PlaceAddScreen> createState() => _PlaceAddScreenState();
@@ -90,6 +89,7 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
     final LatLng currentPosition = ref.watch(currentLocationProvider);
     final bool isCategoryView = ref.watch(isCategoryViewProvider);
     final selectedCategory = ref.watch(selectedCategoryProvider);
+    final selectedDate = ref.watch(selectedDateProvider);
     // final placeAsyncValue = selectedCategory != null
     //     ? ref.watch(placesByCategoryProvider(
     //     PlaceCategoryRequest(
@@ -153,8 +153,12 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                     // Search Bar
                     _buildSearchBar(selectedCategory),
                     // BottomSheet
-                    _buildBottomSheet(isCategoryView, placeAsyncValue,
-                        selectedPlace, currentPosition),
+                    _buildBottomSheet(
+                        isCategoryView,
+                        placeAsyncValue,
+                        selectedPlace,
+                        currentPosition,
+                        selectedDate ?? DateTime.now().toString()),
                   ],
                 ),
               ),
@@ -170,7 +174,8 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
       bool isCategoryView,
       AsyncValue<PlaceResponse?> placeAsyncValue,
       Place? selectedPlace,
-      LatLng currentPosition) {
+      LatLng currentPosition,
+      String selectedDate) {
     return NotificationListener<DraggableScrollableNotification>(
       onNotification: (DraggableScrollableNotification notification) {
         setState(() {
@@ -197,8 +202,8 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                 Expanded(
                   child: isCategoryView
                       ? _buildCategoryGrid(ref, currentPosition)
-                      : _buildPlaceList(
-                          scrollController, placeAsyncValue, selectedPlace),
+                      : _buildPlaceList(scrollController, placeAsyncValue,
+                          selectedPlace, selectedDate),
                 ),
               ],
             ),
@@ -363,7 +368,10 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
   }
 
   // 해당 장소 클릭시 다이얼로그 출력
-  void _showPlaceDialog(BuildContext context, Place place) {
+  void _showPlaceDialog(
+      BuildContext context, Place place, String? selectedDate) {
+    if (selectedDate == null) return; // 날짜가 없으면 다이얼로그를 보여주지 않음
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -401,12 +409,8 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                       ),
                       TextButton(
                         onPressed: () {
-                          final updatedPlace = place.copyWith(
-                            selectedDate: widget.selectedDate != null
-                                ? DateFormat('yyyyMMdd')
-                                    .format(widget.selectedDate!)
-                                : null,
-                          );
+                          final updatedPlace =
+                              place.copyWith(selectedDate: selectedDate);
                           ref
                               .read(placeNotifierProvider.notifier)
                               .addPlace(updatedPlace);
@@ -427,7 +431,7 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
 
   // ✅ 장소 목록 UI
   Widget _buildPlaceList(ScrollController scrollController,
-      AsyncValue placeAsyncValue, selectedPlace) {
+      AsyncValue placeAsyncValue, selectedPlace, String selectedDate) {
     return placeAsyncValue.when(
       data: (placeResponse) {
         List<Place> filteredPlaces =
@@ -449,7 +453,7 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                         onTap: () {
                           // GoRouter.of(context).go('/placeDetail?url=${place.placeUrl}');
                           // WebViewHelper.openWebView(context, place.placeUrl);
-                          _showPlaceDialog(context, place);
+                          _showPlaceDialog(context, place, selectedDate);
                         },
                         title: Row(
                           children: [

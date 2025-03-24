@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_couple_app/core/ui/component/custom_text_field.dart';
 import 'package:my_couple_app/data/model/place/place.dart';
+import 'package:my_couple_app/data/model/place/place_add_argument.dart';
 import 'package:my_couple_app/data/model/place/place_keyword_request.dart';
 import 'package:my_couple_app/ui/view/place/place_view_model.dart';
 
@@ -24,9 +25,11 @@ class _PlaceSearchScreenState extends ConsumerState<PlaceSearchScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(onPressed: (){
-          GoRouter.of(context).go('/placeAdd');
-        }, icon: Icon(CupertinoIcons.back)),
+        leading: IconButton(
+            onPressed: () {
+              GoRouter.of(context).go('/placeAdd');
+            },
+            icon: Icon(CupertinoIcons.back)),
         centerTitle: false,
         backgroundColor: Colors.white,
         title: Text('장소 검색'),
@@ -48,8 +51,10 @@ class _PlaceSearchScreenState extends ConsumerState<PlaceSearchScreen> {
                   ),
                 ),
                 IconButton(
-                  onPressed: (){
-                    ref.read(placeNotifierProvider.notifier).fetchPlacesByKeyword(searchController.text);
+                  onPressed: () {
+                    ref
+                        .read(placeNotifierProvider.notifier)
+                        .fetchPlacesByKeyword(searchController.text);
                   },
                   icon: Icon(Icons.search),
                 ),
@@ -79,7 +84,7 @@ class _PlaceSearchScreenState extends ConsumerState<PlaceSearchScreen> {
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         place.placeName,
@@ -111,7 +116,6 @@ class _PlaceSearchScreenState extends ConsumerState<PlaceSearchScreen> {
     );
   }
 }
-
 
 // import 'package:flutter/cupertino.dart';
 // import 'package:flutter/material.dart';

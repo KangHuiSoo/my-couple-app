@@ -40,12 +40,8 @@ final GoRouter router = GoRouter(routes: [
       GoRoute(
           path: '/placeAdd',
           builder: (context, state) {
-            final args = state.extra as PlaceAddArgument?;
-            return PlaceAddScreen(
-                searchPlace: args?.searchPlace,
-                selectedDate: args?.selectedDate);
-            // final searchPlace = state.extra as Place?;
-            // return PlaceAddScreen(searchPlace: searchPlace);
+            final place = state.extra as Place?;
+            return PlaceAddScreen(searchPlace: place);
           }),
       GoRoute(
           path: '/placeSearch',
