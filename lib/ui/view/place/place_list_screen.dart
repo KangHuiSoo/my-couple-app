@@ -55,8 +55,7 @@ class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
 
   Future<void> _loadPlaces() async {
     try {
-      final loadedPlaces =
-          await ref.read(placeNotifierProvider.notifier).fetchPlaceByCoupleId();
+      final loadedPlaces = ref.read(placeNotifierProvider.notifier).places;
       setState(() {
         places = loadedPlaces;
         selectedItems = List.generate(places.length, (_) => false);
