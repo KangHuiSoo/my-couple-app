@@ -240,8 +240,18 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
     return Positioned(
       bottom: _fabPosition + _fabPositionPadding,
       right: _fabPositionPadding, // 위치 조절
-      child: Column(
+      child: Row(
         children: [
+          FloatingActionButton.extended(
+            onPressed: () async {
+              ref.read(isCategoryViewProvider.notifier).state = true;
+            },
+            backgroundColor: Colors.grey[200],
+            heroTag: 'backToList',
+            label: Text("카테고리"),
+            icon: Icon(Icons.category),
+          ),
+          SizedBox(width: 10.0),
           FloatingActionButton(
             onPressed: () async {
               ref.read(selectedPlaceProvider.notifier).state = null;
@@ -249,10 +259,10 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
             backgroundColor: Colors.grey[200],
             shape: CircleBorder(),
             mini: true,
-            child: Icon(CupertinoIcons.back),
             heroTag: 'backToList',
+            child: Icon(CupertinoIcons.back),
           ),
-          SizedBox(height: 16.0),
+          SizedBox(width: 10.0),
           FloatingActionButton(
             onPressed: () async {
               final newPosition = await ref.read(locationUpdateProvider.future);
@@ -272,8 +282,8 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
             backgroundColor: Colors.grey[200],
             shape: CircleBorder(),
             mini: true,
-            child: Icon(Icons.my_location),
             heroTag: 'myLocation',
+            child: Icon(Icons.my_location),
           ),
         ],
       ),
