@@ -6,26 +6,25 @@ import '../datasource/firestore_place_service.dart';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// 장소 관련 데이터를 관리하는 Repository
-/// - Kakao API를 통한 장소 검색
-/// - Firestore를 통한 장소 데이터 저장/조회
-/// - 캐시를 통한 API 요청 최적화
+/* 장소 관련 데이터를 관리하는 Repository
+- Kakao API를 통한 장소 검색
+- Firestore를 통한 장소 데이터 저장/조회
+- 캐시를 통한 API 요청 최적화 */
 class PlaceRepository {
-  // API 서비스 (카카오 API 호출)
-  final KakaoApiService apiService;
-  // Firestore 서비스 (데이터베이스 작업)
-  final FirestorePlaceService firestoreService;
-  // 캐시 서비스 (API 응답 캐싱)
-  final CacheService<PlaceResponse> cacheService;
+
+  final KakaoApiService apiService; // API 서비스 (카카오 API 호출)
+  final FirestorePlaceService firestoreService;// Firestore 서비스 (데이터베이스 작업)
+  final CacheService<PlaceResponse> cacheService; // 캐시 서비스 (API 응답 캐싱 담당)
 
   PlaceRepository(this.apiService, this.firestoreService, this.cacheService);
 
-  /// 커플 ID로 저장된 장소 목록을 조회
+  /// 커플 고유 id를 이용하여 장소 데이터 가져오기
+  //TODO: 회원가입 후 링크연결시 coupleId 부여하는 기능 완료후 파라미터 적용할것
   Future<List<Place>> fetchPlaceByCoupleId() async {
     return await firestoreService.fetchPlaceByCoupleId();
   }
 
-  /// 새로운 장소를 추가
+  /// 선택한 장소 firestore에 저장
   Future<Place> addPlace(Place place) async {
     return await firestoreService.addPlace(place);
   }

@@ -75,13 +75,6 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
     });
   }
 
-  // @override
-  // void dispose() {
-  //   // TODO: implement dispose
-  //   ref.read(googleMapControllerProvider)?.dispose();
-  //   super.dispose();
-  // }
-
   @override
   Widget build(BuildContext context) {
     // 📍 Provider에서 상태 가져오기
@@ -89,18 +82,6 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
     final bool isCategoryView = ref.watch(isCategoryViewProvider);
     final selectedCategory = ref.watch(selectedCategoryProvider);
     final selectedDate = ref.watch(selectedDateProvider);
-    // final placeAsyncValue = selectedCategory != null
-    //     ? ref.watch(placesByCategoryProvider(
-    //     PlaceCategoryRequest(
-    //       categoryGroupCode: PlaceCategory.getCodeByLabel(
-    //           selectedCategory), // 카테코리 코드로 변환
-    //       x: currentPosition.longitude.toString(), // 선택적
-    //       y: currentPosition.latitude.toString(), // 선택적
-    //       radius: 5000, // 기본값 사용 가능
-    //     ),
-    //   ),
-    // )
-    //     : const AsyncValue.data(null);
     final placeAsyncValue = ref.watch(placeNotifierProvider);
     final selectedPlace = ref.watch(selectedPlaceProvider);
     final markers = ref.watch(markersProvider);
@@ -119,21 +100,6 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                   alignment: Alignment.topCenter,
                   children: [
                     // 📍 Google Map 위젯
-                    // GoogleMap(
-                    //   key: ValueKey('google_map_key'),
-                    //   initialCameraPosition: CameraPosition(
-                    //     target: currentPosition,
-                    //     zoom: 17.0,
-                    //   ),
-                    //   onMapCreated: (GoogleMapController controller) {
-                    //     ref.read(googleMapControllerProvider.notifier).state = controller;
-                    //   },
-                    //   myLocationEnabled: true,
-                    //   myLocationButtonEnabled: false,
-                    //   markers: ref.watch(markersProvider),
-                    // ),
-
-                    // 📍 Google Map 위젯
                     CustomGoogleMap(
                       valueKey: valueKey,
                       initialPosition: CameraPosition(
@@ -147,11 +113,11 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                       markers: markers,
                     ),
 
-                    // FAB
+                    // 장소추가 FAB 버튼
                     _buildFloatingActionButtons(),
-                    // Search Bar
+                    // 검색바
                     _buildSearchBar(selectedCategory),
-                    // BottomSheet
+                    // 바텀 시트
                     _buildBottomSheet(
                         isCategoryView,
                         placeAsyncValue,

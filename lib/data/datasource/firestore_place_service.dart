@@ -7,7 +7,7 @@ class FirestorePlaceService {
 
   // 메모리 캐시 추가
   final Map<String, List<Place>> _cache = {};
-  final Duration _cacheDuration = Duration(minutes: 5);
+  final Duration _cacheDuration = Duration(minutes: 10);
   DateTime? _lastFetchTime;
 
   Future<Place> addPlace(Place place) async {

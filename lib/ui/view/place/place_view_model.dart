@@ -18,7 +18,10 @@ class PlaceViewModel extends StateNotifier<AsyncValue<PlaceResponse?>> {
     _setupPlacesListener();
   }
 
-  // 실시간 리스너 설정
+  // 현재 장소 목록 반환
+  List<Place> get places => _places;
+
+  // 실시간 리스너 설정 ( 장소 목록 실시간 업데이트)
   void _setupPlacesListener() {
     _placesSubscription?.cancel(); // 기존 리스너가 있다면 취소
     _placesSubscription = repository.listenToPlaces().listen(
@@ -31,9 +34,7 @@ class PlaceViewModel extends StateNotifier<AsyncValue<PlaceResponse?>> {
     );
   }
 
-  // 현재 장소 목록 반환
-  List<Place> get places => _places;
-
+  // 선택한 장소 firestore에 추가
   Future<void> addPlace(Place place) async {
     try {
       await repository.addPlace(place);
@@ -49,6 +50,8 @@ class PlaceViewModel extends StateNotifier<AsyncValue<PlaceResponse?>> {
     super.dispose();
   }
 
+
+  /* 검색 키워드로 장소 검색 */
   Future<void> fetchPlacesByKeyword(String keyword,
       {String? categoryGroupCode, String? x, String? y, int? radius}) async {
     state = const AsyncValue.loading();
@@ -61,6 +64,7 @@ class PlaceViewModel extends StateNotifier<AsyncValue<PlaceResponse?>> {
     }
   }
 
+  /* 카테고리별 장소 주변 장소 검색*/
   Future<void> fetchPlacesByCategory(WidgetRef ref, String categoryGroupCode,
       {String? x, String? y, int? radius}) async {
     state = const AsyncValue.loading();
@@ -87,7 +91,6 @@ final placeNotifierProvider =
     StateNotifierProvider<PlaceViewModel, AsyncValue<PlaceResponse?>>(
   (ref) => PlaceViewModel(ref.watch(placeRepositoryProvider)),
 );
-
 
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import '../../../core/utils/map_util.dart';
@@ -128,12 +131,6 @@ final placeNotifierProvider =
 // final placeNotifierProvider = StateNotifierProvider<PlaceNotifier, AsyncValue<PlaceResponse?>>(
 //       (ref) => PlaceNotifier(ref, ref.watch(placeRepositoryProvider)),
 // );
-
-
-
-
-
-
 
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:my_couple_app/data/model/place_keyword_request.dart';
