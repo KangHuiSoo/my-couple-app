@@ -108,7 +108,7 @@ class _PlaceSearchScreenState extends ConsumerState<PlaceSearchScreen> {
                     );
                   },
                   error: (err, stack) => Center(child: Text("Error: \$err")),
-                  loading: () => Center(child: CircularProgressIndicator())),
+                  loading: () => Center(child: Text('검색된 장소가 없습니다'))),
             )
           ],
         ),
