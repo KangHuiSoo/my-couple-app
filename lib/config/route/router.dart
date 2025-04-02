@@ -26,7 +26,9 @@ final GoRouter router = GoRouter(routes: [
           builder: (context, state) => AskCoupleLinkScreen()),
       GoRoute(
           path: '/coupleLink', builder: (context, state) => CoupleLinkScreen()),
-      GoRoute(path: '/askCoupleLink', builder: (context, state) => AskCoupleLinkScreen()),
+      GoRoute(
+          path: '/askCoupleLink',
+          builder: (context, state) => AskCoupleLinkScreen()),
     ],
   ),
   ShellRoute(

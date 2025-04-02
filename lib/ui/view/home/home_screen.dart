@@ -12,6 +12,7 @@ import 'package:my_couple_app/core/ui/component/positioned_decorated_box.dart';
 import 'package:my_couple_app/core/ui/component/positioned_text.dart';
 import 'package:my_couple_app/core/ui/component/profile_photo.dart';
 import 'package:my_couple_app/data/provider/auth/auth_provider.dart';
+import 'package:my_couple_app/ui/viewmodel/couple_view_model.dart';
 
 import '../../../data/model/place/place.dart';
 
@@ -50,13 +51,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _profileImageUrl = FirebaseAuth.instance.currentUser!.photoURL;
+    // 현재 로그인한 사용자의 프로필 이미지 URL을 가져옵니다
+    _profileImageUrl = FirebaseAuth.instance.currentUser?.photoURL;
+
+    // 위젯 생명주기 중에 provider를 수정하는 것을 방지하기 위해 Future를 사용합니다
+    // 이렇게 하면 build 메서드가 완료된 후에 상태 변경이 이루어집니다
+    Future(() {
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId != null) {
+        ref.read(coupleViewModelProvider.notifier).loadCouplePartner(userId);
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final authState = ref.watch(authViewModelProvider);
+    final coupleViewModel = ref.watch(coupleViewModelProvider.notifier);
+    final partnerState = coupleViewModel.partner;
+
+    print('HomeScreen build - Partner state: $partnerState');
 
     return Scaffold(
       body: Stack(
@@ -80,9 +95,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           PositionedDecoratedBox(x: 20, y: 150, text: '생일 D-30'),
           PositionedDecoratedBox(x: 20, y: 180, text: '크리스마스 D-30'),
           DraggableScrollableSheet(
-            initialChildSize: 0.2, // 초기 높이 30%
-            minChildSize: 0.2, // 최소 높이 20%
-            maxChildSize: 0.7, // 최대 높이 100%
+            initialChildSize: 0.2,
+            minChildSize: 0.2,
+            maxChildSize: 0.7,
             builder: (BuildContext context, ScrollController scrollController) {
               return Container(
                 decoration: BoxDecoration(
@@ -92,17 +107,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
                 child: Column(
                   children: [
-                    //상단 Draggable 기호
                     DraggableBar(),
-
-                    // DraggalbeScrollableSheet 몸체
                     Expanded(
                       child: ListView(
                         padding: EdgeInsets.zero,
                         controller: scrollController,
                         children: [
                           Center(
-                            // 상단 프로필 사진, D-day 영역
                             child: Padding(
                               padding: const EdgeInsets.only(top: 26),
                               child: Container(
@@ -137,10 +148,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       ],
                                     ),
                                     SizedBox(width: 16.0),
-                                    ProfilePhoto(
-                                        outsideSize: 80,
-                                        insideSize: 72,
-                                        radius: 32),
+                                    partnerState.when(
+                                      data: (partner) {
+                                        print('Partner data in UI: $partner');
+                                        return ProfilePhoto(
+                                          outsideSize: 80,
+                                          insideSize: 72,
+                                          radius: 32,
+                                          imageUrl: partner?.profileImageUrl,
+                                        );
+                                      },
+                                      loading: () {
+                                        print('Partner state is loading');
+                                        return CircularProgressIndicator();
+                                      },
+                                      error: (error, stack) {
+                                        print('Partner state error: $error');
+                                        return Icon(
+                                          Icons.error,
+                                          color: Colors.red,
+                                          size: 32,
+                                        );
+                                      },
+                                    ),
                                   ],
                                 ),
                               ),
@@ -148,7 +178,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           ),
                           SizedBox(height: 32.0),
                           Container(
-                            // 데이트 코스 영역
                             color: Colors.white,
                             child: Column(
                               children: [

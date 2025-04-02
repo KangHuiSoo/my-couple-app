@@ -1,5 +1,6 @@
 import 'package:my_couple_app/data/datasource/firestore_couple_service.dart';
 import 'package:my_couple_app/data/model/couple/couple.dart';
+import 'package:my_couple_app/data/model/auth/user.dart';
 
 class CoupleRepository {
   final FirestoreCoupleService _coupleService;
@@ -29,5 +30,10 @@ class CoupleRepository {
   // 사용자의 커플 정보 조회
   Future<Couple?> getUserCouple(String userId) async {
     return await _coupleService.getUserCouple(userId);
+  }
+
+  // 커플 상대방 정보 가져오기
+  Future<MyUser?> getCouplePartner(String userId) async {
+    return await _coupleService.getCouplePartner(userId);
   }
 }

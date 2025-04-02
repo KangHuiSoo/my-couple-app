@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:my_couple_app/data/model/couple/couple.dart';
+import 'package:my_couple_app/data/model/auth/user.dart';
 
 class FirestoreCoupleService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -14,7 +15,7 @@ class FirestoreCoupleService {
 
   // 사용자의 커플 상태 확인
   Future<bool> hasCouple(String userId) async {
-    final doc = await _firestore.collection('users').doc(userId).get();
+    final doc = await _firestore.collection('user').doc(userId).get();
     return doc.data()?['coupleId'] != null;
   }
 
@@ -88,26 +89,95 @@ class FirestoreCoupleService {
     }
 
     // 커플 문서 업데이트
-    await _firestore.collection('couples').doc(coupleId).update({
-      'user2Id': userId,
-      'coupleId': coupleId
-    });
+    await _firestore
+        .collection('couples')
+        .doc(coupleId)
+        .update({'user2Id': userId});
 
     // 사용자 문서 업데이트
-    await _firestore.collection('users').doc(userId).update({
+    await _firestore.collection('user').doc(userId).update({
       'coupleId': coupleId,
     });
   }
 
-  // 사용자의 커플 정보 조회
+  // 사용자의 커플 정보 조회 (최적화된 버전)
   Future<Couple?> getUserCouple(String userId) async {
-    final userDoc = await _firestore.collection('users').doc(userId).get();
-    final coupleId = userDoc.data()?['coupleId'];
+    try {
+      final userDoc = await _firestore.collection('user').doc(userId).get();
+      final userData = userDoc.data();
+      if (userData == null) return null;
 
-    if (coupleId == null) return null;
+      final coupleId = userData['coupleId'] as String?;
+      if (coupleId == null) return null;
 
-    final coupleDoc =
-        await _firestore.collection('couples').doc(coupleId).get();
-    return Couple.fromFirestore(coupleDoc);
+      final coupleDoc =
+          await _firestore.collection('couples').doc(coupleId).get();
+      return Couple.fromFirestore(coupleDoc);
+    } catch (e) {
+      print('Error getting user couple: $e');
+      return null;
+    }
+  }
+
+  // 커플 상대방 정보 가져오기
+  Future<MyUser?> getCouplePartner(String userId) async {
+    try {
+      print('Getting couple partner for user: $userId');
+
+      // 사용자와 커플 정보를 한 번에 가져오기
+      final userDoc = await _firestore.collection('user').doc(userId).get();
+      final userData = userDoc.data();
+      if (userData == null) {
+        print('User data is null');
+        return null;
+      }
+
+      final coupleId = userData['coupleId'] as String?;
+      if (coupleId == null) {
+        print('CoupleId is null');
+        return null;
+      }
+
+      // 커플 정보 가져오기
+      final coupleDoc =
+          await _firestore.collection('couples').doc(coupleId).get();
+      final coupleData = coupleDoc.data();
+      if (coupleData == null) {
+        print('Couple data is null');
+        return null;
+      }
+
+      // user2Id가 null이면 아직 연결되지 않은 상태
+      if (coupleData['user2Id'] == null) {
+        print('Partner not connected yet (user2Id is null)');
+        return null;
+      }
+
+      final partnerId = coupleData['user1Id'] == userId
+          ? coupleData['user2Id'] as String
+          : coupleData['user1Id'] as String;
+
+      // 파트너 정보 가져오기
+      final partnerDoc =
+          await _firestore.collection('user').doc(partnerId).get();
+      final partnerData = partnerDoc.data();
+      if (partnerData == null) {
+        print('Partner data is null');
+        return null;
+      }
+
+      return MyUser(
+        uid: partnerId,
+        email: partnerData['email'] as String,
+        nickname: partnerData['nickname'] as String,
+        gender: partnerData['gender'] as String,
+        coupleId: coupleId,
+        profileImageUrl: partnerData['profileImageUrl'] as String?,
+      );
+    } catch (e, stackTrace) {
+      print('Error getting couple partner: $e');
+      print('Stack trace: $stackTrace');
+      return null;
+    }
   }
 }
