@@ -37,13 +37,15 @@ class MyPageScreen extends ConsumerWidget {
             insideSize: 100,
             radius: 52,
             imageUrl: authState.profileImageUrl ??
-                FirebaseAuth.instance.currentUser!.photoURL,
+                FirebaseAuth.instance.currentUser?.photoURL,
           ),
 
           const SizedBox(height: 10),
           // 사용자 이름
           Text(
-            FirebaseAuth.instance.currentUser?.displayName ?? '이름없음',
+            authState.user?.nickname ??
+                FirebaseAuth.instance.currentUser?.displayName ??
+                '이름없음',
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -70,7 +72,7 @@ class MyPageScreen extends ConsumerWidget {
               children: [
                 _buildMenuItem(context, '회원 정보 수정', '/profileEdit'),
                 _buildMenuItem(context, '비밀번호 변경', '/passwordEdit'),
-                _buildMenuItem(context, '커플인증/해제', ''),
+                _buildMenuItem(context, '커플인증/해제', '/askCoupleLink'),
                 _buildMenuItem(context, '앱설정', ''),
                 _buildMenuItem(context, '로그아웃', '/', ref: ref),
               ],
