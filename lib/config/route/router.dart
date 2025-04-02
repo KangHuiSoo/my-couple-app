@@ -1,5 +1,4 @@
 import 'package:go_router/go_router.dart';
-import 'package:my_couple_app/data/model/place/place_add_argument.dart';
 import 'package:my_couple_app/ui/view/bottom_navigation/main_screen.dart';
 import 'package:my_couple_app/ui/view/home/home_screen.dart';
 import 'package:my_couple_app/ui/view/link/ask_couple_link_screen.dart';
@@ -27,6 +26,7 @@ final GoRouter router = GoRouter(routes: [
           builder: (context, state) => AskCoupleLinkScreen()),
       GoRoute(
           path: '/coupleLink', builder: (context, state) => CoupleLinkScreen()),
+      GoRoute(path: '/askCoupleLink', builder: (context, state) => AskCoupleLinkScreen()),
     ],
   ),
   ShellRoute(
