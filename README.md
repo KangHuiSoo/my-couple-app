@@ -1,16 +1,73 @@
-# my_couple_app
+graph TD
+    subgraph UI Layer
+        HS[HomeScreen]
+        MPS[MyPageScreen]
+        CV[CustomTitle]
+        DB[DraggableBar]
+        PL[PlaceList]
+        PDB[PositionedDecoratedBox]
+        PT[PositionedText]
+        PP[ProfilePhoto]
+    end
 
-my couple app
+    subgraph ViewModel Layer
+        CVM[CoupleViewModel]
+        PVM[PlaceViewModel]
+        AVM[AuthViewModel]
+    end
 
-## Getting Started
+    subgraph Repository Layer
+        CR[CoupleRepository]
+    end
 
-This project is a starting point for a Flutter application.
+    subgraph DataSource Layer
+        FCS[FirestoreCoupleService]
+    end
 
-A few resources to get you started if this is your first Flutter project:
+    subgraph Models
+        C[Couple Model]
+        U[User Model]
+        P[Place Model]
+    end
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+    %% UI Layer Connections
+    HS --> CVM
+    HS --> AVM
+    HS --> PVM
+    HS --> CV
+    HS --> DB
+    HS --> PL
+    HS --> PDB
+    HS --> PT
+    HS --> PP
+    MPS --> AVM
+    MPS --> PP
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+    %% ViewModel Layer Connections
+    CVM --> CR
+    CVM --> AVM
+    PVM --> AVM
+
+    %% Repository Layer Connections
+    CR --> FCS
+
+    %% DataSource Layer Connections
+    FCS --> C
+    FCS --> U
+
+    %% Model Usage
+    CVM --> C
+    CVM --> U
+    PVM --> P
+
+    classDef ui fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef viewmodel fill:#bbf,stroke:#333,stroke-width:2px;
+    classDef repository fill:#bfb,stroke:#333,stroke-width:2px;
+    classDef datasource fill:#fbb,stroke:#333,stroke-width:2px;
+    classDef model fill:#fbf,stroke:#333,stroke-width:2px;
+
+    class HS,MPS,CV,DB,PL,PDB,PT,PP ui;
+    class CVM,PVM,AVM viewmodel;
+    class CR repository;
+    class FCS datasource;
+    class C,U,P model;
