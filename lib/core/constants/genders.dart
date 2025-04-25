@@ -1,1 +1,0 @@
-enum Genders{man, woman}
