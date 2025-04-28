@@ -62,7 +62,8 @@ class FirebaseAuthService {
           uid: data['uid'] ?? '',
           email: data['email'] ?? '',
           nickname: data['nickname'] ?? '',
-          gender: data['gender'] ?? '');
+          gender: data['gender'] ?? '',
+          coupleId: data['coupleId']);
     } on FirebaseAuthException catch (e) {
       throw Exception(AuthExceptionHandler.generateErrorMessage(e));
     }

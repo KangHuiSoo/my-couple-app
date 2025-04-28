@@ -9,6 +9,7 @@ import 'package:my_couple_app/core/ui/component/draggable_bar.dart';
 import 'package:my_couple_app/core/ui/component/google_map/custom_google_map.dart';
 import 'package:my_couple_app/core/utils/map_util.dart';
 import 'package:my_couple_app/core/utils/web_view_helper.dart';
+import 'package:my_couple_app/features/auth/provider/auth_provider.dart';
 import 'package:my_couple_app/features/place/model/place.dart';
 import 'package:my_couple_app/features/place/model/place_response.dart';
 import 'package:my_couple_app/features/place/viewmodel/place_view_model.dart';
@@ -83,6 +84,10 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
     final markers = ref.watch(markersProvider);
     final valueKey = ValueKey('google_map_key');
     final initialZoom = 17.0;
+
+    final authState = ref.watch(authViewModelProvider);
+    final currentUser = authState.user;
+    print("유저정보 --->>> ${currentUser}");
 
     return Scaffold(
       backgroundColor: Colors.white,

@@ -14,6 +14,7 @@ class Place {
   final String placeUrl;
   final String distance;
   final String? selectedDate;
+  final String? coupleId;
 
   Place(
       {required this.id,
@@ -28,7 +29,8 @@ class Place {
       required this.y,
       required this.placeUrl,
       required this.distance,
-      this.selectedDate});
+      this.selectedDate,
+      this.coupleId});
 
   factory Place.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
@@ -46,6 +48,7 @@ class Place {
       placeUrl: data['placeUrl'] ?? '',
       distance: data['distance'] ?? '',
       selectedDate: data['selectedDate'],
+      coupleId: data['coupleId']
     );
   }
 
@@ -64,6 +67,7 @@ class Place {
       placeUrl: json['place_url'],
       distance: json['distance'],
       selectedDate: json['selectedDate'],
+      coupleId: json['coupleId']
     );
   }
 

@@ -10,8 +10,6 @@ import 'package:my_couple_app/features/mypage/view/password_edit_screen.dart';
 import 'package:my_couple_app/features/mypage/view/profile_edit_screen.dart';
 import 'package:my_couple_app/features/place/view/datepicker_screen.dart';
 import 'package:my_couple_app/features/place/view/place_add_screen.dart';
-
-
 import '../../features/place/model/place.dart';
 import '../../features/auth/view/join_screen.dart';
 import '../../features/auth/view/login_screen.dart';

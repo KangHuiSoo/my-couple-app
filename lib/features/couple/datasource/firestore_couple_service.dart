@@ -47,10 +47,10 @@ class FirestoreCoupleService {
       'createdAt': FieldValue.serverTimestamp(),
     });
 
-    // 사용자 문서 업데이트
-    await _firestore.collection('user').doc(userId).update({
-      'coupleId': docRef.id,
-    });
+    // 사용자 문서 업데이트 ( 커플완료시 업데이트하는것으로 변경)
+    // await _firestore.collection('user').doc(userId).update({
+    //   'coupleId': docRef.id,
+    // });
 
     return Couple(
       id: docRef.id,
@@ -84,21 +84,57 @@ class FirestoreCoupleService {
 
   // 커플 연결
   Future<void> joinCouple(String coupleId, String userId) async {
-    // 이미 커플인지 확인
-    if (await hasCouple(userId)) {
-      throw Exception('이미 다른 사람과 연결되어 있어요.');
+
+    final batch = _firestore.batch();
+    final coupleDocRef = _firestore.collection('couples').doc(coupleId);
+    final userDocRef = _firestore.collection('user').doc(userId);
+
+    //예외처리
+    final coupleDoc = await coupleDocRef.get();
+    if (!coupleDoc.exists) {
+      throw Exception('커플 문서를 찾을 수 없습니다.');
+    }
+    final coupleData = coupleDoc.data();
+    if (coupleData == null) {
+      throw Exception('커플 문서 데이터가 없습니다.');
+    }
+    final user1Id = coupleData['user1Id'] as String?;
+    if(user1Id == null) {
+      throw Exception('커플 문서에 user1Id가 없습니다.');
     }
 
-    // 커플 문서 업데이트
-    await _firestore
-        .collection('couples')
-        .doc(coupleId)
-        .update({'user2Id': userId});
-
-    // 사용자 문서 업데이트
-    await _firestore.collection('user').doc(userId).update({
-      'coupleId': coupleId,
+    //couples 문서에 user2Id 추가
+    batch.update(coupleDocRef, {
+      'user2Id' : userId,
     });
+
+    // 초대한 사람(A)의 user문서 업데이트
+    final user1DocRef = _firestore.collection('user').doc(user1Id);
+    batch.update(user1DocRef, {
+      'coupleId' : coupleId
+    });
+
+    // 초대 받은 사람(B)의 user문서 업데이트
+    batch.update(userDocRef, {
+      "coupleId" : coupleId
+    });
+
+    await batch.commit();
+    // // 이미 커플인지 확인
+    // if (await hasCouple(userId)) {
+    //   throw Exception('이미 다른 사람과 연결되어 있어요.');
+    // }
+    //
+    // // 커플 문서 업데이트
+    // await _firestore
+    //     .collection('couples')
+    //     .doc(coupleId)
+    //     .update({'user2Id': userId});
+    //
+    // // 사용자 문서 업데이트
+    // await _firestore.collection('user').doc(userId).update({
+    //   'coupleId': coupleId,
+    // });
   }
 
   // 사용자의 커플 정보 조회 (최적화된 버전)
