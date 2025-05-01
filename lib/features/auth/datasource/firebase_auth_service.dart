@@ -122,6 +122,8 @@ class FirebaseAuthService {
       email: data['email'],
       nickname: data['nickname'],
       gender: data['gender'],
+      coupleId: data['coupleId'],
+      profileImageUrl: data['profileImageUrl']
     );
   }
 

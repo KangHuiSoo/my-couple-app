@@ -86,8 +86,7 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
     final initialZoom = 17.0;
 
     final authState = ref.watch(authViewModelProvider);
-    final currentUser = authState.user;
-    print("유저정보 --->>> ${currentUser}");
+    print("========>! ${authState.user}");
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -124,7 +123,8 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                         placeAsyncValue,
                         selectedPlace,
                         currentPosition,
-                        selectedDate ?? DateTime.now().toString()),
+                        selectedDate ?? DateTime.now().toString(),
+                    authState.user?.coupleId?? ''),
                   ],
                 ),
               ),
@@ -141,7 +141,7 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
       AsyncValue<PlaceResponse?> placeAsyncValue,
       Place? selectedPlace,
       LatLng currentPosition,
-      String selectedDate) {
+      String selectedDate, String coupleId) {
     return NotificationListener<DraggableScrollableNotification>(
       onNotification: (DraggableScrollableNotification notification) {
         setState(() {
@@ -169,7 +169,7 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                   child: isCategoryView
                       ? _buildCategoryGrid(ref, currentPosition)
                       : _buildPlaceList(scrollController, placeAsyncValue,
-                          selectedPlace, selectedDate),
+                          selectedPlace, selectedDate, coupleId),
                 ),
               ],
             ),
@@ -345,7 +345,7 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
 
   // 해당 장소 클릭시 다이얼로그 출력
   void _showPlaceDialog(
-      BuildContext context, Place place, String? selectedDate) {
+      BuildContext context, Place place, String? selectedDate, String coupleId) {
     if (selectedDate == null) return; // 날짜가 없으면 다이얼로그를 보여주지 않음
 
     showDialog(
@@ -386,7 +386,7 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                       TextButton(
                         onPressed: () {
                           final updatedPlace =
-                              place.copyWith(selectedDate: selectedDate);
+                              place.copyWith(selectedDate: selectedDate, coupleId: coupleId);
                           ref
                               .read(placeNotifierProvider.notifier)
                               .addPlace(updatedPlace);
@@ -407,7 +407,7 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
 
   // ✅ 장소 목록 UI
   Widget _buildPlaceList(ScrollController scrollController,
-      AsyncValue placeAsyncValue, selectedPlace, String selectedDate) {
+      AsyncValue placeAsyncValue, selectedPlace, String selectedDate, String coupleId) {
     return placeAsyncValue.when(
       data: (placeResponse) {
         List<Place> filteredPlaces =
@@ -429,7 +429,7 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                         onTap: () {
                           // GoRouter.of(context).go('/placeDetail?url=${place.placeUrl}');
                           // WebViewHelper.openWebView(context, place.placeUrl);
-                          _showPlaceDialog(context, place, selectedDate);
+                          _showPlaceDialog(context, place, selectedDate, coupleId);
                         },
                         title: Row(
                           children: [

@@ -86,12 +86,14 @@ class Place {
       'y': y,
       'placeUrl': placeUrl,
       'distance': distance,
-      'selectedDate': selectedDate
+      'selectedDate': selectedDate,
+      'coupleId' : coupleId
     };
   }
 
   Place copyWith({
     String? selectedDate,
+    String? coupleId
   }) {
     return Place(
       id: id,
@@ -107,6 +109,7 @@ class Place {
       placeUrl: placeUrl,
       distance: distance,
       selectedDate: selectedDate ?? this.selectedDate,
+      coupleId: coupleId ?? this.coupleId
     );
   }
 }
