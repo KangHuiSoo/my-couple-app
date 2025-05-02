@@ -3,14 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class CustomGoogleMap extends ConsumerWidget {
-  final ValueKey valueKey;
   final CameraPosition initialPosition;
   final void Function(GoogleMapController) onMapCreated;
   final Set<Marker> markers; // ✅ Set<Marker>로 변경
 
   const CustomGoogleMap({
     super.key,
-    required this.valueKey,
     required this.initialPosition,
     required this.onMapCreated,
     required this.markers, // ✅ 단일 Marker → Set<Marker>
@@ -19,6 +17,7 @@ class CustomGoogleMap extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return GoogleMap(
+      key: key,
       mapType: MapType.normal,
       initialCameraPosition: initialPosition,
       myLocationEnabled: true,

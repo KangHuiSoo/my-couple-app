@@ -82,11 +82,9 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
     final placeAsyncValue = ref.watch(placeNotifierProvider);
     final selectedPlace = ref.watch(selectedPlaceProvider);
     final markers = ref.watch(markersProvider);
-    final valueKey = ValueKey('google_map_key');
     final initialZoom = 17.0;
-
     final authState = ref.watch(authViewModelProvider);
-    print("========>! ${authState.user}");
+
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -101,7 +99,7 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                   children: [
                     // 📍 Google Map 위젯
                     CustomGoogleMap(
-                      valueKey: valueKey,
+                      key: ValueKey('place_add_map'),
                       initialPosition: CameraPosition(
                         target: currentPosition,
                         zoom: initialZoom,
@@ -248,7 +246,7 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
               ref.read(isCategoryViewProvider.notifier).state = true;
             },
             backgroundColor: Colors.grey[200],
-            heroTag: 'backToList',
+            heroTag: 'backToCategory',
             label: Text("카테고리"),
             icon: Icon(Icons.category),
           ),

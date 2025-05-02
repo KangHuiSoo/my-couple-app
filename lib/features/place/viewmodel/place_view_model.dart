@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:my_couple_app/features/auth/provider/auth_provider.dart';
 import '../../../core/utils/map_util.dart';
 import '../datasource/kakao_api_service.dart';
 import '../model/place_response.dart';
@@ -12,8 +13,9 @@ class PlaceViewModel extends StateNotifier<AsyncValue<PlaceResponse?>> {
   final PlaceRepository repository;
   List<Place> _places = [];
   StreamSubscription<List<Place>>? _placesSubscription;
+  final String? coupleId;
 
-  PlaceViewModel(this.repository) : super(const AsyncValue.loading()) {
+  PlaceViewModel(this.repository, this.coupleId) : super(const AsyncValue.loading()) {
     // 실시간 리스너 설정
     _setupPlacesListener();
   }
@@ -24,7 +26,7 @@ class PlaceViewModel extends StateNotifier<AsyncValue<PlaceResponse?>> {
   // 실시간 리스너 설정 ( 장소 목록 실시간 업데이트)
   void _setupPlacesListener() {
     _placesSubscription?.cancel(); // 기존 리스너가 있다면 취소
-    _placesSubscription = repository.listenToPlaces().listen(
+    _placesSubscription = repository.listenToPlaces(coupleId).listen(
       (places) {
         _places = places;
       },
@@ -89,5 +91,16 @@ final placeRepositoryProvider = Provider((ref) => PlaceRepository(
     ));
 final placeNotifierProvider =
     StateNotifierProvider<PlaceViewModel, AsyncValue<PlaceResponse?>>(
-  (ref) => PlaceViewModel(ref.watch(placeRepositoryProvider)),
+  (ref) {
+    final repository = ref.watch(placeRepositoryProvider);
+    final authState = ref.watch(authViewModelProvider);
+    final coupleId = authState.user?.coupleId;
+
+    if(coupleId == null) {
+      print("커플 연결 안됨. 연결필요");
+      // throw Exception("coupleId가 존재하지 않습니다. 로그인이 필요합니다.");
+    }
+
+    return PlaceViewModel(repository, coupleId);
+  } ,
 );

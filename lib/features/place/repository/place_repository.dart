@@ -87,7 +87,7 @@ class PlaceRepository {
   }
 
   // 실시간 장소 목록 리스너
-  Stream<List<Place>> listenToPlaces() {
-    return firestoreService.listenToPlaces();
+  Stream<List<Place>> listenToPlaces(String? coupleId) {
+    return firestoreService.listenToPlaces(coupleId);
   }
 }

@@ -38,8 +38,10 @@ class FirestorePlaceService {
   }
 
   // 실시간 장소 목록 리스너
-  Stream<List<Place>> listenToPlaces() {
-    return firestore.collection('myPlace').snapshots().map((snapshot) =>
+  Stream<List<Place>> listenToPlaces(String? coupleId) {
+    return firestore.collection('myPlace')
+        .where('coupleId', isEqualTo: coupleId)
+        .snapshots().map((snapshot) =>
         snapshot.docs.map((doc) => Place.fromFirestore(doc)).toList());
   }
 }
