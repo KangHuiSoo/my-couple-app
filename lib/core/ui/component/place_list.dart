@@ -142,8 +142,7 @@ class PlaceList extends ConsumerWidget {
                                   children: [
                                     Icon(Icons.person,
                                         size: 16, color: Colors.grey[500]),
-                                    Text(
-                                        "상대: ${partnerRating ?? '-'}점",
+                                    Text("상대: ${partnerRating ?? '-'}점",
                                         style: TextStyle(fontSize: 12)),
                                   ],
                                 )
@@ -155,9 +154,10 @@ class PlaceList extends ConsumerWidget {
                                 child: Text(
                                   '⭐ 평균 우선순위: $average점',
                                   style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.teal),
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: hasBoth ? Colors.teal : Colors.grey,
+                                  ),
                                 ),
                               )
                           ],
