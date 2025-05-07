@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/place_list.dart';
+import 'package:my_couple_app/features/auth/provider/auth_provider.dart';
+import 'package:my_couple_app/features/couple/viewmodel/couple_view_model.dart';
 import 'package:my_couple_app/features/place/provider/place_provider.dart';
 import '../model/place.dart';
 
@@ -22,43 +24,11 @@ class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
     '전체', '카페', '음식점', '관광명소', '숙박', '주차장', '문화시설', '대형마트', '편의점'
   ];
   String selectedCategory = '전체';
-  // List<Place> places = [];
-  // List<bool> selectedItems = [];
 
   @override
   void initState() {
     super.initState();
-    // _loadPlaces();
   }
-
-  // Future<void> _loadPlaces() async {
-  //   try {
-  //     final loadedPlaces = ref.read(placeNotifierProvider.notifier).places;
-  //     setState(() {
-  //       places = loadedPlaces;
-  //       selectedItems = List.generate(places.length, (_) => false);
-  //     });
-  //   } catch (e) {
-  //     print('장소 로딩 실패: $e');
-  //   }
-  // }
-
-  // void toggleCheckbox(int index) {
-  //   setState(() {
-  //     selectedItems[index] = !selectedItems[index];
-  //   });
-  // }
-  //
-  // void resetCheckboxes() {
-  //   setState(() {
-  //     selectedItems = List.generate(selectedItems.length, (_) => false);
-  //   });
-  // }
-
-  // List<Place> get filteredPlaces {
-  //   if (selectedCategory == '전체') return places;
-  //   return places.where((place) => place.categoryGroupName == selectedCategory).toList();
-  // }
 
   TextStyle categoryTextStyle(String category) {
     return TextStyle(
@@ -69,9 +39,15 @@ class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final watchedPlaces = ref.watch(placeListProvider);
+    final myUid = ref.watch(authViewModelProvider).user?.uid;
+    final partnerUid = ref.watch(coupleViewModelProvider.notifier).partner.value?.uid;
+
+    print('(place_list_screen.dart) my uid: $myUid');
+    print('(place_list_screen.dart) Partner uid: $partnerUid');
+
+    final watchedPlaces = ref.watch(placeListProvider); // 장소 조회
     final selectedIds = ref.watch(selectedPlaceIdsProvider);
-    final notifier = ref.read(selectedPlaceIdsProvider.notifier);
+    final notifier = ref.read(selectedPlaceIdsProvider.notifier); //
 
     print(watchedPlaces);
     final filteredPlaces = selectedCategory == '전체'
@@ -104,16 +80,15 @@ class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
               PlaceList(
                 isEditing: isEditing,
                 places: filteredPlaces,
-                // selectedItems: selectedItems,
-                // onCheckboxChanged: toggleCheckbox,
                 selectedIds: selectedIds,
                 onCheckboxToggled: notifier.toggle,
-                // onReset: resetCheckboxes,
                 onEditingChanged: (value) {
                   setState(() {
                     isEditing = value;
                   });
                 },
+                myUid: myUid!,
+                partnerUid: partnerUid!,
               ),
             ],
           ),

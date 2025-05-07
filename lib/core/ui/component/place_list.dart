@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_couple_app/features/place/model/place.dart';
+import 'package:my_couple_app/features/place/viewmodel/place_view_model.dart';
 
 import '../../constants/colors.dart';
 
-class PlaceList extends StatelessWidget {
+class PlaceList extends ConsumerWidget {
   final bool isEditing;
   final ValueChanged<bool>? onEditingChanged;
   final List<Place> places;
-
-  // final List<bool>? selectedItems;
-  // final ValueChanged<int>? onCheckboxChanged;
   final Set<String> selectedIds;
   final void Function(String placeId)? onCheckboxToggled;
-
   final VoidCallback? onReset;
+
+  // ⭐️ 추가: 로그인한 유저 UID와 상대방 UID
+  final String myUid;
+  final String partnerUid;
 
   const PlaceList(
       {super.key,
@@ -22,11 +25,13 @@ class PlaceList extends StatelessWidget {
       required this.selectedIds,
       this.onReset,
       this.onCheckboxToggled,
-      required this.places});
+      required this.places,
+      required this.myUid,
+      required this.partnerUid});
 
   // final List<Map<String, dynamic>> places = [
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
         ListView.builder(
@@ -38,6 +43,13 @@ class PlaceList extends StatelessWidget {
             itemCount: places.length,
             itemBuilder: (context, index) {
               final place = places[index];
+              final myRating = place.userRatings?[myUid];
+              final partnerRating = place.userRatings?[partnerUid];
+              final hasBoth = myRating != null && partnerRating != null;
+              final average = hasBoth
+                  ? ((myRating + partnerRating) / 2).toStringAsFixed(1)
+                  : '-';
+
               return Padding(
                 padding:
                     const EdgeInsets.symmetric(vertical: 3.0, horizontal: 8.0),
@@ -50,7 +62,8 @@ class PlaceList extends StatelessWidget {
                     children: [
                       ClipRRect(
                           borderRadius: BorderRadius.circular(5.0),
-                          child: Image.network('https://picsum.photos/seed/picsum/100/100')
+                          child: Image.network(
+                              'https://picsum.photos/seed/picsum/100/100')
                           // Image.asset(
                           //   place['image'], // 이미지 경로
                           //   width: 100,
@@ -95,36 +108,71 @@ class PlaceList extends StatelessWidget {
                               ),
                             ),
                             SizedBox(height: 8),
-                            Row(
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(Icons.star,
-                                    color: Colors.yellow[700], size: 16),
-                                SizedBox(width: 4),
-                                Text(
-                                  '4.8',
-                                  style: TextStyle(fontSize: 14),
+                                Row(
+                                  children: [
+                                    Text("내 평가:",
+                                        style: TextStyle(fontSize: 12)),
+                                    SizedBox(width: 6),
+                                    RatingBar.builder(
+                                      initialRating: (myRating ?? 0).toDouble(),
+                                      minRating: 1,
+                                      maxRating: 5,
+                                      direction: Axis.horizontal,
+                                      allowHalfRating: false,
+                                      itemSize: 20,
+                                      unratedColor: Colors.grey[300],
+                                      itemBuilder: (context, _) =>
+                                          Icon(Icons.star, color: Colors.amber),
+                                      onRatingUpdate: (rating) {
+                                        //TODO : Firestore 업데이트 로직 연결
+                                        ref
+                                            .read(
+                                                placeNotifierProvider.notifier)
+                                            .updateUserRating(place.id, myUid,
+                                                rating.toInt());
+                                      },
+                                    ),
+                                  ],
                                 ),
+                                SizedBox(height: 6.0),
+                                Row(
+                                  children: [
+                                    Icon(Icons.person,
+                                        size: 16, color: Colors.grey[500]),
+                                    Text(
+                                        "상대: ${partnerRating ?? '-'}점",
+                                        style: TextStyle(fontSize: 12)),
+                                  ],
+                                )
                               ],
                             ),
+                            if (hasBoth)
+                              Padding(
+                                padding: EdgeInsets.only(top: 6.0),
+                                child: Text(
+                                  '⭐ 평균 우선순위: $average점',
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.teal),
+                                ),
+                              )
                           ],
                         ),
                       ),
-                      // isEditing
-                      //     ? Checkbox(
-                      //         value: selectedItems![index],
-                      //         onChanged: (value) {
-                      //           if (onCheckboxChanged != null) {
-                      //             onCheckboxChanged!(index);
-                      //           }
-                      //         })
-                      //     : SizedBox.shrink(),
                       isEditing
-                          ? Checkbox(value: selectedIds.contains(place.id),
-                          onChanged: (_) => onCheckboxToggled?.call(place.id),
-                      ) : SizedBox.shrink()
+                          ? Checkbox(
+                              value: selectedIds.contains(place.id),
+                              onChanged: (_) =>
+                                  onCheckboxToggled?.call(place.id),
+                            )
+                          : SizedBox.shrink()
                     ],
                   ),
-                ) ,
+                ),
               );
             }),
       ],

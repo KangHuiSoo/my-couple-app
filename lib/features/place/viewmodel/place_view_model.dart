@@ -87,6 +87,17 @@ class PlaceViewModel extends StateNotifier<AsyncValue<PlaceResponse?>> {
       state = AsyncValue.error(e, StackTrace.current);
     }
   }
+
+  // TODO : 장소에 대한 평가 점수 저장 2025.05.07 13:46
+  Future<void> updateUserRating(String placeId, String userId, int rating) async {
+    try {
+      await repository.updateUserRating(placeId, userId, rating);
+      state = AsyncValue.data(state.value);
+    } catch (e, stack) {
+      print('🔴 별점 저장 실패: $e');
+      state = AsyncValue.error('별점 저장 실패', stack);
+    }
+  }
 }
 
 final placeRepositoryProvider = Provider((ref) => PlaceRepository(

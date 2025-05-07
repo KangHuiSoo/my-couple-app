@@ -15,6 +15,7 @@ class Place {
   final String distance;
   final String? selectedDate;
   final String? coupleId;
+  final Map<String, int>? userRatings;
 
   Place(
       {required this.id,
@@ -30,7 +31,9 @@ class Place {
       required this.placeUrl,
       required this.distance,
       this.selectedDate,
-      this.coupleId});
+      this.coupleId,
+        this.userRatings,
+      });
 
   factory Place.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
@@ -48,7 +51,10 @@ class Place {
       placeUrl: data['placeUrl'] ?? '',
       distance: data['distance'] ?? '',
       selectedDate: data['selectedDate'],
-      coupleId: data['coupleId']
+      coupleId: data['coupleId'],
+      userRatings: (data['userRatings'] as Map<String, dynamic>?)?.map(
+            (key, value) => MapEntry(key, (value as num).toInt()),
+      ),
     );
   }
 
@@ -67,7 +73,8 @@ class Place {
       placeUrl: json['place_url'],
       distance: json['distance'],
       selectedDate: json['selectedDate'],
-      coupleId: json['coupleId']
+      coupleId: json['coupleId'],
+      userRatings: json['userRatings']
     );
   }
 
@@ -87,7 +94,8 @@ class Place {
       'placeUrl': placeUrl,
       'distance': distance,
       'selectedDate': selectedDate,
-      'coupleId' : coupleId
+      'coupleId' : coupleId,
+      'userRatings' : userRatings
     };
   }
 
@@ -109,7 +117,8 @@ class Place {
       placeUrl: placeUrl,
       distance: distance,
       selectedDate: selectedDate ?? this.selectedDate,
-      coupleId: coupleId ?? this.coupleId
+      coupleId: coupleId ?? this.coupleId,
+      userRatings: userRatings ?? userRatings
     );
   }
 }

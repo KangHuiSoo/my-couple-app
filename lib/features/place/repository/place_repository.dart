@@ -90,4 +90,9 @@ class PlaceRepository {
   Stream<List<Place>> listenToPlaces(String? coupleId) {
     return firestoreService.listenToPlaces(coupleId);
   }
+
+  //TODO : 장소에대한 평가점수 저장 2025. 05.07 13:44
+  Future<void> updateUserRating(String placeId, String userId, int rating){
+    return firestoreService.updateUserRating(placeId: placeId, userId: userId, rating: rating);
+  }
 }

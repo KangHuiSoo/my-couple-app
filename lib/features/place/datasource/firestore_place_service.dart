@@ -41,7 +41,8 @@ class FirestorePlaceService {
   Stream<List<Place>> listenToPlaces(String? coupleId) {
     print('🔍 listenToPlaces: coupleId = $coupleId');
 
-    return firestore.collection('myPlace')
+    return firestore
+        .collection('myPlace')
         .where('coupleId', isEqualTo: coupleId)
         .snapshots()
         .map((snapshot) {
@@ -53,10 +54,22 @@ class FirestorePlaceService {
       return snapshot.docs.map((doc) => Place.fromFirestore(doc)).toList();
     });
 
-
     // return firestore.collection('myPlace')
     //     .where('coupleId', isEqualTo: coupleId)
     //     .snapshots().map((snapshot) =>
     //     snapshot.docs.map((doc) => Place.fromFirestore(doc)).toList());
+  }
+
+  //TODO : 장소에대한 평가점수 저장  2025. 05.07 13:42
+  Future<void> updateUserRating({
+    required String placeId,
+    required String userId,
+    required int rating,
+  }) async {
+    await firestore.collection('myPlace').doc(placeId).set({
+      'userRatings': {
+        userId: rating,
+      }
+    }, SetOptions(merge: true));
   }
 }
