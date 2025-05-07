@@ -175,10 +175,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             child: Column(
                               children: [
                                 CustomTitle(titleText: '데이트 장소'),
-                                PlaceList(
-                                  isEditing: false,
-                                  places: places,
-                                )
+                                // PlaceList(
+                                //   isEditing: false,
+                                //   places: places,
+                                // )
                               ],
                             ),
                           ),

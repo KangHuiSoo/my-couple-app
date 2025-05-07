@@ -29,8 +29,13 @@ class PlaceViewModel extends StateNotifier<AsyncValue<PlaceResponse?>> {
     _placesSubscription = repository.listenToPlaces(coupleId).listen(
       (places) {
         _places = places;
+
+        // ✅ 중요한 부분: 상태를 업데이트해서 UI가 리렌더링되도록 함
+        state = AsyncValue.data(state.value);
+        // 이 줄이 핵심! state 자체는 PlaceResponse?지만 그냥 value 재할당 하면 트리거 발생함
       },
-      onError: (error) {
+      onError: (error, stack) {
+        state = AsyncValue.error(error, stack);
         print("장소 목록 실시간 업데이트 실패: $error");
       },
     );

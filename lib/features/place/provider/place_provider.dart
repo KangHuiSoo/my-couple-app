@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:my_couple_app/features/place/viewmodel/place_view_model.dart';
+import 'package:my_couple_app/features/place/viewmodel/selected_place_view_model.dart';
 import '../model/place.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
@@ -51,3 +53,17 @@ final locationUpdateProvider = FutureProvider.autoDispose((ref) async {
 final markersProvider = StateProvider<Set<Marker>>((ref) {
   return {};
 });
+
+// place 리스트 조회
+final placeListProvider = Provider<List<Place>> ((ref) {
+  ref.watch(placeNotifierProvider);
+  final vm = ref.read(placeNotifierProvider.notifier);
+  return vm.places;
+});
+
+
+// place 편집 - 체크된 장소들의 id를 담는 상태 관리
+final selectedPlaceIdsProvider = StateNotifierProvider<SelectedPlaceIdsNotifier, Set<String>> (
+    (ref) => SelectedPlaceIdsNotifier(),
+);
+

@@ -3,8 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/place_list.dart';
-import 'package:my_couple_app/features/place/viewmodel/place_view_model.dart';
-
+import 'package:my_couple_app/features/place/provider/place_provider.dart';
 import '../model/place.dart';
 
 class PlaceListScreen extends ConsumerStatefulWidget {
@@ -23,43 +22,43 @@ class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
     '전체', '카페', '음식점', '관광명소', '숙박', '주차장', '문화시설', '대형마트', '편의점'
   ];
   String selectedCategory = '전체';
-  List<Place> places = [];
-  List<bool> selectedItems = [];
+  // List<Place> places = [];
+  // List<bool> selectedItems = [];
 
   @override
   void initState() {
     super.initState();
-    _loadPlaces();
+    // _loadPlaces();
   }
 
-  Future<void> _loadPlaces() async {
-    try {
-      final loadedPlaces = ref.read(placeNotifierProvider.notifier).places;
-      setState(() {
-        places = loadedPlaces;
-        selectedItems = List.generate(places.length, (_) => false);
-      });
-    } catch (e) {
-      print('장소 로딩 실패: $e');
-    }
-  }
+  // Future<void> _loadPlaces() async {
+  //   try {
+  //     final loadedPlaces = ref.read(placeNotifierProvider.notifier).places;
+  //     setState(() {
+  //       places = loadedPlaces;
+  //       selectedItems = List.generate(places.length, (_) => false);
+  //     });
+  //   } catch (e) {
+  //     print('장소 로딩 실패: $e');
+  //   }
+  // }
 
-  void toggleCheckbox(int index) {
-    setState(() {
-      selectedItems[index] = !selectedItems[index];
-    });
-  }
+  // void toggleCheckbox(int index) {
+  //   setState(() {
+  //     selectedItems[index] = !selectedItems[index];
+  //   });
+  // }
+  //
+  // void resetCheckboxes() {
+  //   setState(() {
+  //     selectedItems = List.generate(selectedItems.length, (_) => false);
+  //   });
+  // }
 
-  void resetCheckboxes() {
-    setState(() {
-      selectedItems = List.generate(selectedItems.length, (_) => false);
-    });
-  }
-
-  List<Place> get filteredPlaces {
-    if (selectedCategory == '전체') return places;
-    return places.where((place) => place.categoryGroupName == selectedCategory).toList();
-  }
+  // List<Place> get filteredPlaces {
+  //   if (selectedCategory == '전체') return places;
+  //   return places.where((place) => place.categoryGroupName == selectedCategory).toList();
+  // }
 
   TextStyle categoryTextStyle(String category) {
     return TextStyle(
@@ -70,6 +69,17 @@ class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final watchedPlaces = ref.watch(placeListProvider);
+    final selectedIds = ref.watch(selectedPlaceIdsProvider);
+    final notifier = ref.read(selectedPlaceIdsProvider.notifier);
+
+    print(watchedPlaces);
+    final filteredPlaces = selectedCategory == '전체'
+        ? watchedPlaces
+        : watchedPlaces.where((p) => p.categoryGroupName == selectedCategory).toList();
+
+    print('필터드 플레이스 ===> $filteredPlaces');
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -90,13 +100,15 @@ class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
                 indent: 16.0,
                 endIndent: 16.0,
               ),
-              _buildPlaceCountAndEditButton(),
+              _buildPlaceCountAndEditButton(filteredPlaces),
               PlaceList(
                 isEditing: isEditing,
                 places: filteredPlaces,
-                selectedItems: selectedItems,
-                onCheckboxChanged: toggleCheckbox,
-                onReset: resetCheckboxes,
+                // selectedItems: selectedItems,
+                // onCheckboxChanged: toggleCheckbox,
+                selectedIds: selectedIds,
+                onCheckboxToggled: notifier.toggle,
+                // onReset: resetCheckboxes,
                 onEditingChanged: (value) {
                   setState(() {
                     isEditing = value;
@@ -133,7 +145,7 @@ class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
     );
   }
 
-  Widget _buildPlaceCountAndEditButton() {
+  Widget _buildPlaceCountAndEditButton(List<Place> filteredPlaces) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
       child: Row(
@@ -171,8 +183,9 @@ class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
             onPressed: () {
               setState(() {
                 isEditing = false;
-                resetCheckboxes();
+                // resetCheckboxes();
               });
+              ref.read(selectedPlaceIdsProvider.notifier).clear(); // 체크 초기화
             },
             icon: const Icon(Icons.cancel, color: Colors.white),
             label: const Text('취소', style: TextStyle(color: Colors.white)),

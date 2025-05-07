@@ -7,17 +7,21 @@ class PlaceList extends StatelessWidget {
   final bool isEditing;
   final ValueChanged<bool>? onEditingChanged;
   final List<Place> places;
-  final List<bool>? selectedItems;
-  final ValueChanged<int>? onCheckboxChanged;
+
+  // final List<bool>? selectedItems;
+  // final ValueChanged<int>? onCheckboxChanged;
+  final Set<String> selectedIds;
+  final void Function(String placeId)? onCheckboxToggled;
+
   final VoidCallback? onReset;
 
   const PlaceList(
       {super.key,
       required this.isEditing,
       this.onEditingChanged,
-      this.selectedItems,
+      required this.selectedIds,
       this.onReset,
-      this.onCheckboxChanged,
+      this.onCheckboxToggled,
       required this.places});
 
   // final List<Map<String, dynamic>> places = [
@@ -105,15 +109,19 @@ class PlaceList extends StatelessWidget {
                           ],
                         ),
                       ),
+                      // isEditing
+                      //     ? Checkbox(
+                      //         value: selectedItems![index],
+                      //         onChanged: (value) {
+                      //           if (onCheckboxChanged != null) {
+                      //             onCheckboxChanged!(index);
+                      //           }
+                      //         })
+                      //     : SizedBox.shrink(),
                       isEditing
-                          ? Checkbox(
-                              value: selectedItems![index],
-                              onChanged: (value) {
-                                if (onCheckboxChanged != null) {
-                                  onCheckboxChanged!(index);
-                                }
-                              })
-                          : SizedBox.shrink(),
+                          ? Checkbox(value: selectedIds.contains(place.id),
+                          onChanged: (_) => onCheckboxToggled?.call(place.id),
+                      ) : SizedBox.shrink()
                     ],
                   ),
                 ),

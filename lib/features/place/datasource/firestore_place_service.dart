@@ -39,9 +39,24 @@ class FirestorePlaceService {
 
   // 실시간 장소 목록 리스너
   Stream<List<Place>> listenToPlaces(String? coupleId) {
+    print('🔍 listenToPlaces: coupleId = $coupleId');
+
     return firestore.collection('myPlace')
         .where('coupleId', isEqualTo: coupleId)
-        .snapshots().map((snapshot) =>
-        snapshot.docs.map((doc) => Place.fromFirestore(doc)).toList());
+        .snapshots()
+        .map((snapshot) {
+      print('📥 Firestore snapshot size = ${snapshot.docs.length}');
+      for (var doc in snapshot.docs) {
+        print('📄 ${doc.data()}');
+      }
+
+      return snapshot.docs.map((doc) => Place.fromFirestore(doc)).toList();
+    });
+
+
+    // return firestore.collection('myPlace')
+    //     .where('coupleId', isEqualTo: coupleId)
+    //     .snapshots().map((snapshot) =>
+    //     snapshot.docs.map((doc) => Place.fromFirestore(doc)).toList());
   }
 }
