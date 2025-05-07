@@ -124,7 +124,7 @@ class PlaceList extends StatelessWidget {
                       ) : SizedBox.shrink()
                     ],
                   ),
-                ),
+                ) ,
               );
             }),
       ],
