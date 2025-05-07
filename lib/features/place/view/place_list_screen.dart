@@ -37,6 +37,23 @@ class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
     );
   }
 
+  // 커플의 장소에대한 평균평점에 따른 정렬 함수!
+  List<Place> sortByPriority(
+      List<Place> places, String myUid, String partnerUid) {
+    return [...places] // 원본 리스트 복사
+      ..sort((a, b) {
+        final aMy = a.userRatings?[myUid];
+        final aPt = a.userRatings?[partnerUid];
+        final bMy = b.userRatings?[myUid];
+        final bPt = b.userRatings?[partnerUid];
+
+        final aAvg = (aMy != null && aPt != null) ? (aMy + aPt) / 2 : -1;
+        final bAvg = (bMy != null && bPt != null) ? (bMy + bPt) / 2 : -1;
+
+        return bAvg.compareTo(aAvg); // 높은 순 정렬
+      });
+  }
+
   @override
   Widget build(BuildContext context) {
     final myUid = ref.watch(authViewModelProvider).user?.uid;
@@ -50,9 +67,19 @@ class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
     final notifier = ref.read(selectedPlaceIdsProvider.notifier); //
 
     print(watchedPlaces);
+    // final filteredPlaces = selectedCategory == '전체'
+    //     ? watchedPlaces
+    //     : watchedPlaces.where((p) => p.categoryGroupName == selectedCategory).toList();//
+
+    // ⭐️ 우선순위 정렬 적용
     final filteredPlaces = selectedCategory == '전체'
-        ? watchedPlaces
-        : watchedPlaces.where((p) => p.categoryGroupName == selectedCategory).toList();
+        ? sortByPriority(watchedPlaces, myUid!, partnerUid!)
+        : sortByPriority(
+            watchedPlaces.where((p) => p.categoryGroupName == selectedCategory).toList(),
+            myUid!,
+            partnerUid!,
+          );
+
 
     print('필터드 플레이스 ===> $filteredPlaces');
 
