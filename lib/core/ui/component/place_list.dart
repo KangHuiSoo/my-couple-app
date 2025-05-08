@@ -55,7 +55,7 @@ class PlaceList extends ConsumerWidget {
                     const EdgeInsets.symmetric(vertical: 3.0, horizontal: 8.0),
                 child: Card(
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5), // 둥근 모서리 크기
+                    borderRadius: BorderRadius.circular(12.0), // 둥근 모서리 크기
                   ),
                   color: PRIMARY_CARD_COLOR,
                   child: Row(
@@ -63,7 +63,7 @@ class PlaceList extends ConsumerWidget {
                       ClipRRect(
                           borderRadius: BorderRadius.circular(5.0),
                           child: Image.network(
-                              'https://picsum.photos/seed/picsum/100/100')
+                              'https://picsum.photos/seed/picsum/120/120')
                           // Image.asset(
                           //   place['image'], // 이미지 경로
                           //   width: 100,

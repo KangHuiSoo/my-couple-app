@@ -95,14 +95,14 @@ class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              _buildCategoryTabs(),
-              const Divider(
-                height: 0.001,
-                color: Color(0xFFB4B4B4),
-                thickness: 0.5,
-                indent: 16.0,
-                endIndent: 16.0,
-              ),
+              _buildCategoryTabs2(),
+              // const Divider(
+              //   height: 0.001,
+              //   color: Color(0xFFB4B4B4),
+              //   thickness: 0.5,
+              //   indent: 16.0,
+              //   endIndent: 16.0,
+              // ),
               _buildPlaceCountAndEditButton(filteredPlaces),
               PlaceList(
                 isEditing: isEditing,
@@ -143,6 +143,29 @@ class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
             child: Text(category, style: categoryTextStyle(category)),
           );
         }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildCategoryTabs2() {
+    return SizedBox(
+      height: 44,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+        itemCount: categories.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        itemBuilder: (context, index) {
+          final category = categories[index];
+          return ChoiceChip(
+            label: Text(category),
+            selected: category == selectedCategory,
+            onSelected: (_) => setState(() => selectedCategory = category),
+            selectedColor: PRIMARY_COLOR.withOpacity(0.2),
+            backgroundColor: Colors.grey[200],
+            labelStyle: categoryTextStyle(category),
+          );
+        },
       ),
     );
   }
