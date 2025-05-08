@@ -10,7 +10,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 //마커가 선택된 장소
 final selectedPlaceProvider = StateProvider<Place?>((ref) => null);
 //캘린더에서 선택한 날짜
-final selectedDateProvider = StateProvider<String?>((ref) => null);
+final selectedDateProvider = StateProvider<DateTime?>((ref) => null);
 
 
 // 선택된 카테고리 상태 관리

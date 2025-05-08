@@ -93,6 +93,7 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
           decoration: BoxDecoration(color: Colors.white),
           child: Column(
             children: [
+              _buildSelectedDateHeader(selectedDate!), // ✅ 추가
               Expanded(
                 child: Stack(
                   alignment: Alignment.topCenter,
@@ -121,7 +122,7 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
                         placeAsyncValue,
                         selectedPlace,
                         currentPosition,
-                        selectedDate ?? DateTime.now().toString(),
+                        selectedDate ?? DateTime.now(),
                     authState.user?.coupleId?? ''),
                   ],
                 ),
@@ -133,13 +134,45 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
     );
   }
 
+  Widget _buildSelectedDateHeader(DateTime selectedDate) {
+    final parsedDate = selectedDate;
+    final formatted = "${parsedDate.year}년 ${parsedDate.month}월 ${parsedDate.day}일";
+
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Row(
+        children: [
+          Icon(Icons.calendar_today, size: 20, color: PRIMARY_COLOR),
+          SizedBox(width: 8),
+          Text(
+            formatted,
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          Spacer(),
+          TextButton.icon(
+            onPressed: () async {
+              // 날짜 변경 화면으로 이동
+              await context.push('/datePicker');
+
+              // 이후 돌아오면 selectedDateProvider가 변경됨
+              setState(() {}); // 🔁 변경된 날짜 UI에 반영
+            },
+            icon: Icon(Icons.edit, size: 16),
+            label: Text("변경"),
+          ),
+        ],
+      ),
+    );
+  }
+
   // ✅ 하단 바텀 시트 UI
   Widget _buildBottomSheet(
       bool isCategoryView,
       AsyncValue<PlaceResponse?> placeAsyncValue,
       Place? selectedPlace,
       LatLng currentPosition,
-      String selectedDate, String coupleId) {
+      DateTime selectedDate, String coupleId) {
     return NotificationListener<DraggableScrollableNotification>(
       onNotification: (DraggableScrollableNotification notification) {
         setState(() {
@@ -238,56 +271,116 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
   Widget _buildFloatingActionButtons() {
     return Positioned(
       bottom: _fabPosition + _fabPositionPadding,
-      right: _fabPositionPadding, // 위치 조절
-      child: Row(
-        children: [
-          FloatingActionButton.extended(
-            onPressed: () async {
-              ref.read(isCategoryViewProvider.notifier).state = true;
-            },
-            backgroundColor: Colors.grey[200],
-            heroTag: 'backToCategory',
-            label: Text("카테고리"),
-            icon: Icon(Icons.category),
-          ),
-          SizedBox(width: 10.0),
-          FloatingActionButton(
-            onPressed: () async {
-              ref.read(selectedPlaceProvider.notifier).state = null;
-            },
-            backgroundColor: Colors.grey[200],
-            shape: CircleBorder(),
-            mini: true,
-            heroTag: 'backToList',
-            child: Icon(CupertinoIcons.back),
-          ),
-          SizedBox(width: 10.0),
-          FloatingActionButton(
-            onPressed: () async {
-              final newPosition = await ref.read(locationUpdateProvider.future);
-              ref.read(currentLocationProvider.notifier).state = newPosition;
+      right: _fabPositionPadding,
+      child: Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        // 🔙 목록 초기화 버튼
+        FloatingActionButton(
+          onPressed: () {
+            ref.read(selectedPlaceProvider.notifier).state = null;
+          },
+          backgroundColor: Colors.white,
+          heroTag: 'backToList',
+          mini: true,
+          elevation: 3,
+          child: Icon(CupertinoIcons.back, color: Colors.black87),
+        ),
+        SizedBox(height: 12),
 
-              Future.delayed(Duration(milliseconds: 500), () {
-                final mapController = ref.read(googleMapControllerProvider);
-                if (mapController != null) {
-                  print("✅ 현재 위치 이동: $newPosition");
-                  mapController
-                      .animateCamera(CameraUpdate.newLatLng(newPosition));
-                } else {
-                  print("❌ GoogleMapController가 아직 초기화되지 않음");
-                }
-              });
-            },
-            backgroundColor: Colors.grey[200],
-            shape: CircleBorder(),
-            mini: true,
-            heroTag: 'myLocation',
-            child: Icon(Icons.my_location),
-          ),
-        ],
-      ),
+        // 📍 내 위치 이동
+        FloatingActionButton(
+          onPressed: () async {
+            final newPosition = await ref.read(locationUpdateProvider.future);
+            ref.read(currentLocationProvider.notifier).state = newPosition;
+
+            Future.delayed(Duration(milliseconds: 500), () {
+              final mapController = ref.read(googleMapControllerProvider);
+              if (mapController != null) {
+                mapController.animateCamera(CameraUpdate.newLatLng(newPosition));
+              }
+            });
+          },
+          backgroundColor: Colors.white,
+          heroTag: 'myLocation',
+          mini: true,
+          elevation: 3,
+          child: Icon(Icons.my_location, color: Colors.black87),
+        ),
+
+        // 🔥 카테고리 버튼
+        // FloatingActionButton.extended(
+        //   onPressed: () {
+        //     ref.read(isCategoryViewProvider.notifier).state = true;
+        //   },
+        //   backgroundColor: Colors.white,
+        //   elevation: 4,
+        //   label: Text("카테고리", style: TextStyle(color: PRIMARY_COLOR)),
+        //   icon: Icon(Icons.category, color: PRIMARY_COLOR),
+        //   heroTag: 'backToCategory',
+        //   shape: RoundedRectangleBorder(
+        //     borderRadius: BorderRadius.circular(16),
+        //     side: BorderSide(color: PRIMARY_COLOR),
+        //   ),
+        // ),
+
+      ],
+    ),
     );
   }
+  // Widget _buildFloatingActionButtons() {
+  //   return Positioned(
+  //     bottom: _fabPosition + _fabPositionPadding,
+  //     right: _fabPositionPadding, // 위치 조절
+  //     child: Row(
+  //       children: [
+  //         FloatingActionButton.extended(
+  //           onPressed: () async {
+  //             ref.read(isCategoryViewProvider.notifier).state = true;
+  //           },
+  //           backgroundColor: Colors.grey[200],
+  //           heroTag: 'backToCategory',
+  //           label: Text("카테고리"),
+  //           icon: Icon(Icons.category),
+  //         ),
+  //         SizedBox(width: 10.0),
+  //         FloatingActionButton(
+  //           onPressed: () async {
+  //             ref.read(selectedPlaceProvider.notifier).state = null;
+  //           },
+  //           backgroundColor: Colors.grey[200],
+  //           shape: CircleBorder(),
+  //           mini: true,
+  //           heroTag: 'backToList',
+  //           child: Icon(CupertinoIcons.back),
+  //         ),
+  //         SizedBox(width: 10.0),
+  //         FloatingActionButton(
+  //           onPressed: () async {
+  //             final newPosition = await ref.read(locationUpdateProvider.future);
+  //             ref.read(currentLocationProvider.notifier).state = newPosition;
+  //
+  //             Future.delayed(Duration(milliseconds: 500), () {
+  //               final mapController = ref.read(googleMapControllerProvider);
+  //               if (mapController != null) {
+  //                 print("✅ 현재 위치 이동: $newPosition");
+  //                 mapController
+  //                     .animateCamera(CameraUpdate.newLatLng(newPosition));
+  //               } else {
+  //                 print("❌ GoogleMapController가 아직 초기화되지 않음");
+  //               }
+  //             });
+  //           },
+  //           backgroundColor: Colors.grey[200],
+  //           shape: CircleBorder(),
+  //           mini: true,
+  //           heroTag: 'myLocation',
+  //           child: Icon(Icons.my_location),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   // ✅ 카테고리 UI
   Widget _buildCategoryGrid(WidgetRef ref, LatLng currentPosition) {
@@ -343,58 +436,117 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
 
   // 해당 장소 클릭시 다이얼로그 출력
   void _showPlaceDialog(
-      BuildContext context, Place place, String? selectedDate, String coupleId) {
-    if (selectedDate == null) return; // 날짜가 없으면 다이얼로그를 보여주지 않음
+      BuildContext context, Place place, DateTime? selectedDate, String coupleId) {
+    if (selectedDate == null) return;
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(20.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  place.placeName,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                // 🏷 장소명
+                Row(
+                  children: [
+                    Icon(Icons.place, color: PRIMARY_COLOR),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        place.placeName,
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 12),
+
+                // 📍 주소
+                Row(
+                  children: [
+                    Icon(Icons.location_on_outlined, color: Colors.grey),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(place.roadAddressName,
+                          style: TextStyle(fontSize: 14, color: Colors.black87)),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 8),
-                Text("📍 ${place.roadAddressName}"),
-                Text("📞 ${place.phone}"),
-                Text("📏 거리: ${place.distance}m"),
-                TextButton(
+
+                // 📞 전화번호
+                if (place.phone.isNotEmpty)
+                  Row(
+                    children: [
+                      Icon(Icons.phone, size: 16, color: Colors.grey),
+                      SizedBox(width: 8),
+                      Text(place.phone, style: TextStyle(fontSize: 14)),
+                    ],
+                  ),
+                SizedBox(height: 8),
+
+                // 📏 거리
+                Row(
+                  children: [
+                    Icon(Icons.directions_walk, size: 16, color: Colors.grey),
+                    SizedBox(width: 8),
+                    Text("거리: ${place.distance}m",
+                        style: TextStyle(fontSize: 14)),
+                  ],
+                ),
+                SizedBox(height: 16),
+
+                // 🔍 자세히 보기 버튼
+                Center(
+                  child: TextButton(
                     onPressed: () {
                       WebViewHelper.openWebView(context, place.placeUrl);
                     },
-                    child: Text('자세히 >')),
-                SizedBox(height: 12),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Row(
-                    children: [
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: Text("닫기", style: TextStyle(color: Colors.blue)),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          final updatedPlace =
-                              place.copyWith(selectedDate: selectedDate, coupleId: coupleId);
-                          ref
-                              .read(placeNotifierProvider.notifier)
-                              .addPlace(updatedPlace);
-                          Navigator.pop(context);
-                        },
-                        child: Text("추가", style: TextStyle(color: Colors.blue)),
-                      ),
-                    ],
+                    child: Text('자세히 보기',
+                        style: TextStyle(
+                            color: PRIMARY_COLOR,
+                            fontWeight: FontWeight.bold)),
                   ),
                 ),
+
+                Divider(height: 24),
+
+                // ✅ 버튼 영역
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // ❌ 닫기
+                    TextButton.icon(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: Icon(Icons.close, color: Colors.grey),
+                      label: Text("닫기", style: TextStyle(color: Colors.grey)),
+                    ),
+
+                    // ✅ 추가
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        final updatedPlace = place.copyWith(
+                            selectedDate: selectedDate, coupleId: coupleId);
+                        ref
+                            .read(placeNotifierProvider.notifier)
+                            .addPlace(updatedPlace);
+                        Navigator.pop(context);
+                      },
+                      icon: Icon(Icons.add),
+                      label: Text("추가"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: PRIMARY_COLOR,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
           ),
@@ -402,10 +554,71 @@ class _PlaceAddScreenState extends ConsumerState<PlaceAddScreen> {
       },
     );
   }
+  // void _showPlaceDialog(
+  //     BuildContext context, Place place, String? selectedDate, String coupleId) {
+  //   if (selectedDate == null) return; // 날짜가 없으면 다이얼로그를 보여주지 않음
+  //
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return Dialog(
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(16),
+  //         ),
+  //         child: Padding(
+  //           padding: const EdgeInsets.all(16.0),
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               Text(
+  //                 place.placeName,
+  //                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+  //               ),
+  //               SizedBox(height: 8),
+  //               Text("📍 ${place.roadAddressName}"),
+  //               Text("📞 ${place.phone}"),
+  //               Text("📏 거리: ${place.distance}m"),
+  //               TextButton(
+  //                   onPressed: () {
+  //                     WebViewHelper.openWebView(context, place.placeUrl);
+  //                   },
+  //                   child: Text('자세히 >')),
+  //               SizedBox(height: 12),
+  //               Align(
+  //                 alignment: Alignment.centerRight,
+  //                 child: Row(
+  //                   children: [
+  //                     TextButton(
+  //                       onPressed: () => Navigator.of(context).pop(),
+  //                       child: Text("닫기", style: TextStyle(color: Colors.blue)),
+  //                     ),
+  //                     TextButton(
+  //                       onPressed: () {
+  //                         final updatedPlace =
+  //                             place.copyWith(selectedDate: selectedDate, coupleId: coupleId);
+  //                         ref
+  //                             .read(placeNotifierProvider.notifier)
+  //                             .addPlace(updatedPlace);
+  //                         Navigator.pop(context);
+  //                       },
+  //                       child: Text("추가", style: TextStyle(color: Colors.blue)),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   // ✅ 장소 목록 UI
   Widget _buildPlaceList(ScrollController scrollController,
-      AsyncValue placeAsyncValue, selectedPlace, String selectedDate, String coupleId) {
+      AsyncValue placeAsyncValue, selectedPlace, DateTime selectedDate, String coupleId) {
+
     return placeAsyncValue.when(
       data: (placeResponse) {
         List<Place> filteredPlaces =
