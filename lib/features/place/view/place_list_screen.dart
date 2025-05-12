@@ -128,7 +128,9 @@ class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
               });
             },
             child: Text(
-              DateFormat('yyyy년 M월 d일').format(selectedDay!),
+              selectedDay != null
+                  ? DateFormat('yyyy년 M월 d일').format(selectedDay)
+                  : "날짜 선택",
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             ),
           )
