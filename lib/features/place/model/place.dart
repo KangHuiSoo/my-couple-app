@@ -116,4 +116,9 @@ class Place {
         coupleId: coupleId ?? this.coupleId,
         userRatings: userRatings ?? userRatings);
   }
+
+  @override
+  String toString() {
+    return 'Place{id: $id, placeName: $placeName, categoryName: $categoryName, categoryGroupCode: $categoryGroupCode, categoryGroupName: $categoryGroupName, phone: $phone, addressName: $addressName, roadAddressName: $roadAddressName, x: $x, y: $y, placeUrl: $placeUrl, distance: $distance, selectedDate: $selectedDate, coupleId: $coupleId, userRatings: $userRatings}';
+  }
 }

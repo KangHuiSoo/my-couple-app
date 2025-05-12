@@ -16,21 +16,21 @@ class FirestorePlaceService {
     return place;
   }
 
-  Future<List<Place>> fetchPlaceByCoupleId() async {
-    // 캐시가 유효한 경우 캐시된 데이터 반환
-    if (_isCacheValid()) {
-      return _cache['places'] ?? [];
-    }
-
-    final snapshot = await firestore.collection("myPlace").get();
-    final places = snapshot.docs.map((e) => Place.fromFirestore(e)).toList();
-
-    // 캐시 업데이트
-    _cache['places'] = places;
-    _lastFetchTime = DateTime.now();
-
-    return places;
-  }
+  // Future<List<Place>> fetchPlaceByCoupleId() async {
+  //   // 캐시가 유효한 경우 캐시된 데이터 반환
+  //   if (_isCacheValid()) {
+  //     return _cache['places'] ?? [];
+  //   }
+  //
+  //   final snapshot = await firestore.collection("myPlace").get();
+  //   final places = snapshot.docs.map((e) => Place.fromFirestore(e)).toList();
+  //
+  //   // 캐시 업데이트
+  //   _cache['places'] = places;
+  //   _lastFetchTime = DateTime.now();
+  //
+  //   return places;
+  // }
 
   bool _isCacheValid() {
     if (_lastFetchTime == null || _cache['places'] == null) return false;

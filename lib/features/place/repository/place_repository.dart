@@ -19,10 +19,9 @@ class PlaceRepository {
   PlaceRepository(this.apiService, this.firestoreService, this.cacheService);
 
   /// 커플 고유 id를 이용하여 장소 데이터 가져오기
-  //TODO: 회원가입 후 링크연결시 coupleId 부여하는 기능 완료후 파라미터 적용할것
-  Future<List<Place>> fetchPlaceByCoupleId() async {
-    return await firestoreService.fetchPlaceByCoupleId();
-  }
+  // Future<List<Place>> fetchPlaceByCoupleId() async {
+  //   return await firestoreService.fetchPlaceByCoupleId();
+  // }
 
   /// 선택한 장소 firestore에 저장
   Future<Place> addPlace(Place place) async {

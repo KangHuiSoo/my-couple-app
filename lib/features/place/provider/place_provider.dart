@@ -8,9 +8,6 @@ import '../model/place.dart';
 /// 🔵 현재 지도에서 선택된 장소 (지도 마커 클릭 시 저장됨)
 final focusedSearchPlaceProvider = StateProvider<Place?>((ref) => null);
 
-/// 🟢 날짜별로 장소를 필터링할 때 기준이 되는 선택된 날짜
-final selectedFilterDateProvider = StateProvider<DateTime?>((ref) => null);
-
 /// 🟡 선택된 카테고리 ('음식점', '카페' 등) 필터링용
 final selectedCategoryLabelProvider = StateProvider<String?>((ref) => null);
 
@@ -18,10 +15,12 @@ final selectedCategoryLabelProvider = StateProvider<String?>((ref) => null);
 final isCategoryViewModeProvider = StateProvider<bool>((ref) => true);
 
 /// 🗺 구글맵 컨트롤러 상태
-final googleMapControllerProvider = StateProvider<GoogleMapController?>((ref) => null);
+final googleMapControllerProvider =
+    StateProvider<GoogleMapController?>((ref) => null);
 
 /// 📍 현재 위치 (위도, 경도)
-final currentLocationProvider = StateProvider<LatLng>((ref) => LatLng(37.5665, 126.9780));
+final currentLocationProvider =
+    StateProvider<LatLng>((ref) => LatLng(37.5665, 126.9780));
 
 /// 📍 현재 위치 업데이트 요청 (비동기)
 final locationUpdateProvider = FutureProvider.autoDispose((ref) async {
@@ -47,6 +46,12 @@ final locationUpdateProvider = FutureProvider.autoDispose((ref) async {
 /// 📍 Google Map 마커 관리용 Provider
 final mapMarkerSetProvider = StateProvider<Set<Marker>>((ref) => {});
 
+/// ✅ 편집 모드에서 선택된 장소들의 ID 집합
+final checkedPlaceIdSetProvider =
+    StateNotifierProvider<SelectedPlaceIdsNotifier, Set<String>>(
+  (ref) => SelectedPlaceIdsNotifier(),
+);
+
 /// 📦 Firestore에서 불러온 커플의 전체 장소 리스트 (날짜/카테고리 필터링 전 상태)
 final allPlacesByCoupleProvider = Provider<List<Place>>((ref) {
   ref.watch(placeNotifierProvider);
@@ -54,10 +59,8 @@ final allPlacesByCoupleProvider = Provider<List<Place>>((ref) {
   return vm.places;
 });
 
-/// ✅ 편집 모드에서 선택된 장소들의 ID 집합
-final checkedPlaceIdSetProvider = StateNotifierProvider<SelectedPlaceIdsNotifier, Set<String>>(
-      (ref) => SelectedPlaceIdsNotifier(),
-);
+/// 🟢 날짜별로 장소를 필터링할 때 기준이 되는 선택된 날짜
+final selectedFilterDateProvider = StateProvider<DateTime?>((ref) => null);
 
 /// 🔹 [선택된 날짜]에 해당하는 장소만 필터링된 리스트
 final placesForSelectedDateProvider = Provider<List<Place>>((ref) {
@@ -74,6 +77,18 @@ final placesForSelectedDateProvider = Provider<List<Place>>((ref) {
   }).toList();
 });
 
+/// 🔹 [등록된 장소에서 날짜리스트만] 필터링
+final filteredPlaceDateProvider = Provider<List<DateTime>>((ref) {
+  final allPlaces = ref.watch(allPlacesByCoupleProvider);
+
+  final allDates = allPlaces
+      .map((place) => place.selectedDate)
+      .whereType<DateTime>() //null 제거
+      .toSet() //set변환하여 중복 제거 후
+      .toList() // 다시 리스트로 변환 (정렬을 위함)
+    ..sort();
+  return allDates;
+});
 
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:google_maps_flutter/google_maps_flutter.dart';

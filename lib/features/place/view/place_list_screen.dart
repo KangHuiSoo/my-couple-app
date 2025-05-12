@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/place_list.dart';
 import 'package:my_couple_app/features/auth/provider/auth_provider.dart';
@@ -18,10 +19,20 @@ class PlaceListScreen extends ConsumerStatefulWidget {
 class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
   bool isEditing = false;
   DateTime focusedDay = DateTime.now();
-  DateTime selectedDay = DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  // DateTime selectedDay = DateTime.utc(
+  //     DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
 
   final categories = [
-    '전체', '카페', '음식점', '관광명소', '숙박', '주차장', '문화시설', '대형마트', '편의점'
+    '전체',
+    '카페',
+    '음식점',
+    '관광명소',
+    '숙박',
+    '주차장',
+    '문화시설',
+    '대형마트',
+    '편의점'
   ];
   String selectedCategory = '전체';
 
@@ -30,17 +41,42 @@ class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
     super.initState();
   }
 
+  void _showDateSelector(BuildContext context, List<DateTime> availableDates,
+      ValueChanged<DateTime> onDateSelected) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return ListView.builder(
+          itemCount: availableDates.length,
+          itemBuilder: (context, index) {
+            final date = availableDates[index];
+            final formatted = "${date.year}년 ${date.month}월 ${date.day}일";
+
+            return ListTile(
+              leading: Icon(Icons.calendar_today, color: Colors.grey),
+              title: Text(formatted),
+              onTap: () {
+                Navigator.pop(context); // 닫기
+                onDateSelected(date); // 선택 콜백
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
   TextStyle categoryTextStyle(String category) {
     return TextStyle(
       color: category == selectedCategory ? Colors.black : Colors.grey,
-      fontWeight: category == selectedCategory ? FontWeight.bold : FontWeight.normal,
+      fontWeight:
+          category == selectedCategory ? FontWeight.bold : FontWeight.normal,
     );
   }
 
   List<Place> sortByPriority(
       List<Place> places, String myUid, String partnerUid) {
-    return [...places]
-      ..sort((a, b) {
+    return [...places]..sort((a, b) {
         final aMy = a.userRatings?[myUid];
         final aPt = a.userRatings?[partnerUid];
         final bMy = b.userRatings?[myUid];
@@ -56,19 +92,25 @@ class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
   @override
   Widget build(BuildContext context) {
     final myUid = ref.watch(authViewModelProvider).user?.uid;
-    final partnerUid = ref.watch(coupleViewModelProvider.notifier).partner.value?.uid;
+    final partnerUid =
+        ref.watch(coupleViewModelProvider.notifier).partner.value?.uid;
 
-    final watchedPlaces = ref.watch(allPlacesByCoupleProvider);
+    // final watchedPlaces = ref.watch(allPlacesByCoupleProvider);
+    final watchedPlaces = ref.watch(placesForSelectedDateProvider);
     final selectedIds = ref.watch(checkedPlaceIdSetProvider);
     final notifier = ref.read(checkedPlaceIdSetProvider.notifier);
+    final registeredDates = ref.watch(filteredPlaceDateProvider);
+    final selectedDay = ref.watch(selectedFilterDateProvider);
 
     final filteredPlaces = selectedCategory == '전체'
         ? sortByPriority(watchedPlaces, myUid!, partnerUid!)
         : sortByPriority(
-      watchedPlaces.where((p) => p.categoryGroupName == selectedCategory).toList(),
-      myUid!,
-      partnerUid!,
-    );
+            watchedPlaces
+                .where((p) => p.categoryGroupName == selectedCategory)
+                .toList(),
+            myUid!,
+            partnerUid!,
+          );
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -76,6 +118,21 @@ class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
         centerTitle: false,
         backgroundColor: Colors.white,
         title: const Text('약속장소'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              _showDateSelector(context, registeredDates, (selected) {
+                print('선택된 날짜: $selected');
+                ref.read(selectedFilterDateProvider.notifier).state = selected;
+                setState(() {});
+              });
+            },
+            child: Text(
+              DateFormat('yyyy년 M월 d일').format(selectedDay!),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
+          )
+        ],
       ),
       body: DecoratedBox(
         decoration: const BoxDecoration(color: Colors.white),
@@ -101,15 +158,17 @@ class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: isEditing ? _buildEditingBottomBar() : const SizedBox.shrink(),
+      bottomNavigationBar:
+          isEditing ? _buildEditingBottomBar() : const SizedBox.shrink(),
       floatingActionButton: isEditing
           ? const SizedBox.shrink()
           : FloatingActionButton(
-        backgroundColor: PRIMARY_COLOR,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50.0)),
-        onPressed: () => context.push('/datePicker'),
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
+              backgroundColor: PRIMARY_COLOR,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50.0)),
+              onPressed: () => context.push('/datePicker'),
+              child: const Icon(Icons.add, color: Colors.white),
+            ),
     );
   }
 
@@ -192,7 +251,6 @@ class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
     );
   }
 }
-
 
 // import 'package:flutter/material.dart';
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
