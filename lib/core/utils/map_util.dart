@@ -9,7 +9,7 @@ void setCurrentLocationMarker(WidgetRef ref, LatLng currentPosition) {}
 
 // 📌 검색된 장소 마커 추가
 void addSearchMarkers(WidgetRef ref, List<Place> places) {
-  final markers = ref.read(markersProvider.notifier);
+  final markers = ref.read(mapMarkerSetProvider.notifier);
 
   // ✅ 기존 현재 위치 마커 유지
   final currentMarkers =
@@ -19,7 +19,7 @@ void addSearchMarkers(WidgetRef ref, List<Place> places) {
   final newMarkers = places.map((place) {
     return Marker(
       onTap: (){
-        ref.read(selectedPlaceProvider.notifier).state = place;
+        ref.read(focusedSearchPlaceProvider.notifier).state = place;
       },
       markerId: MarkerId(place.id),
       position: LatLng(

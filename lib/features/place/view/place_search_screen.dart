@@ -62,7 +62,7 @@ class _PlaceSearchScreenState extends ConsumerState<PlaceSearchScreen> {
             Expanded(
               child: placeAsyncValue.when(
                   data: (placeResponse) {
-                    List<Place> filteredPlaces = placeResponse!.places;
+                    List<Place> filteredPlaces = placeResponse?.places ?? [];
 
                     return ListView.builder(
                       itemCount: filteredPlaces.length,

@@ -87,7 +87,7 @@ class _DatepickerScreenState extends ConsumerState<DatepickerScreen> {
                 height: 48,
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    ref.read(selectedDateProvider.notifier).state =
+                    ref.read(selectedFilterDateProvider.notifier).state =
                         focusedDay;
                     context.push('/placeAdd');
                   },
