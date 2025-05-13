@@ -60,7 +60,15 @@ final allPlacesByCoupleProvider = Provider<List<Place>>((ref) {
 });
 
 /// 🟢 날짜별로 장소를 필터링할 때 기준이 되는 선택된 날짜
-final selectedFilterDateProvider = StateProvider<DateTime?>((ref) => null);
+final selectedFilterDateProvider = StateProvider<DateTime?>((ref) {
+  final dates = ref.watch(filteredPlaceDateProvider);
+  final now = DateTime.now();
+
+  //오늘 이후의 날짜만 필터링해서 가장 가까운 날짜 선택
+  final upcoming = dates.where((d) => d.isAfter(DateTime(now.year, now.month, now.day))).toList()..sort();
+
+  return upcoming.isNotEmpty ? upcoming.first : null;
+});
 
 /// 🔹 [선택된 날짜]에 해당하는 장소만 필터링된 리스트
 final placesForSelectedDateProvider = Provider<List<Place>>((ref) {
