@@ -58,7 +58,7 @@ class AskCoupleLinkScreen extends ConsumerWidget {
                 SizedBox(height: 8.0),
                 TextButton(
                     onPressed: () {
-                      context.go('/');
+                      context.go('/home');
                     },
                     child: Text('나중에하기', style: TextStyle(color: Colors.grey)))
               ],

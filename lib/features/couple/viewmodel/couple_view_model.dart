@@ -18,6 +18,7 @@ class CoupleViewModel extends StateNotifier<AsyncValue<Couple?>> {
 
   // 커플 상대방 정보
   AsyncValue<MyUser?> _partner = const AsyncValue.data(null);
+
   AsyncValue<MyUser?> get partner => _partner;
 
   /// 사용자 ID를 기반으로 커플 파트너 정보를 로드합니다
@@ -126,6 +127,15 @@ class CoupleViewModel extends StateNotifier<AsyncValue<Couple?>> {
       final userId = _getCurrentUserId(ref);
       final couple = await _repository.getUserCouple(userId);
       state = AsyncValue.data(couple);
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+    }
+  }
+
+  Future<void> updateFirstMetDate(String coupleId, DateTime firstMetDate) async {
+    try {
+      state = const AsyncValue.loading();
+      await _repository.updateFirstMetDate(coupleId, firstMetDate);
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
     }

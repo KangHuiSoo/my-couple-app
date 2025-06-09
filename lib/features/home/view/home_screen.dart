@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/custom_title.dart';
@@ -13,6 +14,7 @@ import 'package:my_couple_app/core/ui/component/positioned_text.dart';
 import 'package:my_couple_app/core/ui/component/profile_photo.dart';
 import 'package:my_couple_app/features/auth/provider/auth_provider.dart';
 import 'package:my_couple_app/features/couple/viewmodel/couple_view_model.dart';
+import 'package:my_couple_app/features/home/provider/home_provider.dart';
 
 import '../../place/model/place.dart';
 
@@ -28,6 +30,32 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   String? backgroundImage;
   final List<Place> places = [];
 
+  @override
+  void initState() {
+    super.initState();
+    // 현재 로그인한 사용자의 프로필 이미지 URL 을 가져옵니다
+    _profileImageUrl = FirebaseAuth.instance.currentUser?.photoURL;
+
+    // 위젯 생명 주기 중에 provider 를 수정 하는 것을 방지 하기 위해 Future 를 사용 합니다
+    // 이렇게 하면 build 메서드가 완료된 후에 상태 변경이 이루어집니다
+    Future(() {
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      final coupleId = ref.read(authViewModelProvider).user?.coupleId;
+      print(" ====================");
+      print(userId);
+      print(coupleId);
+      print(" ====================");
+      if (userId != null) {
+        ref.read(coupleViewModelProvider.notifier).loadCouplePartner(userId);
+      }
+      if (coupleId != null) {
+        ref
+            .read(homeViewModelProvider.notifier)
+            .fetchNearestUpcomingPlaces(coupleId);
+      }
+    });
+  }
+
   Future<void> _pickBackgroundImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? pickedFile =
@@ -40,20 +68,42 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    // 현재 로그인한 사용자의 프로필 이미지 URL을 가져옵니다
-    _profileImageUrl = FirebaseAuth.instance.currentUser?.photoURL;
-
-    // 위젯 생명주기 중에 provider를 수정하는 것을 방지하기 위해 Future를 사용합니다
-    // 이렇게 하면 build 메서드가 완료된 후에 상태 변경이 이루어집니다
-    Future(() {
-      final userId = FirebaseAuth.instance.currentUser?.uid;
-      if (userId != null) {
-        ref.read(coupleViewModelProvider.notifier).loadCouplePartner(userId);
-      }
-    });
+  // 배너 위젯
+  Widget _buildCoupleLinkBanner(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: const EdgeInsets.all(12.0),
+      decoration: BoxDecoration(
+        color: Colors.yellow[100],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.orange),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Expanded(
+            child: Text(
+              "아직 커플 연결이 완료되지 않았어요!\n링크를 생성해 상대방에게 공유해보세요.",
+              style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w500),
+            ),
+          ),
+          const SizedBox(width: 10),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: PRIMARY_COLOR,
+              minimumSize: const Size(80, 35),
+            ),
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("커플 연결 화면으로 이동합니다.")),
+              );
+              context.push("/askCoupleLink");
+            },
+            child: const Text("연결하기", style: TextStyle(fontSize: 13)),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -62,6 +112,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final authState = ref.watch(authViewModelProvider);
     final coupleViewModel = ref.watch(coupleViewModelProvider.notifier);
     final partnerState = coupleViewModel.partner;
+    final homeState = ref.watch(homeViewModelProvider);
 
     print('(home_screen.dart)HomeScreen build - Partner state: $partnerState');
     print('(home_screen.dart) My User 정보 : ${authState.user}');
@@ -106,6 +157,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         padding: EdgeInsets.zero,
                         controller: scrollController,
                         children: [
+                          if (authState.user?.coupleId == null)
+                            _buildCoupleLinkBanner(context),
                           Center(
                             child: Padding(
                               padding: const EdgeInsets.only(top: 26),
@@ -174,11 +227,84 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             color: Colors.white,
                             child: Column(
                               children: [
-                                CustomTitle(titleText: '데이트 장소'),
-                                // PlaceList(
-                                //   isEditing: false,
-                                //   places: places,
-                                // )
+                                GestureDetector(child: CustomTitle(titleText: '다음 약속 장소'), onTap: (){
+                                  context.push('/placeList');
+                                },),
+
+                                //TODO : 다가오는 가장 가까운 날짜의 데이트 장소 보여주기.
+                                // DraggableSheet 내에 표시
+                                if (homeState.isLoading)
+                                  Center(child: CircularProgressIndicator())
+                                else if (homeState.filteredPlaces.isEmpty)
+                                  Padding(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Text("다가오는 데이트 장소가 없어요."),
+                                  )
+                                else ...[
+                                    ...homeState.filteredPlaces.map(
+                                          (p) => Container(
+                                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                        padding: const EdgeInsets.all(16),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(16),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black12,
+                                              blurRadius: 8,
+                                              offset: Offset(0, 4),
+                                            )
+                                          ],
+                                          border: Border.all(color: PRIMARY_COLOR.withOpacity(0.2)),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.place, color: PRIMARY_COLOR, size: 30),
+                                            const SizedBox(width: 12),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    p.placeName,
+                                                    style: const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  Text(
+                                                    p.addressName ?? '',
+                                                    style: const TextStyle(
+                                                      fontSize: 13,
+                                                      color: Colors.grey,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            if (p.selectedDate != null)
+                                              Container(
+                                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                decoration: BoxDecoration(
+                                                  color: PRIMARY_COLOR.withOpacity(0.1),
+                                                  borderRadius: BorderRadius.circular(8),
+                                                ),
+                                                child: Text(
+                                                  "${p.selectedDate!.month}월 ${p.selectedDate!.day}일",
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: PRIMARY_COLOR,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+
+                                ]
                               ],
                             ),
                           ),

@@ -41,30 +41,138 @@ class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
     super.initState();
   }
 
-  void _showDateSelector(BuildContext context, List<DateTime> availableDates,
-      ValueChanged<DateTime> onDateSelected) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return ListView.builder(
-          itemCount: availableDates.length,
-          itemBuilder: (context, index) {
-            final date = availableDates[index];
-            final formatted = "${date.year}년 ${date.month}월 ${date.day}일";
 
-            return ListTile(
-              leading: Icon(Icons.calendar_today, color: Colors.grey),
-              title: Text(formatted),
-              onTap: () {
-                Navigator.pop(context); // 닫기
-                onDateSelected(date); // 선택 콜백
-              },
+  void showGroupedDateSelector(
+      BuildContext context,
+      List<DateTime> dates,
+      ValueChanged<DateTime> onDateSelected, {
+        DateTime? selectedDate,
+      }) {
+    final Map<String, List<DateTime>> grouped = {};
+
+    for (final date in dates) {
+      final key = "${date.year}년 ${date.month}월";
+      grouped.putIfAbsent(key, () => []).add(date);
+    }
+
+    showModalBottomSheet(
+      backgroundColor: Colors.white,
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      isScrollControlled: true,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.6,
+          maxChildSize: 0.9,
+          builder: (context, scrollController) {
+            return Column(
+              children: [
+                const SizedBox(height: 12),
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  '날짜를 선택해주세요',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 12),
+                Expanded(
+                  child: ListView(
+                    controller: scrollController,
+                    children: grouped.entries.expand((entry) {
+                      final month = entry.key;
+                      final monthDates = entry.value;
+
+                      return [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          child: Text(
+                            month,
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey[700]),
+                          ),
+                        ),
+                        ...monthDates.map((date) {
+                          final weekday = ['일', '월', '화', '수', '목', '금', '토'][date.weekday % 7];
+                          final formatted = "${date.year}년 ${date.month}월 ${date.day}일 ($weekday)";
+                          final isSelected = selectedDate != null &&
+                              selectedDate.year == date.year &&
+                              selectedDate.month == date.month &&
+                              selectedDate.day == date.day;
+
+                          return InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                              onDateSelected(date);
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: isSelected ? Colors.blue[50] : null,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              margin: const EdgeInsets.symmetric(horizontal: 12),
+                              child: ListTile(
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                                leading: Icon(Icons.calendar_month, color: Colors.blueAccent),
+                                title: Text(
+                                  formatted,
+                                  style: TextStyle(
+                                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                    color: isSelected ? Colors.blueAccent : Colors.black,
+                                  ),
+                                ),
+                                trailing: isSelected
+                                    ? Icon(Icons.check_circle, color: Colors.blueAccent)
+                                    : null,
+                              ),
+                            ),
+                          );
+                        }),
+                        SizedBox(height: 8),
+                      ];
+                    }).toList(),
+                  ),
+                ),
+              ],
             );
           },
         );
       },
     );
   }
+
+  // void _showDateSelector(BuildContext context, List<DateTime> availableDates,
+  //     ValueChanged<DateTime> onDateSelected) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     builder: (context) {
+  //       return ListView.builder(
+  //         itemCount: availableDates.length,
+  //         itemBuilder: (context, index) {
+  //           final date = availableDates[index];
+  //           final formatted = "${date.year}년 ${date.month}월 ${date.day}일";
+  //
+  //           return ListTile(
+  //             leading: Icon(Icons.calendar_today, color: Colors.grey),
+  //             title: Text(formatted),
+  //             onTap: () {
+  //               Navigator.pop(context); // 닫기
+  //               onDateSelected(date); // 선택 콜백
+  //             },
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 
   TextStyle categoryTextStyle(String category) {
     return TextStyle(
@@ -115,17 +223,23 @@ class _PlaceListScreenState extends ConsumerState<PlaceListScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         centerTitle: false,
         backgroundColor: Colors.white,
         title: const Text('약속장소'),
         actions: [
           TextButton(
             onPressed: () {
-              _showDateSelector(context, registeredDates, (selected) {
-                print('선택된 날짜: $selected');
-                ref.read(selectedFilterDateProvider.notifier).state = selected;
-                setState(() {});
-              });
+              showGroupedDateSelector(
+                context,
+                registeredDates, // List<DateTime>
+                    (selected) {
+                  print('선택된 날짜: $selected');
+                  ref.read(selectedFilterDateProvider.notifier).state = selected;
+                  setState(() {}); // 선택 후 UI 갱신이 필요하면 유지
+                },
+                selectedDate: ref.read(selectedFilterDateProvider), // ✅ 현재 선택된 날짜 전달
+              );
             },
             child: Text(
               selectedDay != null

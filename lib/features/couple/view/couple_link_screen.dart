@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:my_couple_app/core/constants/colors.dart';
 import 'package:my_couple_app/core/ui/component/custom_button.dart';
 import 'package:my_couple_app/core/ui/component/custom_text_field.dart';
@@ -50,6 +51,7 @@ class CoupleLinkScreen extends ConsumerWidget {
                       ref
                           .read(coupleViewModelProvider.notifier)
                           .joinCouple(_coupleIdController.text, ref);
+                      context.go("/firstMetDatePicker");
                     },
                     buttonText: "연결",
                     textColor: Colors.white,

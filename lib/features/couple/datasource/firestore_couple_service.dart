@@ -217,4 +217,16 @@ class FirestoreCoupleService {
       return null;
     }
   }
+
+  // 커플의 처음 만난날 추가
+  Future<String> updateFirstMetDate (String coupleId, DateTime firstMetDate) async {
+    try{
+      final result = await _firestore.collection("couples").doc(coupleId).update({
+        'firstMetDate' : firstMetDate
+      });
+      return 'success';
+    } catch (e) {
+      return 'error ${e.toString()}';
+    }
+  }
 }

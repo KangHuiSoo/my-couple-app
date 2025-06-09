@@ -37,4 +37,8 @@ class CoupleRepository {
   Future<MyUser?> getCouplePartner(String userId) async {
     return await _coupleService.getCouplePartner(userId);
   }
+
+  Future<String> updateFirstMetDate(String coupleId, DateTime firstMetDate) async{
+    return await _coupleService.updateFirstMetDate(coupleId, firstMetDate);
+  }
 }

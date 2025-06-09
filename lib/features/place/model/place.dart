@@ -60,21 +60,26 @@ class Place {
 
   factory Place.fromJson(Map<String, dynamic> json) {
     return Place(
-        id: json['id'],
-        placeName: json['place_name'],
-        categoryName: json['category_name'],
-        categoryGroupCode: json['category_group_code'],
-        categoryGroupName: json['category_group_name'],
-        phone: json['phone'],
-        addressName: json['address_name'],
-        roadAddressName: json['road_address_name'],
-        y: json['y'],
-        x: json['x'],
-        placeUrl: json['place_url'],
-        distance: json['distance'],
-        selectedDate: json['selectedDate'],
-        coupleId: json['coupleId'],
-        userRatings: json['userRatings']);
+      id: json['id'] ?? '',
+      placeName: json['placeName'] ?? '',
+      categoryName: json['categoryName'] ?? '',
+      categoryGroupCode: json['categoryGroupCode'] ?? '',
+      categoryGroupName: json['categoryGroupName'] ?? '',
+      phone: json['phone'] ?? '',
+      addressName: json['addressName'] ?? '',
+      roadAddressName: json['roadAddressName'] ?? '',
+      y: json['y'] ?? '',
+      x: json['x'] ?? '',
+      placeUrl: json['placeUrl'] ?? '',
+      distance: json['distance'] ?? '',
+      selectedDate: json['selectedDate'] != null
+          ? (json['selectedDate'] as Timestamp).toDate()
+          : null,
+      coupleId: json['coupleId'] ?? '',
+      userRatings: json['userRatings'] != null
+          ? Map<String, int>.from(json['userRatings'])
+          : null,
+    );
   }
 
   // 📌 ✅ JSON 변환 메서드 추가

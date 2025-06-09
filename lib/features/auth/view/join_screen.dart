@@ -30,7 +30,7 @@ class _JoinScreenState extends ConsumerState<JoinScreen> {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(next.errorMessage!)));
       } else if (next.user != null) {
-        context.go('/askCoupleLink');
+        context.go('/home');
       }
     });
 

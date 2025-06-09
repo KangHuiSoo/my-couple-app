@@ -45,7 +45,7 @@ class LoginScreen extends ConsumerWidget {
                     SvgPicture.asset('assets/images/logo.svg',
                         width: 56, height: 56),
                     SizedBox(height: 8),
-                    Text('데플리',
+                    Text('연플리',
                         style: TextStyle(
                             fontFamily: 'okddung',
                             fontSize: 30,
