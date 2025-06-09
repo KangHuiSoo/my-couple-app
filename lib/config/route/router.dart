@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:my_couple_app/core/ui/bottom_navigation/main_screen.dart';
 import 'package:my_couple_app/features/couple/view/ask_couple_link_screen.dart';
 import 'package:my_couple_app/features/couple/view/couple_link_screen.dart';
+import 'package:my_couple_app/features/couple/view/first_met_date_picker_screen.dart';
 import 'package:my_couple_app/features/place/view/place_list_screen.dart';
 import 'package:my_couple_app/features/place/view/place_search_screen.dart';
 import 'package:my_couple_app/features/home/view/home_screen.dart';
@@ -28,6 +29,7 @@ final GoRouter router = GoRouter(routes: [
       GoRoute(
           path: '/askCoupleLink',
           builder: (context, state) => AskCoupleLinkScreen()),
+      GoRoute(path: '/firstMetDatePicker', builder: (context ,state) => FirstMetDatePickerScreen())
     ],
   ),
   ShellRoute(
